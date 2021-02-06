@@ -39,7 +39,7 @@ def import_people_handler():
 
 
 def enrich_people_handler():
-    people = [People.query.first()]
+    people = People.query.all()
 
     for person in people:
         r = requests.get(DETAILS_ENDPOINT + person.rechtspraak_id)
