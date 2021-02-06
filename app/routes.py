@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, redirect, render_template, request
+from flask import Blueprint, abort, jsonify, redirect, render_template, request
 
 from app.models import People, ProfessionalDetails, SideJobs
 
@@ -18,6 +18,10 @@ def about():
 @base_bp.route("/person/<id>")
 def person_detail(id):
     person = People.query.filter(People.id == id).first()
+
+    if person.protected:
+        abort(404)
+
     professional_details = (
         ProfessionalDetails.query.filter(ProfessionalDetails.person_id == person.id)
         .filter(ProfessionalDetails.end_date.is_(None))
@@ -54,7 +58,7 @@ api_bp = Blueprint("api", __name__, url_prefix="/api/v1")
 @api_bp.route("/search")
 def search():
     q = request.args.get("q", None)
-    query = People.query
+    query = People.query.filter(People.protected.isnot(True))
 
     if q:
         query = query.filter(People.toon_naam.ilike(f"%{q}%"))

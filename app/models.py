@@ -13,6 +13,7 @@ class People(UUIDModel):
     toon_naam_kort = Column(db.Text, nullable=True)
     rechtspraak_id = Column(db.Text, nullable=False, unique=True)
     last_scraped_at = Column(db.DateTime, nullable=True)
+    protected = Column(db.Boolean, default=False)
 
     @property
     def serialize(self):
