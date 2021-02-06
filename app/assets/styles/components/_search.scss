@@ -1,3 +1,7 @@
 .search-result-person {
   text-decoration: none;
+
+  &__name {
+    margin: 0.5rem 0;
+  }
 }
