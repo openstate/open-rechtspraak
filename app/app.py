@@ -9,7 +9,7 @@ from app.extensions import db, migrate, toolbar
 
 
 def create_app(env=None):
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder="static")
     app.config.from_object(get_config(env))
     flask_extensions(app)
     register_routes(app)
@@ -47,7 +47,6 @@ def initialize_talisman(app):
     app = Talisman(
         app,
         content_security_policy=csp,
-        content_security_policy_nonce_in=["script-src"],
     )
     return app
 
