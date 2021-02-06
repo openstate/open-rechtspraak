@@ -9,11 +9,33 @@
   </div>
 
   <div>
-    <h2>Beroepsgegevens</h2>
-    <p>n/a</p>
+    <h2 class="mb-3">Beroepsgegevens</h2>
+    {% for pd in professional_details %}
+      <h5>{{ pd.function }}</h5>
+      <ul id="{{ pd.id }}">
+        <li>{{ pd.start_date|date }}</li>
+      </ul>
+    {% endfor %}
 
-    <h4 class="mt-3">Historische beroepsgegevens</h4>
-    <p>n/a</p>
+    <h2 class="mt-3 mb-3">Historische beroepsgegevens</h2>
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>Functie</th>
+        <th>Van</th>
+        <th>Tot</th>
+      </tr>
+      </thead>
+      <tbody>
+      {% for pd in historical_professional_details %}
+        <tr id="{{ pd.id }}">
+          <td>{{ pd.function }}</td>
+          <td>{{ pd.start_date|date }}</td>
+          <td>{{ pd.end_date|date }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
   </div>
 
   <div>

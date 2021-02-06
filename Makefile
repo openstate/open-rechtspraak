@@ -31,5 +31,8 @@ env:
 import_people:
 	$(FLASK) import_people
 
+enrich_people:
+	$(FLASK) enrich_people
+
 seed:
 	$(FLASK) seed

@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, redirect, render_template, request
 
-from app.models import People
+from app.models import People, ProfessionalDetails
 
 base_bp = Blueprint("base", __name__)
 
@@ -18,7 +18,22 @@ def about():
 @base_bp.route("/person/<id>")
 def person_detail(id):
     person = People.query.filter(People.id == id).first()
-    return render_template("person/detail.html", person=person)
+    professional_details = (
+        ProfessionalDetails.query.filter(ProfessionalDetails.person_id == person.id)
+        .filter(ProfessionalDetails.historical.is_(False))
+        .all()
+    )
+    historical_professional_details = (
+        ProfessionalDetails.query.filter(ProfessionalDetails.person_id == person.id)
+        .filter(ProfessionalDetails.historical.is_(True))
+        .all()
+    )
+    return render_template(
+        "person/detail.html",
+        person=person,
+        professional_details=professional_details,
+        historical_professional_details=historical_professional_details,
+    )
 
 
 api_bp = Blueprint("api", __name__, url_prefix="/api/v1")

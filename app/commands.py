@@ -6,7 +6,7 @@ from faker import Faker
 from flask.cli import with_appcontext
 
 from app.models import People
-from app.scraper.extract import collect_and_save_people
+from app.scraper.extract import enrich_people_handler, import_people_handler
 
 
 @click.command("placeholder")
@@ -18,7 +18,13 @@ def placeholder():
 @click.command("import_people")
 @with_appcontext
 def import_people():
-    collect_and_save_people()
+    import_people_handler()
+
+
+@click.command("enrich_people")
+@with_appcontext
+def enrich_people():
+    enrich_people_handler()
 
 
 def person_generator():
