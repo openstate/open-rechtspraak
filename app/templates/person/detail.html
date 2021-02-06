@@ -21,6 +21,7 @@
         <tr>
           <th>Van</th>
           <th>Functie</th>
+          <th>Organisatie</th>
         </tr>
         </thead>
         <tbody>
@@ -28,6 +29,7 @@
           <tr id="{{ pd.id }}">
             <td nowrap>{{ pd.start_date|date }}</td>
             <td>{{ pd.function }}</td>
+            <td>{{ pd.organisation }}</td>
           </tr>
         {% endfor %}
         </tbody>
@@ -45,6 +47,7 @@
           <th>Van</th>
           <th>Tot</th>
           <th>Functie</th>
+          <th>Organisatie</th>
         </tr>
         </thead>
         <tbody>
@@ -53,6 +56,7 @@
             <td nowrap>{{ pd.start_date|date }}</td>
             <td nowrap>{{ pd.end_date|date }}</td>
             <td>{{ pd.function }}</td>
+            <td>{{ pd.organisation }}</td>
           </tr>
         {% endfor %}
         </tbody>
@@ -63,8 +67,8 @@
   </div>
 
   <div>
+    <h2 class="mt-3 mb-3">Nevenbetrekkingen</h2>
     {% if side_jobs|length > 0 %}
-      <h2>Nevenbetrekkingen</h2>
       <table class="table table-striped">
         <thead>
         <tr>
@@ -93,7 +97,7 @@
       <p>Er zijn geen nevenbetrekkingen bekend.</p>
     {% endif %}
 
-    <h4 class="mt-3">Historische nevenbetrekkingen</h4>
+    <h2 class="mt-3 mb-3">Historische nevenbetrekkingen</h2>
     {% if historical_side_jobs|length > 0 %}
       <table class="table table-striped">
         <thead>

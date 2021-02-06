@@ -31,7 +31,8 @@ class People(UUIDModel):
             "toon_naam_kort": self.toon_naam_kort,
             "rechtspraak_id": self.rechtspraak_id,
             "beroepsgegevens": [
-                {"function": pd.function} for pd in professional_details
+                {"function": pd.function.title(), "organisation": pd.organisation}
+                for pd in professional_details
             ],
         }
 
@@ -57,6 +58,7 @@ class ProfessionalDetails(UUIDModel):
     end_date = Column(db.DateTime, nullable=True)
     main_job = Column(db.Boolean, default=False)
     function = Column(db.Text, nullable=False)
+    organisation = Column(db.Text, nullable=True)
     remarks = Column(db.Text, nullable=True)
     person_id = reference_col("people", nullable=False)
     person = relationship("People", backref="professional_details", lazy="select")
@@ -67,6 +69,7 @@ class ProfessionalDetails(UUIDModel):
             start_date=parse_rechtspraak_datetime(d.get("begindatum") or ""),
             main_job=bool(d.get("hoofdfunctie")),
             function=(d.get("functieOmschrijving") or "").strip(),
+            organisation=(d.get("instantieOmschrijving") or "").strip(),
             remarks=(d.get("opmerkingen") or "").strip(),
         )
 
@@ -76,7 +79,8 @@ class ProfessionalDetails(UUIDModel):
             start_date=parse_rechtspraak_datetime(d.get("begindatum") or ""),
             end_date=parse_rechtspraak_datetime(d.get("einddatum") or ""),
             main_job=bool(d.get("hoofdfunctie")),
-            function=(d.get("functieOmschrijving") or "").strip(),
+            function=(d.get("functie") or "").strip(),
+            organisation=(d.get("instantie") or "").strip(),
         )
 
 
