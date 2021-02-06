@@ -12,6 +12,7 @@ Flask-DebugToolbar==0.11.0
 Flask-Migrate==2.6.0
 Flask-SQLAlchemy==2.4.4
 flask-talisman==0.7.0
+gunicorn==20.0.4
 identify==1.5.13
 idna==2.10
 itsdangerous==1.1.0

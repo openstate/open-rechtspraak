@@ -12,16 +12,16 @@ require('laravel-mix-imagemin');
  |
  */
 
-mix.setPublicPath('../static/dist');
+mix.setPublicPath('app/static/dist');
 
-mix.js('scripts/main.js', '../static/dist/scripts/');
+mix.js('assets/scripts/main.js', 'app/static/dist/scripts/');
 
-mix.sass('styles/main.scss', '../static/dist/styles/')
+mix.sass('assets/styles/main.scss', 'app/static/dist/styles/')
 
-mix.copy('node_modules/@openfonts/lexend-deca_latin/files/', '../static/dist/styles/files/');
-mix.copy('node_modules/@openfonts/dosis_latin/files/', '../static/dist/styles/files/');
+mix.copy('node_modules/@openfonts/lexend-deca_latin/files/', 'app/static/dist/styles/files/');
+mix.copy('node_modules/@openfonts/dosis_latin/files/', 'app/static/dist/styles/files/');
 
-mix.imagemin('images/*');
+mix.imagemin('assets/images/*');
 
 mix.autoload({
   jquery: ['jQuery', '$', 'window.jQuery'],
