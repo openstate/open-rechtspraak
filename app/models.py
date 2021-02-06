@@ -36,14 +36,16 @@ class People(UUIDModel):
 
     @staticmethod
     def from_dict(d):
-        len_last_name = len(d.get("toonnaam").strip()) - len(d.get("toonnaamkort", ""))
+        toon_naam = (d.get("toonnaam") or "").strip()
+        toon_naam_kort = (d.get("toonnaamkort") or "").strip()
+        len_last_name = len(toon_naam) - len(toon_naam_kort)
         titles = d.get("toonnaam", "")[0:len_last_name].strip()
 
         return dict(
-            rechtspraak_id=d.get("persoonId", "").strip(),
-            last_name=d.get("ACHTERNAAM", "").strip(),
-            toon_naam=d.get("toonnaam", "").strip(),
-            toon_naam_kort=d.get("toonnaamkort", "").strip(),
+            rechtspraak_id=(d.get("persoonId") or "").strip(),
+            last_name=(d.get("ACHTERNAAM") or "").strip(),
+            toon_naam=toon_naam,
+            toon_naam_kort=toon_naam_kort,
             titles=titles,
         )
 
@@ -62,18 +64,54 @@ class ProfessionalDetails(UUIDModel):
     @staticmethod
     def transform_beroepsgegevens_dict(d):
         return dict(
-            start_date=parse_rechtspraak_datetime(d.get("begindatum")),
+            start_date=parse_rechtspraak_datetime(d.get("begindatum") or ""),
             main_job=bool(d.get("hoofdfunctie")),
-            function=d.get("functieOmschrijving", "").strip(),
-            remarks=(d.get("opmerkingen", "") or "").strip(),
+            function=(d.get("functieOmschrijving") or "").strip(),
+            remarks=(d.get("opmerkingen") or "").strip(),
         )
 
     @staticmethod
     def transform_historisch_beroepsgegevens_dict(d):
         return dict(
-            start_date=parse_rechtspraak_datetime(d.get("begindatum")),
-            end_date=parse_rechtspraak_datetime(d.get("einddatum")),
+            start_date=parse_rechtspraak_datetime(d.get("begindatum") or ""),
+            end_date=parse_rechtspraak_datetime(d.get("einddatum") or ""),
             main_job=bool(d.get("hoofdfunctie")),
             historical=True,
-            function=d.get("functie", "").strip(),
+            function=(d.get("functieOmschrijving") or "").strip(),
+        )
+
+
+class SideJobs(UUIDModel):
+    __tablename__ = "side_jobs"
+    start_date = Column(db.DateTime, nullable=True)
+    end_date = Column(db.DateTime, nullable=True)
+    function = Column(db.Text, nullable=False)
+    place = Column(db.Text, nullable=True)
+    paid = Column(db.Text, nullable=True)
+    organisation_name = Column(db.Text, nullable=True)
+    organisation_type = Column(db.Text, nullable=True)
+    person_id = reference_col("people", nullable=False)
+    person = relationship("People", backref="side_jobs", lazy="select")
+
+    @staticmethod
+    def transform_huidige_nevenbetrekkingen_dict(d):
+        return dict(
+            start_date=parse_rechtspraak_datetime(d.get("begindatum") or ""),
+            paid=(d.get("bezoldigd") or "").strip(),
+            function=(d.get("functie") or "").strip(),
+            organisation_name=(d.get("instantie") or "").strip(),
+            place=(d.get("plaats") or "").strip(),
+            organisation_type=(d.get("soortbedrijf") or "").strip(),
+        )
+
+    @staticmethod
+    def transform_voorgaande_nevenbetrekkingen_dict(d):
+        return dict(
+            start_date=parse_rechtspraak_datetime(d.get("begindatum") or ""),
+            end_date=parse_rechtspraak_datetime(d.get("einddatum") or ""),
+            paid=(d.get("bezoldigd") or "").strip(),
+            function=(d.get("functie") or "").strip(),
+            organisation_name=(d.get("instantie") or "").strip(),
+            place=(d.get("plaats") or "").strip(),
+            organisation_type=(d.get("soortbedrijf") or "").strip(),
         )
