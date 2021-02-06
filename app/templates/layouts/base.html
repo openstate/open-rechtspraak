@@ -39,67 +39,20 @@
 <body>
 
 <header>
-  <nav class="navbar navbar-expand-lg fixed-top">
-    <div class="container">
-      <a class="navbar-brand" href="/">
-        <img src="/static/dist/images/logo-open-state-foundation.svg"
-             alt="Open Rechtspraak logo" width="30" height="24" class="d-inline-block align-top">
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
-              aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-        Menu
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNavDropdown">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link active" href="{{ url_for('base.index') }}">Home</a></li>
-          <li class="nav-item"><a class="nav-link" href="{{ url_for('base.about') }}">Over deze website</a></li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-
-  <div class="lead">
-    <div class="container">
-      <div class="row header">
-        <div class="col-xs-12 col-sm-10 offset-sm-2">
-          <h2 class="font-body">Transparantie in de rechtspraak, zo gevonden.</h2>
-        </div>
-      </div>
-    </div>
-  </div>
+  {% include 'partials/_nav.html' %}
+  {% include 'partials/_lead.html' %}
 </header>
 
 <main>
   <div class="container">
-    {% block content %}
-    {% endblock %}
+    <div class="mt-5 mb-5">
+      {% block content %}
+      {% endblock %}
+    </div>
   </div>
 </main>
 
-<footer>
-  <div class="container">
-    <div class="row header">
-      <div class="footer-item col-xs-12 col-sm-4 col-md-3 footer-logo">
-        <a href="/">
-          <img class="img-responsive" src="/static/dist/images/logo-open-state-foundation.svg"
-               alt="Open Rechtspraak logo">
-        </a>
-      </div>
-      <div id="contact" class="footer-item col-xs-12 col-sm-4 col-md-3">
-        <ul class="list-inline text-grey right-footer-list-padding" style="margin-top: 15px;">
-          <li><a class="right-footer-padding" href="https://www.facebook.com/OpenStateFoundation/" target="_blank"
-                 rel="noopener"><i class="fa fa-facebook fa-2x text-grey"></i></a></li>
-          <li><a class="right-footer-padding" href="https://twitter.com/OpenStateEU" target="_blank" rel="noopener"><i
-                  class="fa fa-twitter fa-2x text-grey"></i></a></li>
-          <li><a class="right-footer-padding" href="https://github.com/openstate/open-rechtspraak" target="_blank"
-                 rel="noopener"><i class="fa fa-github fa-2x text-grey"></i></a></li>
-          <li><a class="right-footer-padding" href="mailto:openrechtspraak@openstate.eu" target="_blank" rel="noopener"><i
-                  class="fa fa-envelope-o fa-2x text-grey"></i></a></li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</footer>
+{% include 'partials/_footer.html' %}
 
 {% block scripts %}
   <script src="/static/dist/scripts/main.js"></script>
