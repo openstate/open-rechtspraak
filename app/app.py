@@ -36,20 +36,13 @@ def initialize_talisman(app):
 
     csp = {
         "default-src": [SELF],
-        "style-src": [
-            SELF,
-            "fonts.googleapis.com",
-            "unpkg.com"
-        ],
+        "style-src": [SELF, "fonts.googleapis.com", "unpkg.com"],
         "script-src": [SELF],
         "connect-src": [
             SELF,
             "www.google-analytics.com",
         ],
-        "font-src": [
-            SELF,
-            "fonts.gstatic.com"
-        ]
+        "font-src": [SELF, "fonts.gstatic.com"],
     }
     app = Talisman(
         app,
