@@ -2,11 +2,20 @@ import requests
 
 from app.models import People
 from app.scraper.config import HEADERS, SEARCH_ENDPOINT
-from app.scraper.utils import format_payload, search_strings
+from app.scraper.utils import (
+    find_request_verification_token,
+    format_payload,
+    search_strings,
+)
 
 
 def collect_and_save_people():
     with requests.Session() as s:
+        # We first need a CSRF token to be able to query the namenlijst.rechtspraak.nl API
+        r = s.get("https://namenlijst.rechtspraak.nl/#!/zoeken/index")
+        HEADERS["__RequestVerificationToken"] = find_request_verification_token(
+            r.content
+        )
         for search_string in search_strings():
             payload = format_payload(search_string)
             r = s.post(SEARCH_ENDPOINT, json=payload, headers=HEADERS)

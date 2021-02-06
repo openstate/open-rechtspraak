@@ -1,5 +1,7 @@
 import string
 
+from bs4 import BeautifulSoup
+
 
 def search_strings():
     result_set = []
@@ -16,3 +18,8 @@ def format_payload(search_string):
         + search_string
         + '"}'
     }
+
+
+def find_request_verification_token(content):
+    soup = BeautifulSoup(content, "html.parser")
+    return soup.find("input", {"name": "__RequestVerificationToken"})["value"]
