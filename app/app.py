@@ -1,11 +1,11 @@
 from flask import Flask
 from flask_talisman import Talisman
 
+import app.routes as routes
 from app import commands
 from app.config import get_config
 from app.errors import internal_server_error, page_not_found, unauthorized_error
 from app.extensions import db, migrate, toolbar
-from app.routes import base_bp
 
 
 def create_app(env=None):
@@ -59,7 +59,8 @@ def register_error_handlers(app):
 
 
 def register_routes(app):
-    app.register_blueprint(base_bp)
+    app.register_blueprint(routes.base_bp)
+    app.register_blueprint(routes.api_bp)
 
 
 def register_commands(app):
