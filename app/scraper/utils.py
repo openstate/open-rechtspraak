@@ -1,3 +1,4 @@
+import random
 import string
 
 from bs4 import BeautifulSoup
@@ -9,6 +10,7 @@ def search_strings():
         for second_char in string.ascii_lowercase:
             result_set.append(char + second_char)
 
+    random.shuffle(result_set)
     return result_set
 
 

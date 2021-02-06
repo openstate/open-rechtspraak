@@ -4,10 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^1.2.30",
-    "@fortawesome/free-brands-svg-icons": "^5.14.0",
-    "@fortawesome/free-regular-svg-icons": "^5.14.0",
-    "@fortawesome/free-solid-svg-icons": "^5.14.0",
+    "@fortawesome/fontawesome-free": "^5.15.2",
     "@openfonts/dosis_latin": "^0.0.11",
     "@openfonts/lexend-deca_latin": "^0.0.11",
     "@popperjs/core": "^2.6.0",

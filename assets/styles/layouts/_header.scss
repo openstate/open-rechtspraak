@@ -1,26 +1,11 @@
-header a {
-  color: black;
-}
-
 nav {
-  background-color: $white;
-  font-size: 18px;
-  line-height: 36px;
-  font-family: $font-family-title;
-
-  button {
-    margin: 0 !important;
-    border: 0 !important;
-    padding: 7px 20px !important;
-    color: $black !important;
-  }
+  border-bottom: 4px solid $light-grey !important;
 }
 
 .navbar-brand {
   padding: 0;
 
   img {
-    padding: 2px 10px;
     height: 100%;
     width: 60%;
   }
@@ -29,14 +14,4 @@ nav {
 .lead {
   background-color: $light-grey;
   padding: 100px 0 20px 0;
-}
-
-.header-logo {
-  a {
-    display: inline-block;
-  }
-
-  img {
-    width: 220px;
-  }
 }

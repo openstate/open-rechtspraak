@@ -8,6 +8,7 @@ POSTGRES_DB = get_env_variable("POSTGRES_DB", default="stenos")
 
 
 class Config:
+    SECRET_KEY = get_env_variable("POSTGRES_DB", default="OSF")
     FLASK_ENV = get_env_variable("POSTGRES_URL", default="development")
     DEBUG = False
     TESTING = False

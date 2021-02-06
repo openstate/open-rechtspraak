@@ -11,6 +11,8 @@ up:
 down:
 	$(COMPOSE) down
 
+init: build up db-schema seed
+
 logs:
 	$(COMPOSE) logs --tail=500 -f
 
@@ -28,3 +30,9 @@ env:
 
 import_people:
 	$(FLASK) import_people
+
+enrich_people:
+	$(FLASK) enrich_people
+
+seed:
+	$(FLASK) seed
