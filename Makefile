@@ -25,3 +25,6 @@ cli:
 
 env:
 	cp .env.dist .env
+
+import_people:
+	$(FLASK) import_people
