@@ -61,6 +61,7 @@ def register_error_handlers(app):
 def register_routes(app):
     app.register_blueprint(routes.base_bp)
     app.register_blueprint(routes.api_bp)
+    app.register_blueprint(routes.redirect_bp)
 
 
 def register_commands(app):

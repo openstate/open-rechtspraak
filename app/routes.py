@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, render_template, request
+from flask import Blueprint, jsonify, redirect, render_template, request
 
 from app.models import People
 
@@ -13,6 +13,12 @@ def index():
 @base_bp.route("/about")
 def about():
     return render_template("pages/about.html")
+
+
+@base_bp.route("/person/<id>")
+def person_detail(id):
+    person = People.query.filter(People.id == id).first()
+    return render_template("person/detail.html", person=person)
 
 
 api_bp = Blueprint("api", __name__, url_prefix="/api/v1")
@@ -30,3 +36,16 @@ def search():
         data=[person.serialize for person in query.limit(100).all()],
         count=query.count(),
     )
+
+
+redirect_bp = Blueprint("redirect", __name__, url_prefix="/redirect")
+
+
+@redirect_bp.route("/rechtspraak/open-data")
+def rechtspraak_open_data():
+    return redirect("https://www.rechtspraak.nl/Uitspraken/paginas/open-data.aspx")
+
+
+@redirect_bp.route("/rechtspraak/<id>")
+def rechtspraak_persoon(id):
+    return redirect(f"https://namenlijst.rechtspraak.nl/#!/details/{id}")

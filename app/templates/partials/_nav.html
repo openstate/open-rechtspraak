@@ -13,7 +13,7 @@
           <li class="nav-item"><a class="nav-link" href="{{ url_for('base.index') }}">Home</a></li>
           <li class="nav-item ms-3"><a class="nav-link" href="{{ url_for('base.about') }}">Over deze website</a></li>
           <li class="nav-item ms-3"><a class="nav-link"
-                                       href="https://www.rechtspraak.nl/Uitspraken/paginas/open-data.aspx">Open data bij
+                                       href="{{ url_for('redirect.rechtspraak_open_data') }}">Open data bij
             de Rechtspraak</a></li>
         </ul>
       </div>

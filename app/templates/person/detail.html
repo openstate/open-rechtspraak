@@ -1,0 +1,30 @@
+{% extends 'layouts/base.html' %}
+{% block title %}{{ person.toon_naam }}{% endblock %}
+
+{% block content %}
+  <div class="mb-4">
+    <a class="btn btn-primary float-end" href="{{ url_for('redirect.rechtspraak_persoon', id=person.rechtspraak_id) }}">Bekijk
+      op rechtspraak.nl</a>
+    <h1>{{ person.toon_naam }}</h1>
+  </div>
+
+  <div>
+    <h2>Beroepsgegevens</h2>
+    <p>n/a</p>
+
+    <h4 class="mt-3">Historische beroepsgegevens</h4>
+    <p>n/a</p>
+  </div>
+
+  <div>
+    <h2>Nevenbetrekkingen</h2>
+    <p>n/a</p>
+
+    <h4 class="mt-3">Historische nevenbetrekkingen</h4>
+    <p>n/a</p>
+  </div>
+
+  <div>
+    <h2>Uitspraken</h2>
+  </div>
+{% endblock %}
