@@ -46,6 +46,11 @@ def rechtspraak_open_data():
     return redirect("https://www.rechtspraak.nl/Uitspraken/paginas/open-data.aspx")
 
 
-@redirect_bp.route("/rechtspraak/<id>")
+@redirect_bp.route("/rechtspraak/search")
+def rechtspraak_search():
+    return redirect("https://namenlijst.rechtspraak.nl/")
+
+
+@redirect_bp.route("/rechtspraak/persoon/<id>")
 def rechtspraak_persoon(id):
     return redirect(f"https://namenlijst.rechtspraak.nl/#!/details/{id}")
