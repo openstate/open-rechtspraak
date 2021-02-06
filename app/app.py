@@ -30,18 +30,26 @@ def flask_extensions(app):
 def initialize_talisman(app):
     SELF = (
         "'self' 'unsafe-inline' 'unsafe-eval'"
-        if app.config["ENV"] == "development"
+        if app.config["FLASK_ENV"] == "development"
         else "'self'"
     )
 
     csp = {
         "default-src": [SELF],
-        "style-src": [SELF],
+        "style-src": [
+            SELF,
+            "fonts.googleapis.com",
+            "unpkg.com"
+        ],
         "script-src": [SELF],
         "connect-src": [
             SELF,
             "www.google-analytics.com",
         ],
+        "font-src": [
+            SELF,
+            "fonts.gstatic.com"
+        ]
     }
     app = Talisman(
         app,

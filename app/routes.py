@@ -9,3 +9,7 @@ base_bp = Blueprint("base", __name__)
 def index():
     People.query.all()
     return render_template("index.html")
+
+@base_bp.route("/about")
+def about():
+    return render_template("about.html")
