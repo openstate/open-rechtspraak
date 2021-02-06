@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, redirect, render_template, request
 
-from app.models import People, ProfessionalDetails
+from app.models import People, ProfessionalDetails, SideJobs
 
 base_bp = Blueprint("base", __name__)
 
@@ -20,12 +20,22 @@ def person_detail(id):
     person = People.query.filter(People.id == id).first()
     professional_details = (
         ProfessionalDetails.query.filter(ProfessionalDetails.person_id == person.id)
-        .filter(ProfessionalDetails.historical.is_(False))
+        .filter(ProfessionalDetails.end_date.is_(None))
         .all()
     )
     historical_professional_details = (
         ProfessionalDetails.query.filter(ProfessionalDetails.person_id == person.id)
-        .filter(ProfessionalDetails.historical.is_(True))
+        .filter(ProfessionalDetails.end_date.isnot(None))
+        .all()
+    )
+    side_jobs = (
+        SideJobs.query.filter(SideJobs.person_id == person.id)
+        .filter(SideJobs.end_date.is_(None))
+        .all()
+    )
+    historical_side_jobs = (
+        SideJobs.query.filter(SideJobs.person_id == person.id)
+        .filter(SideJobs.end_date.isnot(None))
         .all()
     )
     return render_template(
@@ -33,6 +43,8 @@ def person_detail(id):
         person=person,
         professional_details=professional_details,
         historical_professional_details=historical_professional_details,
+        side_jobs=side_jobs,
+        historical_side_jobs=historical_side_jobs,
     )
 
 

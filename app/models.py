@@ -18,7 +18,7 @@ class People(UUIDModel):
     def serialize(self):
         professional_details = ProfessionalDetails.query.filter(
             ProfessionalDetails.person_id == self.id
-        ).filter(ProfessionalDetails.historical.is_(False))
+        ).filter(ProfessionalDetails.end_date.is_(None))
         return {
             "id": self.id,
             "titles": self.titles,
@@ -56,7 +56,6 @@ class ProfessionalDetails(UUIDModel):
     end_date = Column(db.DateTime, nullable=True)
     main_job = Column(db.Boolean, default=False)
     function = Column(db.Text, nullable=False)
-    historical = Column(db.Boolean, default=False)
     remarks = Column(db.Text, nullable=True)
     person_id = reference_col("people", nullable=False)
     person = relationship("People", backref="professional_details", lazy="select")
@@ -76,7 +75,6 @@ class ProfessionalDetails(UUIDModel):
             start_date=parse_rechtspraak_datetime(d.get("begindatum") or ""),
             end_date=parse_rechtspraak_datetime(d.get("einddatum") or ""),
             main_job=bool(d.get("hoofdfunctie")),
-            historical=True,
             function=(d.get("functieOmschrijving") or "").strip(),
         )
 

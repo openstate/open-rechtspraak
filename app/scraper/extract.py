@@ -2,7 +2,7 @@ from datetime import datetime
 
 import requests
 
-from app.models import People, ProfessionalDetails
+from app.models import People, ProfessionalDetails, SideJobs
 from app.scraper.config import DETAILS_ENDPOINT, HEADERS, SEARCH_ENDPOINT
 from app.scraper.utils import (
     find_request_verification_token,
@@ -62,6 +62,20 @@ def enrich_people_handler():
                 historisch_beroepsgegeven
             )
             ProfessionalDetails.create(**{"person_id": person.id, **pd_kwargs})
+
+        for nevenbetrekking in person_json.get("huidigeNevenbetrekkingen", []):
+            nb_kwargs = SideJobs.transform_huidige_nevenbetrekkingen_dict(
+                nevenbetrekking
+            )
+            SideJobs.create(**{"person_id": person.id, **nb_kwargs})
+
+        for voorgaande_nevenbetrekking in person_json.get(
+            "voorgaandeNevenbetrekkingen", []
+        ):
+            nb_kwargs = SideJobs.transform_voorgaande_nevenbetrekkingen_dict(
+                voorgaande_nevenbetrekking
+            )
+            SideJobs.create(**{"person_id": person.id, **nb_kwargs})
 
         person.last_scraped_at = datetime.now()
         person.save()

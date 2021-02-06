@@ -19,5 +19,7 @@ def rechtspraak_to_epoch(dt):
 
 
 def parse_rechtspraak_datetime(dt):
+    if len(dt) < 5:
+        return
     epoch = rechtspraak_to_epoch(strip_rechtspraak_datetime(dt))
     return datetime.fromtimestamp(epoch)
