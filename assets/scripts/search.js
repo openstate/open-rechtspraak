@@ -52,8 +52,10 @@ const url = () => {
 }
 
 $(document).ready(function () {
-  populateSearchField();
-  doSearch();
+  if ($('#results').length > 0) {
+    populateSearchField();
+    doSearch();
+  }
 
   $("#q").on('input', () => {
     doSearch()
