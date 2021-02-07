@@ -5,9 +5,16 @@
 - Make (to access dev shortcuts in [Makefile](/Makefile))
 
 ## Stack
+
+### Back end
 - Python 3.8.6+
 - Flask
 - Postgres 13
+
+### Front end
+- Bootstrap 5 (v5.0.0-beta1)
+- For JS see [package.json](/package.json)
+- Webpacker for compilation
 
 ## Getting started
 - You can initialize the full development environment with `make init`.
