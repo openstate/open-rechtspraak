@@ -1,0 +1,10 @@
+{% if paid == 'Ja' %}
+  <span class="badge rounded-pill bg-warning text-dark mt-2 me-2 overflow-hidden mw-100"
+        title="Betaald">Betaald</span>
+{% elif paid == 'Nee' %}
+  <span class="badge rounded-pill bg-success mt-2 me-2 overflow-hidden mw-100"
+        title="Betaald">Onbetaald</span>
+{% else %}
+  <span class="badge rounded-pill bg-info mt-2 me-2 overflow-hidden mw-100"
+        title="Betaald">Bezoldiging onbekend</span>
+{% endif %}
