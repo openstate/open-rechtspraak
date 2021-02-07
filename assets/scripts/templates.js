@@ -1,9 +1,27 @@
+const uniqueOrganisations = (beroepsgegevens) => {
+  let set = new Set();
+  beroepsgegevens.forEach((bg) => {
+    set.add(bg.organisation)
+  })
+  return set
+}
+
+const uniqueFunctions = (beroepsgegevens) => {
+  let set = new Set();
+  beroepsgegevens.forEach((bg) => {
+    set.add(bg.function)
+  })
+  return set
+}
+
 const renderOrganisation = (person) => {
   let html = '';
-  person.beroepsgegevens.forEach((bg) => {
-      console.log(bg);
-    html += '<span class="badge rounded-pill bg-primary ms-2">' + bg.organisation + '</span>'
-  })
+  for (let bg of uniqueOrganisations(person.beroepsgegevens).values()) {
+    html += '<span class="badge rounded-pill bg-primary ms-2">' + bg + '</span>'
+  }
+  for (let bg of uniqueFunctions(person.beroepsgegevens).values()) {
+    html += '<span class="badge rounded-pill bg-secondary ms-2">' + bg + '</span>'
+  }
   return html
 }
 

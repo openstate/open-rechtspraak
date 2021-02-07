@@ -1,3 +1,5 @@
+.PHONY: test
+
 COMPOSE = docker-compose
 FLASK = $(COMPOSE) run --rm app flask
 
@@ -21,6 +23,9 @@ db-migration:
 
 db-schema:
 	$(FLASK) db upgrade
+
+test:
+	$(COMPOSE) exec -e FLASK_DEBUG=0 -e FLASK_ENV=test app pytest -rP
 
 cli:
 	$(COMPOSE) run --rm app bash

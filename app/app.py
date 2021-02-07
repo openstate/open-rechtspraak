@@ -46,6 +46,7 @@ def initialize_talisman(app):
     }
     app = Talisman(
         app,
+        force_https=app.config["TALISMAN_FORCE_HTTPS"],
         content_security_policy=csp,
     )
     return app
