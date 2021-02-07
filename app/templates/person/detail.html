@@ -1,5 +1,7 @@
 {% extends 'layouts/base.html' %}
 {% block title %}{{ person.toon_naam }}{% endblock %}
+{% block og_title %}<meta property="og:title" content="{{ person.toon_naam }}" />{% endblock %}
+{% block og_description %}Op deze pagina zie je alle beroepsgegevens en nevenfuncties van {{ person.toon_naam }}.{% endblock %}
 
 {% block content %}
   <div class="row mb-5">

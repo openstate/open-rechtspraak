@@ -5,11 +5,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}{% endblock %} | OpenRechtspraak</title>
-    <meta name="description" content="OpenRechtspraak geeft je inzicht in de rechtspraak.">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    {% block og_title %}
+      <meta property="og:title" content="OpenRechtspraak, een tool van Open State Foundation" />
+    {% endblock %}
+    <meta name="description" content="OpenRechtspraak geeft je inzicht in de rechtspraak. {% block og_description %}{% endblock %}">
     <meta property="og:url" content="{{ request.url }}"/>
-    <meta property="og:image" content="{{ url_for('static', filename='dist/images/logo-og.png', _external=True) }}"/>
+    <meta property="og:image" content="{{ url_for('static', filename='dist/images/logo-open-state-foundation.svg', _external=True) }}"/>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link rel="apple-touch-icon" sizes="180x180" href="/static/dist/images/apple-touch-icon.png?v=m2LrpjR4Y0">
     <link rel="icon" type="image/png" sizes="32x32" href="/static/dist/images/favicon-32x32.png?v=m2LrpjR4Y0">
