@@ -1,5 +1,5 @@
 from app.database import Column, UUIDModel, db, reference_col, relationship
-from app.util import parse_rechtspraak_datetime
+from app.util import determine_gender, extract_initials, parse_rechtspraak_datetime
 
 
 class People(UUIDModel):
@@ -46,9 +46,11 @@ class People(UUIDModel):
         return dict(
             rechtspraak_id=(d.get("persoonId") or "").strip(),
             last_name=(d.get("ACHTERNAAM") or "").strip(),
+            gender=determine_gender(toon_naam),
             toon_naam=toon_naam,
             toon_naam_kort=toon_naam_kort,
             titles=titles,
+            initials=extract_initials(toon_naam_kort),
         )
 
 

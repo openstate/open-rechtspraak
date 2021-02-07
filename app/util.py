@@ -23,3 +23,16 @@ def parse_rechtspraak_datetime(dt):
         return
     epoch = rechtspraak_to_epoch(strip_rechtspraak_datetime(dt))
     return datetime.fromtimestamp(epoch)
+
+
+def determine_gender(toonnaam):
+    if "dhr." in toonnaam:
+        return "male"
+    elif "mw." in toonnaam:
+        return "female"
+    else:
+        "other"
+
+
+def extract_initials(toonnaam_kort):
+    return toonnaam_kort.split()[0]
