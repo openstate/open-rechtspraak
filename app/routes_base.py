@@ -1,4 +1,4 @@
-from flask import Blueprint, abort, jsonify, redirect, render_template, request
+from flask import Blueprint, abort, render_template
 
 from app.models import People, ProfessionalDetails, SideJobs
 
@@ -50,38 +50,3 @@ def person_detail(id):
         side_jobs=side_jobs,
         historical_side_jobs=historical_side_jobs,
     )
-
-
-api_bp = Blueprint("api", __name__, url_prefix="/api/v1")
-
-
-@api_bp.route("/search")
-def search():
-    q = request.args.get("q", None)
-    query = People.query.filter(People.protected.isnot(True))
-
-    if q:
-        query = query.filter(People.toon_naam.ilike(f"%{q}%"))
-
-    return jsonify(
-        data=[person.serialize for person in query.limit(100).all()],
-        count=query.count(),
-    )
-
-
-redirect_bp = Blueprint("redirect", __name__, url_prefix="/redirect")
-
-
-@redirect_bp.route("/rechtspraak/open-data")
-def rechtspraak_open_data():
-    return redirect("https://www.rechtspraak.nl/Uitspraken/paginas/open-data.aspx")
-
-
-@redirect_bp.route("/rechtspraak/search")
-def rechtspraak_search():
-    return redirect("https://namenlijst.rechtspraak.nl/")
-
-
-@redirect_bp.route("/rechtspraak/persoon/<id>")
-def rechtspraak_persoon(id):
-    return redirect(f"https://namenlijst.rechtspraak.nl/#!/details/{id}")
