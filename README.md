@@ -34,5 +34,11 @@ Scraping data from people is done in two steps:
 ## Protecting a scraped person from public eyes
 The `People` model has an attribute called `protected`. Toggling that attribute to `True` removes the person from all public listings (i.e. the API search endpoint) and blocks access to their detail page.
 
+## Config for production
+These env variables are required for production:
+- `ENV` = `production`
+- `FLASK_ENV` = `production`
+- `DATABASE_URL` = url to the database, formatted similar to `postgresql://user:password@localhost:port/database_name` (alternatively you can use the individual parts of the database url in separate environment variables as found in [.env.dist](/.env.dist))
+
 ## Contact details
 Questions? Contact [developers@openstate.eu](mailto:developers@openstate.eu).
