@@ -38,18 +38,17 @@ def initialize_talisman(app):
 
     csp = {
         "default-src": [SELF],
-        "style-src": [SELF, "fonts.googleapis.com", "unpkg.com"],
-        "script-src": [SELF],
-        "connect-src": [
-            SELF,
-            "www.google-analytics.com",
-        ],
+        "style-src": [SELF, "'unsafe-inline'", "fonts.googleapis.com", "unpkg.com"],
+        "script-src": [SELF, "analytics.openstate.eu"],
+        "connect-src": [SELF, "analytics.openstate.eu"],
+        "img-src": [SELF, "analytics.openstate.eu"],
         "font-src": [SELF, "fonts.gstatic.com"],
     }
     app = Talisman(
         app,
         force_https=app.config["TALISMAN_FORCE_HTTPS"],
         content_security_policy=csp,
+        content_security_policy_nonce_in=["script-src"],
     )
     return app
 
