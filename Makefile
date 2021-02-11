@@ -1,3 +1,5 @@
+.PHONY: test
+
 COMPOSE = docker-compose
 FLASK = $(COMPOSE) run --rm app flask
 
@@ -11,6 +13,8 @@ up:
 down:
 	$(COMPOSE) down
 
+init: build up db-schema seed
+
 logs:
 	$(COMPOSE) logs --tail=500 -f
 
@@ -20,6 +24,9 @@ db-migration:
 db-schema:
 	$(FLASK) db upgrade
 
+test:
+	$(COMPOSE) exec -e FLASK_DEBUG=0 -e FLASK_ENV=test app pytest -rP
+
 cli:
 	$(COMPOSE) run --rm app bash
 
@@ -28,3 +35,9 @@ env:
 
 import_people:
 	$(FLASK) import_people
+
+enrich_people:
+	$(FLASK) enrich_people
+
+seed:
+	$(FLASK) seed

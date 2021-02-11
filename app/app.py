@@ -1,15 +1,17 @@
 from flask import Flask
 from flask_talisman import Talisman
 
-import app.routes as routes
 from app import commands
 from app.config import get_config
 from app.errors import internal_server_error, page_not_found, unauthorized_error
 from app.extensions import db, migrate, toolbar
+from app.routes_api import api_bp
+from app.routes_base import base_bp
+from app.routes_redirect import redirect_bp
 
 
 def create_app(env=None):
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder="static")
     app.config.from_object(get_config(env))
     flask_extensions(app)
     register_routes(app)
@@ -36,16 +38,17 @@ def initialize_talisman(app):
 
     csp = {
         "default-src": [SELF],
-        "style-src": [SELF, "fonts.googleapis.com", "unpkg.com"],
-        "script-src": [SELF],
-        "connect-src": [
-            SELF,
-            "www.google-analytics.com",
-        ],
+        "style-src": [SELF, "'unsafe-inline'", "fonts.googleapis.com", "unpkg.com"],
+        "script-src": [SELF, "analytics.openstate.eu"],
+        "connect-src": [SELF, "analytics.openstate.eu"],
+        "img-src": [SELF, "analytics.openstate.eu"],
         "font-src": [SELF, "fonts.gstatic.com"],
+        "base-uri": [],
+        "object-src": [],
     }
     app = Talisman(
         app,
+        force_https=app.config["TALISMAN_FORCE_HTTPS"],
         content_security_policy=csp,
         content_security_policy_nonce_in=["script-src"],
     )
@@ -59,15 +62,21 @@ def register_error_handlers(app):
 
 
 def register_routes(app):
-    app.register_blueprint(routes.base_bp)
-    app.register_blueprint(routes.api_bp)
-    app.register_blueprint(routes.redirect_bp)
+    app.register_blueprint(base_bp)
+    app.register_blueprint(api_bp)
+    app.register_blueprint(redirect_bp)
 
 
 def register_commands(app):
     app.cli.add_command(commands.placeholder)
     app.cli.add_command(commands.import_people)
+    app.cli.add_command(commands.enrich_people)
+    app.cli.add_command(commands.seed)
 
 
 def register_template_filters(app):
+    @app.template_filter("date")
+    def _jinja2_filter_datetime(datetime):
+        return datetime.strftime("%d-%m-%Y")
+
     return

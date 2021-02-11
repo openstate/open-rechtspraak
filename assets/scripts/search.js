@@ -3,10 +3,21 @@ import {personTemplate} from './templates';
 const doSearch = () => {
   $.get({
     url: url(),
-  }).done((data) => {
-    bindCount(data.count);
-    bindResults(data.data)
+    success: (data) => {
+      bindCount(data.count);
+      bindResults(data.data);
+    },
+    complete: setWindowUrl()
   })
+}
+
+const setWindowUrl = () => {
+  window.history.pushState({}, '', '?' + queryString());
+}
+
+const populateSearchField = () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  $("#q").val(urlParams.get('q'));
 }
 
 const bindCount = (count) => {
@@ -29,16 +40,22 @@ const getSearchValue = () => {
   return $("#q").val();
 }
 
-const url = () => {
+const queryString = () => {
   const params = new URLSearchParams({
     q: getSearchValue()
   })
-  const queryString = params.toString();
-  return `/api/v1/search?${queryString}`;
+  return params.toString();
+}
+
+const url = () => {
+  return `/api/v1/search?${queryString()}`;
 }
 
 $(document).ready(function () {
-  doSearch();
+  if ($('#results').length > 0) {
+    populateSearchField();
+    doSearch();
+  }
 
   $("#q").on('input', () => {
     doSearch()

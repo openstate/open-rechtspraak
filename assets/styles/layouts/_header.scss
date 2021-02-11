@@ -1,0 +1,17 @@
+nav {
+  border-bottom: 4px solid $light-grey !important;
+}
+
+.navbar-brand {
+  padding: 0;
+
+  img {
+    height: 100%;
+    width: 60%;
+  }
+}
+
+.lead {
+  background-color: $light-grey;
+  padding: 100px 0 20px 0;
+}
