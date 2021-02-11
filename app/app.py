@@ -43,6 +43,8 @@ def initialize_talisman(app):
         "connect-src": [SELF, "analytics.openstate.eu"],
         "img-src": [SELF, "analytics.openstate.eu"],
         "font-src": [SELF, "fonts.gstatic.com"],
+        "base-uri": [],
+        "object-src": [],
     }
     app = Talisman(
         app,
