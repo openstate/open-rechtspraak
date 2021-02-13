@@ -23,14 +23,11 @@ def import_people_handler():
         for search_string in search_strings():
             payload = format_payload(search_string)
             r = s.post(SEARCH_ENDPOINT, json=payload, headers=HEADERS)
-            print(r.status_code, r.url, payload)
 
             if not r.ok:
-                print("error", r.status_code, r.content)
                 continue
 
             people = r.json().get("result", {}).get("model", {}).get("groupedItems", {})
-            print(f"Found {len(people)} people.")
             for person in people:
                 p_kwargs = People.from_dict(person)
                 person_already_exists = People.query.filter(
@@ -45,10 +42,8 @@ def enrich_people_handler():
 
     for person in people:
         r = requests.get(DETAILS_ENDPOINT + person.rechtspraak_id)
-        print(r.status_code, r.url)
 
         if not r.ok:
-            print("error", r.status_code, r.content)
             continue
 
         person_json = r.json().get("model", {})

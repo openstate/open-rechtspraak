@@ -9,12 +9,6 @@ from app.models import People
 from app.scraper.extract import enrich_people_handler, import_people_handler
 
 
-@click.command("placeholder")
-@with_appcontext
-def placeholder():
-    print("Still here!")
-
-
 @click.command("import_people")
 @with_appcontext
 def import_people():
