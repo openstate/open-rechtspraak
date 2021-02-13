@@ -39,6 +39,7 @@ These env variables are required for production:
 - `ENV` = `production`
 - `FLASK_ENV` = `production`
 - `DATABASE_URL` = url to the database, formatted similar to `postgresql://user:password@localhost:port/database_name` (alternatively you can use the individual parts of the database url in separate environment variables as found in [.env.dist](/.env.dist))
+- `SECRET_KEY` = a randomly generated string that is used for encryption
 
 ## Contact details
 Questions? Contact [developers@openstate.eu](mailto:developers@openstate.eu).
