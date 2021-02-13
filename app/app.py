@@ -68,7 +68,6 @@ def register_routes(app):
 
 
 def register_commands(app):
-    app.cli.add_command(commands.placeholder)
     app.cli.add_command(commands.import_people)
     app.cli.add_command(commands.enrich_people)
     app.cli.add_command(commands.seed)

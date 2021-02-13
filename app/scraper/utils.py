@@ -7,6 +7,9 @@ from app.models import ProfessionalDetails, SideJobs
 
 
 def search_strings():
+    """
+    :return: list of search strings, that's formatted like this: ['aa', 'ab', 'ac', 'ad' ... 'ba', 'bb', 'zz']
+    """
     result_set = []
     for char in string.ascii_lowercase:
         for second_char in string.ascii_lowercase:
