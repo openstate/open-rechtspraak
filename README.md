@@ -41,5 +41,9 @@ These env variables are required for production:
 - `DATABASE_URL` = url to the database, formatted similar to `postgresql://user:password@localhost:port/database_name` (alternatively you can use the individual parts of the database url in separate environment variables as found in [.env.dist](/.env.dist))
 - `SECRET_KEY` = a randomly generated string that is used for encryption
 
+## Prod deploys should contain at least...
+- Compiling new assets, i.e. by running `npm run prod`
+- Running the latest migrations, i.e. by running [release/tasks.sh](/release/tasks.sh)
+
 ## Contact details
 Questions? Contact [developers@openstate.eu](mailto:developers@openstate.eu).
