@@ -48,12 +48,16 @@ def initialize_talisman(app):
         "font-src": [SELF, "fonts.gstatic.com"],
         "base-uri": [],
         "object-src": [],
+        "report-uri": app.config["SENTRY_CSP_REPORT_URI"],
     }
+    content_security_policy_nonce_in = (
+        ["script-src"] if app.config["FLASK_ENV"] != "development" else []
+    )
     app = Talisman(
         app,
         force_https=app.config["TALISMAN_FORCE_HTTPS"],
         content_security_policy=csp,
-        content_security_policy_nonce_in=["script-src"],
+        content_security_policy_nonce_in=content_security_policy_nonce_in,
     )
     return app
 

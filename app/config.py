@@ -32,6 +32,7 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     SENTRY_DSN = get_env_variable("SENTRY_DSN", default="")
+    SENTRY_CSP_REPORT_URI = get_env_variable("SENTRY_CSP_REPORT_URI", default="")
 
 
 class DevelopmentConfig(Config):
