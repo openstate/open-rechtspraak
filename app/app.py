@@ -1,5 +1,7 @@
+import sentry_sdk
 from flask import Flask
 from flask_talisman import Talisman
+from sentry_sdk.integrations.flask import FlaskIntegration
 
 from app import commands
 from app.config import get_config
@@ -13,6 +15,7 @@ from app.routes_redirect import redirect_bp
 def create_app(env=None):
     app = Flask(__name__, static_folder="static")
     app.config.from_object(get_config(env))
+    setup_sentry(app)
     flask_extensions(app)
     register_routes(app)
     register_commands(app)
@@ -53,6 +56,15 @@ def initialize_talisman(app):
         content_security_policy_nonce_in=["script-src"],
     )
     return app
+
+
+def setup_sentry(app):
+    sentry_sdk.init(
+        dsn=app.config["SENTRY_DSN"],
+        integrations=[FlaskIntegration()],
+        environment=app.config["ENV"],
+    )
+    return None
 
 
 def register_error_handlers(app):

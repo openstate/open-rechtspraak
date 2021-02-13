@@ -31,6 +31,8 @@ class Config:
     # Silence deprecation warning
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+    SENTRY_DSN = get_env_variable("SENTRY_DSN", default="")
+
 
 class DevelopmentConfig(Config):
     DEBUG = True
