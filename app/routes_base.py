@@ -47,6 +47,7 @@ def person_detail(id):
         .filter(PersonVerdict.person_id == person.id)
         .order_by(Verdict.issued.desc())
         .limit(10)
+        .all()
     )
 
     return render_template(

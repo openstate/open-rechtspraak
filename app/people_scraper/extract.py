@@ -29,7 +29,7 @@ def import_people_handler():
             payload = format_payload(search_string)
             r = s.post(SEARCH_ENDPOINT, json=payload, headers=HEADERS)
 
-            current_app.logger.debug(
+            current_app.logger.info(
                 f"Collecting people from {r.url} with payload {payload}"
             )
 
@@ -61,7 +61,7 @@ def enrich_people_handler():
 
     for person in people:
         r = requests.get(DETAILS_ENDPOINT + person.rechtspraak_id)
-        current_app.logger.debug(
+        current_app.logger.info(
             f"Enriching person {person.id} with information from {r.url}"
         )
 

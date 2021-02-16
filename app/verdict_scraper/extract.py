@@ -4,15 +4,24 @@ import requests
 from flask import current_app
 
 from app.errors import EnrichError
-from app.models import Verdict
+from app.models import PersonVerdict, Verdict
 from app.verdict_scraper.config import (
     DEFAULT_LIMIT,
     DEFAULT_SEARCH_QUERY_PARAMS,
     DETAILS_ENDPOINT,
     SEARCH_ENDPOINT,
 )
-from app.verdict_scraper.feed_parsing import extract_verdicts, safe_find_text, to_soup
-from app.verdict_scraper.utils import verdict_already_exists
+from app.verdict_scraper.soup_parsing import (
+    extract_verdicts,
+    find_beslissing,
+    safe_find_text,
+    to_soup,
+)
+from app.verdict_scraper.utils import (
+    person_verdict_already_exists,
+    recognize_people,
+    verdict_already_exists,
+)
 
 
 def import_verdicts_handler(start_datetime, end_datetime):
@@ -22,7 +31,7 @@ def import_verdicts_handler(start_datetime, end_datetime):
 
     while True:
         r = requests.get(SEARCH_ENDPOINT, params=DEFAULT_SEARCH_QUERY_PARAMS)
-        current_app.logger.debug(f"Collecting verdicts from {r.url}")
+        current_app.logger.info(f"Collecting verdicts from {r.url}")
 
         if not r.ok or r.url == "https://mededeling.rechtspraak.nl/404":
             current_app.logger.error(
@@ -58,7 +67,8 @@ def import_verdicts_handler(start_datetime, end_datetime):
 
 
 def enrich_verdicts_handler():
-    verdicts = Verdict.query.filter(Verdict.last_scraped_at.is_(None)).all()
+    # verdicts = Verdict.query.filter(Verdict.last_scraped_at.is_(None)).all()
+    verdicts = Verdict.query.all()
     for verdict in verdicts:
         try:
             enrich_verdict(verdict)
@@ -74,7 +84,7 @@ def enrich_verdict(verdict):
     current_app.logger.debug(f"Enriching {verdict.ecli}")
     params = {"id": verdict.ecli}
     r = requests.get(DETAILS_ENDPOINT, params=params)
-    current_app.logger.debug(f"Collecting verdict information from {r.url}")
+    current_app.logger.info(f"Collecting verdict information from {r.url}")
 
     if not r.ok or r.url == "https://mededeling.rechtspraak.nl/404":
         current_app.logger.error(
@@ -97,10 +107,26 @@ def enrich_verdict(verdict):
 
 
 def find_people_for_verdict(verdict):
-    from sqlalchemy import func
+    soup = to_soup(verdict.raw_xml)
+    beslissing = find_beslissing(soup)
 
-    from app.models import Person, PersonVerdict
+    if not beslissing:
+        current_app.logger.info(
+            f"No beslissing found in verdict {verdict.ecli} ({verdict.id})"
+        )
+        return
 
-    people = Person.query.order_by(func.random()).limit(2).all()
-    for person in people:
-        PersonVerdict.create(role="rechter", verdict=verdict, person=person)
+    related_people = recognize_people(beslissing)
+    current_app.logger.info(
+        f"Found {len(related_people)} in verdict {verdict.ecli} ({verdict.id})"
+    )
+
+    for person in related_people:
+        pv = {"role": "rechter", "verdict_id": verdict.id, "person_id": person.id}
+
+        if not person_verdict_already_exists(pv):
+            PersonVerdict.create(**pv)
+        else:
+            current_app.logger.debug(
+                f"PersonVerdict for person {person.id} and verdict {verdict.id} already exists"
+            )
