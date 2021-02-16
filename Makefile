@@ -24,6 +24,9 @@ db-migration:
 db-schema:
 	$(FLASK) db upgrade
 
+db-truncate:
+	$(FLASK) db_truncate
+
 test:
 	$(COMPOSE) exec -e FLASK_DEBUG=0 -e FLASK_ENV=test app pytest -rP
 

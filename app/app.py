@@ -71,6 +71,7 @@ def register_commands(app):
     app.cli.add_command(commands.import_people)
     app.cli.add_command(commands.enrich_people)
     app.cli.add_command(commands.seed)
+    app.cli.add_command(commands.db_truncate)
 
 
 def register_template_filters(app):

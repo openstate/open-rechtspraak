@@ -5,6 +5,7 @@ import click
 from faker import Faker
 from flask.cli import with_appcontext
 
+from app.database import db
 from app.models import People
 from app.scraper.extract import enrich_people_handler, import_people_handler
 
@@ -50,3 +51,13 @@ def seed():
     people = [person_generator() for i in range(0, 10)]
     for person in people:
         People.update_or_create(person)
+
+
+@click.command("db_truncate")
+@with_appcontext
+def db_truncate():
+    meta = db.metadata
+    for table in reversed(meta.sorted_tables):
+        print("Clear table %s" % table)
+        db.session.execute(table.delete())
+    db.session.commit()
