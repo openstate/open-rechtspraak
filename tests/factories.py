@@ -1,7 +1,7 @@
 import factory
 
 from app.database import db
-from app.models import Person
+from app.models import Person, Verdict
 
 
 class PersonFactory(factory.alchemy.SQLAlchemyModelFactory):
@@ -20,3 +20,13 @@ class PersonFactory(factory.alchemy.SQLAlchemyModelFactory):
         lambda a: "{} {}".format(a.initials, a.last_name)
     )
     protected = False
+
+
+class VerdictFactory(factory.alchemy.SQLAlchemyModelFactory):
+    class Meta:
+        model = Verdict
+        sqlalchemy_session = db.session
+
+    ecli = "ECLI:NL:TEST:2020:1"
+    title = factory.LazyAttribute(lambda a: "{}".format(a.ecli))
+    raw_xml = "<?xml><rdf:description></rdf:rdf></open-rechtspraak>"
