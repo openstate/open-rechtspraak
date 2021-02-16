@@ -4,7 +4,7 @@ import requests
 from flask import current_app
 
 from app.errors import EnrichError
-from app.models import Verdicts
+from app.models import Verdict
 from app.verdict_scraper.config import (
     DEFAULT_LIMIT,
     DEFAULT_SEARCH_QUERY_PARAMS,
@@ -46,7 +46,7 @@ def import_verdicts_handler(start_datetime, end_datetime):
                 "uri": verdict.link["href"],
             }
             if not verdict_already_exists(verdict_kwargs):
-                Verdicts.create(**verdict_kwargs)
+                Verdict.create(**verdict_kwargs)
             else:
                 current_app.logger.debug(
                     f'Verdict for {verdict_kwargs.get("ecli")} already exists'
@@ -58,10 +58,12 @@ def import_verdicts_handler(start_datetime, end_datetime):
 
 
 def enrich_verdicts_handler():
-    verdicts = Verdicts.query.filter(Verdicts.last_scraped_at.is_(None)).all()
+    # verdicts = Verdict.query.filter(Verdict.last_scraped_at.is_(None)).all()
+    verdicts = Verdict.query.limit(1).all()
     for verdict in verdicts:
         try:
             enrich_verdict(verdict)
+            find_people_for_verdict(verdict)
         except EnrichError:
             current_app.logger.error(
                 "An unknown problem during verdict enrichment was encountered."
@@ -92,4 +94,15 @@ def enrich_verdict(verdict):
     verdict.procedure = safe_find_text(soup, "psi:procedure")
     verdict.raw_xml = str(soup)
     verdict.last_scraped_at = datetime.now()
+    verdict.save()
+
+
+def find_people_for_verdict(verdict):
+    from sqlalchemy import func
+
+    from app.models import Person
+
+    people = Person.query.order_by(func.random()).limit(2).all()
+    print(people)
+    verdict.people = Person.query.order_by(func.random()).limit(2).all()
     verdict.save()

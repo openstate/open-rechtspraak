@@ -2,8 +2,15 @@ from app.database import Column, UUIDModel, db, reference_col, relationship
 from app.util import determine_gender, extract_initials, parse_rechtspraak_datetime
 
 
-class People(UUIDModel):
-    __tablename__ = "people"
+class PersonVerdict(UUIDModel):
+    __tablename__ = "person_verdict"
+    verdict_id = reference_col("verdict", column_kwargs={"primary_key": False})
+    person_id = reference_col("person", column_kwargs={"primary_key": False})
+    role = Column(db.Text, nullable=True)
+
+
+class Person(UUIDModel):
+    __tablename__ = "person"
     titles = Column(db.Text, nullable=True)
     initials = Column(db.Text, nullable=True)
     first_name = Column(db.Text, nullable=True)
@@ -17,9 +24,9 @@ class People(UUIDModel):
 
     @property
     def serialize(self):
-        professional_details = ProfessionalDetails.query.filter(
-            ProfessionalDetails.person_id == self.id
-        ).filter(ProfessionalDetails.end_date.is_(None))
+        professional_details = ProfessionalDetail.query.filter(
+            ProfessionalDetail.person_id == self.id
+        ).filter(ProfessionalDetail.end_date.is_(None))
         return {
             "id": self.id,
             "titles": self.titles,
@@ -54,16 +61,16 @@ class People(UUIDModel):
         )
 
 
-class ProfessionalDetails(UUIDModel):
-    __tablename__ = "professional_details"
+class ProfessionalDetail(UUIDModel):
+    __tablename__ = "professional_detail"
     start_date = Column(db.DateTime, nullable=True)
     end_date = Column(db.DateTime, nullable=True)
     main_job = Column(db.Boolean, default=False)
     function = Column(db.Text, nullable=False)
     organisation = Column(db.Text, nullable=True)
     remarks = Column(db.Text, nullable=True)
-    person_id = reference_col("people", nullable=False)
-    person = relationship("People", backref="professional_details", lazy="select")
+    person_id = reference_col("person", nullable=False)
+    person = relationship("Person", backref="professional_detail", lazy="select")
 
     @staticmethod
     def transform_beroepsgegevens_dict(d):
@@ -86,8 +93,8 @@ class ProfessionalDetails(UUIDModel):
         )
 
 
-class SideJobs(UUIDModel):
-    __tablename__ = "side_jobs"
+class SideJob(UUIDModel):
+    __tablename__ = "side_job"
     start_date = Column(db.DateTime, nullable=True)
     end_date = Column(db.DateTime, nullable=True)
     function = Column(db.Text, nullable=False)
@@ -95,8 +102,8 @@ class SideJobs(UUIDModel):
     paid = Column(db.Text, nullable=True)
     organisation_name = Column(db.Text, nullable=True)
     organisation_type = Column(db.Text, nullable=True)
-    person_id = reference_col("people", nullable=False)
-    person = relationship("People", backref="side_jobs", lazy="select")
+    person_id = reference_col("person", nullable=False)
+    person = relationship("Person", backref="side_job", lazy="select")
 
     @staticmethod
     def transform_huidige_nevenbetrekkingen_dict(d):
@@ -122,8 +129,8 @@ class SideJobs(UUIDModel):
         )
 
 
-class Verdicts(UUIDModel):
-    __tablename__ = "verdicts"
+class Verdict(UUIDModel):
+    __tablename__ = "verdict"
     ecli = Column(db.Text, nullable=False, unique=True)
     title = Column(db.Text, nullable=True)
     summary = Column(db.Text, nullable=True)

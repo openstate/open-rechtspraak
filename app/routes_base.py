@@ -1,6 +1,6 @@
 from flask import Blueprint, abort, render_template
 
-from app.models import People, ProfessionalDetails, SideJobs
+from app.models import Person, ProfessionalDetail, SideJob
 
 base_bp = Blueprint("base", __name__)
 
@@ -17,29 +17,29 @@ def about():
 
 @base_bp.route("/person/<id>")
 def person_detail(id):
-    person = People.query.filter(People.id == id).first()
+    person = Person.query.filter(Person.id == id).first()
 
     if person.protected:
         abort(404)
 
     professional_details = (
-        ProfessionalDetails.query.filter(ProfessionalDetails.person_id == person.id)
-        .filter(ProfessionalDetails.end_date.is_(None))
+        ProfessionalDetail.query.filter(ProfessionalDetail.person_id == person.id)
+        .filter(ProfessionalDetail.end_date.is_(None))
         .all()
     )
     historical_professional_details = (
-        ProfessionalDetails.query.filter(ProfessionalDetails.person_id == person.id)
-        .filter(ProfessionalDetails.end_date.isnot(None))
+        ProfessionalDetail.query.filter(ProfessionalDetail.person_id == person.id)
+        .filter(ProfessionalDetail.end_date.isnot(None))
         .all()
     )
     side_jobs = (
-        SideJobs.query.filter(SideJobs.person_id == person.id)
-        .filter(SideJobs.end_date.is_(None))
+        SideJob.query.filter(SideJob.person_id == person.id)
+        .filter(SideJob.end_date.is_(None))
         .all()
     )
     historical_side_jobs = (
-        SideJobs.query.filter(SideJobs.person_id == person.id)
-        .filter(SideJobs.end_date.isnot(None))
+        SideJob.query.filter(SideJob.person_id == person.id)
+        .filter(SideJob.end_date.isnot(None))
         .all()
     )
     return render_template(

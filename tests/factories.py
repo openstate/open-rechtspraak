@@ -1,12 +1,12 @@
 import factory
 
 from app.database import db
-from app.models import People
+from app.models import Person
 
 
 class PersonFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
-        model = People
+        model = Person
         sqlalchemy_session = db.session
 
     initials = "A.B.C."

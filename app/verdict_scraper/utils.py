@@ -1,8 +1,8 @@
-from app.models import Verdicts
+from app.models import Verdict
 
 
 def verdict_already_exists(verdict):
-    verdicts = Verdicts.query.filter(Verdicts.ecli == verdict.get("ecli")).all()
+    verdicts = Verdict.query.filter(Verdict.ecli == verdict.get("ecli")).all()
 
     if verdicts:
         return True
