@@ -44,4 +44,8 @@ def find_beslissing(soup):
         ],
     )
     beslissings_text += " ".join(results)
+
+    if not beslissings_text:
+        beslissings_text = safe_find_text(soup, "uitspraak")
+
     return beslissings_text
