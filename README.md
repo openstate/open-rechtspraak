@@ -31,6 +31,12 @@ Scraping data from people is done in two steps:
 1. Retrieving a list of people with `make import_people` from the `https://namenlijst.rechtspraak.nl/Services/WebNamenlijstService/Zoek` service. These people are saved.
 2. We enrich the details from people through `https://namenlijst.rechtspraak.nl/Services/WebNamenlijstService/haalOp/?id=<rechtspraak_id>` where `rechtspraak_id` is a unique ID assigned by `namenlijst.rechtspraak.nl` to the person.
 
+Similarly, two commands exist for scraping verdicts and enriching them.
+1. Retrieving a list of verdicts (default = verdicts of the past three days) with `make import_verdicts`.
+2. Enriching verdicts with `make enrich_verdicts` in two steps: (1) collecting additional metadata of the verdict and (2) checking whether a person is mentioned in a verdict.
+
+_Warning_: The number of verdicts imported by `make import_verdicts` can be high (ca. 50k a year). Consider this carefully when you use the `--start_date` and `--end_date` cli params.
+
 ## Protecting a scraped person from public eyes
 The `People` model has an attribute called `protected`. Toggling that attribute to `True` removes the person from all public listings (i.e. the API search endpoint) and blocks access to their detail page.
 
