@@ -8,7 +8,7 @@ from flask.cli import with_appcontext
 
 from app.database import db
 from app.models import People
-from app.scraper.extract import enrich_people_handler, import_people_handler
+from app.people_scraper.extract import enrich_people_handler, import_people_handler
 from app.verdict_scraper.extract import enrich_verdicts_handler, import_verdicts_handler
 
 
