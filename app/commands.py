@@ -1,5 +1,6 @@
 import random
 import string
+from datetime import datetime, timedelta
 
 import click
 from faker import Faker
@@ -8,6 +9,7 @@ from flask.cli import with_appcontext
 from app.database import db
 from app.models import People
 from app.scraper.extract import enrich_people_handler, import_people_handler
+from app.verdict_scraper.extract import enrich_verdicts_handler, import_verdicts_handler
 
 
 @click.command("placeholder")
@@ -26,6 +28,25 @@ def import_people():
 @with_appcontext
 def enrich_people():
     enrich_people_handler()
+
+
+@click.command("import_verdicts")
+@click.option("--start_date", default=None)
+@click.option("--end_date", default=None)
+@with_appcontext
+def import_verdicts(start_date, end_date):
+    if not start_date:
+        start_date = (datetime.now() - timedelta(days=3)).strftime("%Y-%m-%dT%H:%M:%S")
+    if not end_date:
+        end_date = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+
+    import_verdicts_handler(start_date, end_date)
+
+
+@click.command("enrich_verdicts")
+@with_appcontext
+def enrich_verdicts():
+    enrich_verdicts_handler()
 
 
 def person_generator():

@@ -120,3 +120,21 @@ class SideJobs(UUIDModel):
             place=(d.get("plaats") or "").strip(),
             organisation_type=(d.get("soortbedrijf") or "").strip(),
         )
+
+
+class Verdicts(UUIDModel):
+    __tablename__ = "verdicts"
+    ecli = Column(db.Text, nullable=False, unique=True)
+    title = Column(db.Text, nullable=True)
+    summary = Column(db.Text, nullable=True)
+    uri = Column(db.Text, nullable=True)
+    deep_link = Column(db.Text, nullable=True)
+    issued = Column(db.DateTime, nullable=True)
+    zaak_nummer = Column(db.Text, nullable=True)
+    type = Column(db.Text, nullable=True)
+    coverage = Column(db.Text, nullable=True)
+    subject = Column(db.Text, nullable=True)
+    spatial = Column(db.Text, nullable=True)
+    procedure = Column(db.Text, nullable=True)
+    raw_xml = Column(db.Text, nullable=True)
+    last_scraped_at = Column(db.DateTime, nullable=True)

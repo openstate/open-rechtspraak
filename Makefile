@@ -42,5 +42,11 @@ import_people:
 enrich_people:
 	$(FLASK) enrich_people
 
+import_verdicts:
+	$(FLASK) import_verdicts
+
+enrich_verdicts:
+	$(FLASK) enrich_verdicts
+
 seed:
 	$(FLASK) seed
