@@ -1,0 +1,12 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+  <h1>{{ verdict.title }}</h1>
+  <p>{{ verdict.ecli }}</p>
+
+  <h2>Beslissing</h2>
+  <pre class="verdict-xml">{{ beslissing }}</pre>
+
+  <h2>Raw xml</h2>
+  <pre class="verdict-xml">{{ verdict.raw_xml }}</pre>
+{% endblock %}

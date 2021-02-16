@@ -1,6 +1,7 @@
 from flask import Blueprint, abort, render_template
 
 from app.models import Person, PersonVerdict, ProfessionalDetail, SideJob, Verdict
+from app.verdict_scraper.soup_parsing import find_beslissing, to_soup
 
 base_bp = Blueprint("base", __name__)
 
@@ -13,6 +14,21 @@ def index():
 @base_bp.route("/about")
 def about():
     return render_template("pages/about.html")
+
+
+@base_bp.route("/verdict/<id>")
+def verdict_detail(id):
+    verdict = Verdict.query.filter(Verdict.id == id).first()
+    beslissing = find_beslissing(to_soup(verdict.raw_xml))
+    return render_template(
+        "verdicts/detail.html", verdict=verdict, beslissing=beslissing
+    )
+
+
+@base_bp.route("/verdict/ecli/<ecli>")
+def verdict_by_ecli(ecli):
+    verdict = Verdict.query.filter(Verdict.ecli == ecli).first()
+    return verdict_detail(verdict.id)
 
 
 @base_bp.route("/person/<id>")
