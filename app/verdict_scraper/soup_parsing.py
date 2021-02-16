@@ -13,6 +13,8 @@ def safe_find_text(soup, selector, attrs=None):
     finding = soup.find(selector, attrs=attrs)
     if finding:
         return finding.text
+    else:
+        return ""
 
 
 def find_elements_containing(soup, text):
@@ -22,6 +24,7 @@ def find_elements_containing(soup, text):
         for word in text:
             if word in section.text:
                 result.append(section.text)
+                continue
     return result
 
 
@@ -36,6 +39,8 @@ def find_beslissing(soup):
             "griffier",
             "griffiers",
             "Dit vonnis is gewezen door",
+            "raadsheren",
+            "Aldus gegeven door",
         ],
     )
     beslissings_text += " ".join(results)
