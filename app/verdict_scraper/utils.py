@@ -23,8 +23,8 @@ def recognize_people(text):
     people = Person.query.all()
     found = []
     for person in people:
-        if person.toon_naam in text:
+        if person.toon_naam.lower() in text.lower():
             found.append(person)
-        elif person.toon_naam_kort in text:
+        elif person.toon_naam_kort.lower() in text.lower():
             found.append(person)
     return found
