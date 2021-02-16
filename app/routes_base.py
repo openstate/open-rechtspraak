@@ -24,6 +24,7 @@ def verdict_detail(id):
     related_people = (
         Person.query.join(Person.verdicts)
         .filter(PersonVerdict.verdict_id == verdict.id)
+        .filter(Person.protected.isnot(True))
         .all()
     )
     return render_template(
@@ -92,7 +93,7 @@ def post_blog():
     yield "base.about", {}, "", "weekly", 1.0
 
     for person in (
-        Person.query.filter(Person.protected.is_(False))
+        Person.query.filter(Person.protected.isnot(True))
         .order_by(Person.last_scraped_at.desc())
         .all()
     ):
