@@ -67,11 +67,11 @@ def import_verdicts_handler(start_datetime, end_datetime):
 
 
 def enrich_verdicts_handler():
-    # verdicts = Verdict.query.filter(Verdict.last_scraped_at.is_(None)).all()
-    verdicts = Verdict.query.all()
+    verdicts = Verdict.query.filter(Verdict.last_scraped_at.is_(None)).all()
     for verdict in verdicts:
         try:
-            enrich_verdict(verdict)
+            if verdict.raw_xml is None:
+                enrich_verdict(verdict)
             find_people_for_verdict(verdict)
         except EnrichError:
             current_app.logger.error(
