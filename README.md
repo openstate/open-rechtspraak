@@ -40,6 +40,7 @@ These env variables are required for production:
 - `FLASK_ENV` = `production`
 - `DATABASE_URL` = url to the database, formatted similar to `postgresql://user:password@localhost:port/database_name` (alternatively you can use the individual parts of the database url in separate environment variables as found in [.env.dist](/.env.dist))
 - `SECRET_KEY` = a randomly generated string that is used for encryption
+- `LOG_LEVEL` = a valid level from Python's [logging](https://docs.python.org/3/library/logging.html) module; generally `WARN` or higher is recommended in production
 
 ## Prod deploys should contain at least...
 - Compiling new assets, i.e. by running `npm run prod`

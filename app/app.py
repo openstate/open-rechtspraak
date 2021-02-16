@@ -13,6 +13,7 @@ from app.routes_redirect import redirect_bp
 def create_app(env=None):
     app = Flask(__name__, static_folder="static")
     app.config.from_object(get_config(env))
+    app.logger.setLevel(app.config["LOG_LEVEL"])
     flask_extensions(app)
     register_routes(app)
     register_commands(app)

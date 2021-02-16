@@ -19,6 +19,7 @@ class Config:
     FLASK_ENV = get_env_variable("FLASK_ENV", default="development")
     DEBUG = False
     TESTING = False
+    LOG_LEVEL = get_env_variable("LOG_LEVEL", "info").upper()
 
     TALISMAN_FORCE_HTTPS = True
 
