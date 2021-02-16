@@ -46,5 +46,8 @@ These env variables are required for production:
 - Compiling new assets, i.e. by running `npm run prod`
 - Running the latest migrations, i.e. by running [release/tasks.sh](/release/tasks.sh)
 
+## Sitemap
+- A self-updating sitemap is included at `/sitemap.xml`. You can submit this sitemap to search engines to be indexed faster.
+
 ## Contact details
 Questions? Contact [developers@openstate.eu](mailto:developers@openstate.eu).

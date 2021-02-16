@@ -1,5 +1,6 @@
 from flask import Blueprint, abort, render_template
 
+from app.extensions import sitemap
 from app.models import Person, PersonVerdict, ProfessionalDetail, SideJob, Verdict
 from app.verdict_scraper.soup_parsing import find_beslissing, to_soup
 
@@ -83,3 +84,18 @@ def person_detail(id):
         historical_side_jobs=historical_side_jobs,
         verdicts=verdicts,
     )
+
+
+@sitemap.register_generator
+def post_blog():
+    yield "base.index", {}, "", "daily", 1.0
+    yield "base.about", {}, "", "weekly", 1.0
+
+    for person in (
+        Person.query.filter(Person.protected.is_(False))
+        .order_by(Person.last_scraped_at.desc())
+        .all()
+    ):
+        yield "base.person_detail", {
+            "id": person.id
+        }, person.last_scraped_at, "weekly", 0.9
