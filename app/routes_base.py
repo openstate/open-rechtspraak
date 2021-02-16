@@ -20,8 +20,16 @@ def about():
 def verdict_detail(id):
     verdict = Verdict.query.filter(Verdict.id == id).first()
     beslissing = find_beslissing(to_soup(verdict.raw_xml))
+    related_people = (
+        Person.query.join(Person.verdicts)
+        .filter(PersonVerdict.verdict_id == verdict.id)
+        .all()
+    )
     return render_template(
-        "verdicts/detail.html", verdict=verdict, beslissing=beslissing
+        "verdicts/detail.html",
+        verdict=verdict,
+        beslissing=beslissing,
+        related_people=related_people,
     )
 
 
