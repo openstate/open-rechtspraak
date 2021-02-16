@@ -7,6 +7,8 @@ class PersonVerdict(UUIDModel):
     verdict_id = reference_col("verdict", column_kwargs={"primary_key": False})
     person_id = reference_col("person", column_kwargs={"primary_key": False})
     role = Column(db.Text, nullable=True)
+    verdict = relationship("Verdict", back_populates="people")
+    person = relationship("Person", back_populates="verdicts")
 
 
 class Person(UUIDModel):
@@ -21,6 +23,7 @@ class Person(UUIDModel):
     rechtspraak_id = Column(db.Text, nullable=False, unique=True)
     last_scraped_at = Column(db.DateTime, nullable=True)
     protected = Column(db.Boolean, default=False)
+    verdicts = relationship("PersonVerdict", back_populates="person", uselist=False)
 
     @property
     def serialize(self):
@@ -145,3 +148,4 @@ class Verdict(UUIDModel):
     procedure = Column(db.Text, nullable=True)
     raw_xml = Column(db.Text, nullable=True)
     last_scraped_at = Column(db.DateTime, nullable=True)
+    people = relationship("PersonVerdict", back_populates="verdict", uselist=False)

@@ -58,8 +58,7 @@ def import_verdicts_handler(start_datetime, end_datetime):
 
 
 def enrich_verdicts_handler():
-    # verdicts = Verdict.query.filter(Verdict.last_scraped_at.is_(None)).all()
-    verdicts = Verdict.query.limit(1).all()
+    verdicts = Verdict.query.filter(Verdict.last_scraped_at.is_(None)).all()
     for verdict in verdicts:
         try:
             enrich_verdict(verdict)
@@ -100,9 +99,8 @@ def enrich_verdict(verdict):
 def find_people_for_verdict(verdict):
     from sqlalchemy import func
 
-    from app.models import Person
+    from app.models import Person, PersonVerdict
 
     people = Person.query.order_by(func.random()).limit(2).all()
-    print(people)
-    verdict.people = Person.query.order_by(func.random()).limit(2).all()
-    verdict.save()
+    for person in people:
+        PersonVerdict.create(role="rechter", verdict=verdict, person=person)

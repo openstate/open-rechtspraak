@@ -1,6 +1,6 @@
 from flask import Blueprint, abort, render_template
 
-from app.models import Person, ProfessionalDetail, SideJob
+from app.models import Person, PersonVerdict, ProfessionalDetail, SideJob, Verdict
 
 base_bp = Blueprint("base", __name__)
 
@@ -42,6 +42,13 @@ def person_detail(id):
         .filter(SideJob.end_date.isnot(None))
         .all()
     )
+    verdicts = (
+        Verdict.query.join(Verdict.people)
+        .filter(PersonVerdict.person_id == person.id)
+        .order_by(Verdict.issued.desc())
+        .limit(10)
+    )
+
     return render_template(
         "person/detail.html",
         person=person,
@@ -49,4 +56,5 @@ def person_detail(id):
         historical_professional_details=historical_professional_details,
         side_jobs=side_jobs,
         historical_side_jobs=historical_side_jobs,
+        verdicts=verdicts,
     )
