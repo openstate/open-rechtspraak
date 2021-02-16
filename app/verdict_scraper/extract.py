@@ -116,6 +116,9 @@ def find_people_for_verdict(verdict):
         )
         return
 
+    verdict.contains_beslissing = True
+    verdict.save()
+
     related_people = recognize_people(beslissing)
     current_app.logger.info(
         f"Found {len(related_people)} in verdict {verdict.ecli} ({verdict.id})"

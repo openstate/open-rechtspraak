@@ -149,3 +149,4 @@ class Verdict(UUIDModel):
     raw_xml = Column(db.Text, nullable=True)
     last_scraped_at = Column(db.DateTime, nullable=True)
     people = relationship("PersonVerdict", back_populates="verdict", uselist=False)
+    contains_beslissing = Column(db.Boolean, nullable=False, default=False)
