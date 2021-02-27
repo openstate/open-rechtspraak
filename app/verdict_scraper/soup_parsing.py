@@ -49,3 +49,9 @@ def find_beslissing(soup):
         beslissings_text = safe_find_text(soup, "uitspraak")
 
     return beslissings_text
+
+
+def find_institution_identifier(soup):
+    creator = soup.find("dcterms:creator")
+    if creator:
+        return creator["resourceidentifier"]

@@ -4,7 +4,7 @@ import requests
 from flask import current_app
 
 from app.errors import EnrichError
-from app.models import PersonVerdict, Verdict
+from app.models import Institution, PersonVerdict, Verdict
 from app.verdict_scraper.config import (
     DEFAULT_LIMIT,
     DEFAULT_SEARCH_QUERY_PARAMS,
@@ -14,6 +14,7 @@ from app.verdict_scraper.config import (
 from app.verdict_scraper.soup_parsing import (
     extract_verdicts,
     find_beslissing,
+    find_institution_identifier,
     safe_find_text,
     to_soup,
 )
@@ -73,6 +74,7 @@ def enrich_verdicts_handler():
             if verdict.raw_xml is None:
                 enrich_verdict(verdict)
             find_people_for_verdict(verdict)
+            find_institution_for_verdict(verdict)
         except EnrichError:
             current_app.logger.error(
                 "An unknown problem during verdict enrichment was encountered."
@@ -133,3 +135,13 @@ def find_people_for_verdict(verdict):
             current_app.logger.debug(
                 f"PersonVerdict for person {person.id} and verdict {verdict.id} already exists"
             )
+
+
+def find_institution_for_verdict(verdict):
+    institution_identifier = find_institution_identifier(to_soup(verdict.raw_xml))
+    institution = Institution.query.filter(
+        Institution.lido_id.ilike(institution_identifier)
+    ).first()
+    if institution:
+        verdict.institution = institution
+        verdict.save()

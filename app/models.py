@@ -154,6 +154,8 @@ class Verdict(UUIDModel):
     last_scraped_at = Column(db.DateTime, nullable=True)
     people = relationship("PersonVerdict", back_populates="verdict", uselist=False)
     contains_beslissing = Column(db.Boolean, nullable=False, default=False)
+    institution_id = reference_col("institution", nullable=True)
+    institution = relationship("Institution", backref="verdict", lazy="select")
 
 
 class Institution(UUIDModel):
