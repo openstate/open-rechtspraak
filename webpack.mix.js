@@ -1,4 +1,4 @@
-                                 let mix = require('laravel-mix');
+let mix = require('laravel-mix');
 require('laravel-mix-imagemin');
 
 /*
