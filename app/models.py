@@ -150,3 +150,13 @@ class Verdict(UUIDModel):
     last_scraped_at = Column(db.DateTime, nullable=True)
     people = relationship("PersonVerdict", back_populates="verdict", uselist=False)
     contains_beslissing = Column(db.Boolean, nullable=False, default=False)
+
+
+class Institution(UUIDModel):
+    __tablename__ = "institution"
+    lido_id = Column(db.Text, nullable=False)
+    name = Column(db.Text, nullable=False)
+    abbrevation = Column(db.Text, nullable=True)
+    type = Column(db.Text, nullable=False)
+    begin_date = Column(db.DateTime, nullable=True)
+    end_date = Column(db.DateTime, nullable=True)

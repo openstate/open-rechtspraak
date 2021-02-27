@@ -48,5 +48,11 @@ import_verdicts:
 enrich_verdicts:
 	$(FLASK) enrich_verdicts
 
+import_static: import_institutions
+
+import_institutions:
+	$(FLASK) import_institutions
+
+
 seed:
 	$(FLASK) seed
