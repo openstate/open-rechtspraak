@@ -121,7 +121,7 @@ def find_people_for_verdict(verdict):
 
     related_people = recognize_people(beslissing)
     current_app.logger.info(
-        f"Found {len(related_people)} in verdict {verdict.ecli} ({verdict.id})"
+        f"Found {len(related_people)} related people in verdict {verdict.ecli} ({verdict.id})"
     )
 
     for person in related_people:
