@@ -156,6 +156,8 @@ class Verdict(UUIDModel):
     contains_beslissing = Column(db.Boolean, nullable=False, default=False)
     institution_id = reference_col("institution", nullable=True)
     institution = relationship("Institution", backref="verdict", lazy="select")
+    procedure_type_id = reference_col("procedure_type", nullable=True)
+    procedure_type = relationship("ProcedureType", backref="verdict", lazy="select")
 
 
 class Institution(UUIDModel):
@@ -168,19 +170,12 @@ class Institution(UUIDModel):
     end_date = Column(db.DateTime, nullable=True)
 
 
-# class ProcedureType(UUIDModel):
-#     __tablename__ = "procedure_type"
-#     lido_id = Column(db.Text, nullable=False)
-#     name = Column(db.Text, nullable=False)
-#
-#     @staticmethod
-#     def transform_procedure_type(d):
-#         return dict(
-#             lido_id=d.get('Identifier', '').strip(),
-#             name=d.get('Naam', '').strip(),
-#         )
-#
-#
+class ProcedureType(UUIDModel):
+    __tablename__ = "procedure_type"
+    lido_id = Column(db.Text, nullable=False)
+    name = Column(db.Text, nullable=False)
+
+
 # class MainLegalArea(UUIDModel):
 #     __tablename__ = "main_legal_area"
 #     lido_id = Column(db.Text, nullable=False)

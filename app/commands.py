@@ -9,6 +9,7 @@ from flask.cli import with_appcontext
 from app.database import db
 from app.models import Person
 from app.other_scraper.institutions import import_institutions_handler
+from app.other_scraper.procedure_type import import_procedure_types_handler
 from app.people_scraper.extract import enrich_people_handler, import_people_handler
 from app.verdict_scraper.extract import enrich_verdicts_handler, import_verdicts_handler
 
@@ -89,3 +90,9 @@ def db_truncate():
 @with_appcontext
 def import_institutions():
     import_institutions_handler()
+
+
+@click.command("import_procedure_types")
+@with_appcontext
+def import_procedure_types():
+    import_procedure_types_handler()

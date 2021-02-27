@@ -4,7 +4,7 @@ import requests
 from flask import current_app
 
 from app.errors import EnrichError
-from app.models import Institution, PersonVerdict, Verdict
+from app.models import Institution, PersonVerdict, ProcedureType, Verdict
 from app.verdict_scraper.config import (
     DEFAULT_LIMIT,
     DEFAULT_SEARCH_QUERY_PARAMS,
@@ -15,6 +15,7 @@ from app.verdict_scraper.soup_parsing import (
     extract_verdicts,
     find_beslissing,
     find_institution_identifier,
+    find_procedure_type_identifier,
     safe_find_text,
     to_soup,
 )
@@ -75,6 +76,7 @@ def enrich_verdicts_handler():
                 enrich_verdict(verdict)
             find_people_for_verdict(verdict)
             find_institution_for_verdict(verdict)
+            find_procedure_type_for_verdict(verdict)
         except EnrichError:
             current_app.logger.error(
                 "An unknown problem during verdict enrichment was encountered."
@@ -139,6 +141,10 @@ def find_people_for_verdict(verdict):
 
 def find_institution_for_verdict(verdict):
     institution_identifier = find_institution_identifier(to_soup(verdict.raw_xml))
+
+    if not institution_identifier:
+        return
+
     institution = Institution.query.filter(
         Institution.lido_id.ilike(institution_identifier)
     ).first()
@@ -146,9 +152,33 @@ def find_institution_for_verdict(verdict):
         verdict.institution = institution
         verdict.save()
         current_app.logger.info(
-            f"Institution {institution.name} matched with and verdict ({verdict.id} ({verdict.ecli})"
+            f"Institution {institution.name} matched with and verdict {verdict.id} ({verdict.ecli})"
         )
     else:
         current_app.logger.warning(
             f"No institution found for verdict {verdict.id} ({verdict.ecli})"
+        )
+
+
+def find_procedure_type_for_verdict(verdict):
+    procedure_type_identifier = find_procedure_type_identifier(to_soup(verdict.raw_xml))
+
+    if not procedure_type_identifier:
+        current_app.logger.info(
+            f"No procedure type found in xml from verdict {verdict.id} ({verdict.ecli})"
+        )
+        return
+
+    procedure_type = ProcedureType.query.filter(
+        ProcedureType.lido_id.ilike(procedure_type_identifier)
+    ).first()
+    if procedure_type:
+        verdict.procedure_type = procedure_type
+        verdict.save()
+        current_app.logger.info(
+            f"Procedure type {procedure_type.name} matched with and verdict {verdict.id} ({verdict.ecli})"
+        )
+    else:
+        current_app.logger.warning(
+            f"No procedure type found for verdict {verdict.id} ({verdict.ecli})"
         )

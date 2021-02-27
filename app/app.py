@@ -76,6 +76,7 @@ def register_commands(app):
     app.cli.add_command(commands.import_verdicts)
     app.cli.add_command(commands.enrich_verdicts)
     app.cli.add_command(commands.import_institutions)
+    app.cli.add_command(commands.import_procedure_types)
     app.cli.add_command(commands.seed)
     app.cli.add_command(commands.db_truncate)
 

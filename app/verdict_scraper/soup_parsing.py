@@ -55,3 +55,9 @@ def find_institution_identifier(soup):
     creator = soup.find("dcterms:creator")
     if creator:
         return creator["resourceidentifier"]
+
+
+def find_procedure_type_identifier(soup):
+    creator = soup.find("psi:procedure")
+    if creator:
+        return creator["resourceidentifier"]
