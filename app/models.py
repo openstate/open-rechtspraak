@@ -74,6 +74,10 @@ class ProfessionalDetail(UUIDModel):
     remarks = Column(db.Text, nullable=True)
     person_id = reference_col("person", nullable=False)
     person = relationship("Person", backref="professional_detail", lazy="select")
+    institution_id = reference_col("institution", nullable=True)
+    institution = relationship(
+        "Institution", backref="professional_detail", lazy="select"
+    )
 
     @staticmethod
     def transform_beroepsgegevens_dict(d):
@@ -160,3 +164,43 @@ class Institution(UUIDModel):
     type = Column(db.Text, nullable=False)
     begin_date = Column(db.DateTime, nullable=True)
     end_date = Column(db.DateTime, nullable=True)
+
+
+# class ProcedureType(UUIDModel):
+#     __tablename__ = "procedure_type"
+#     lido_id = Column(db.Text, nullable=False)
+#     name = Column(db.Text, nullable=False)
+#
+#     @staticmethod
+#     def transform_procedure_type(d):
+#         return dict(
+#             lido_id=d.get('Identifier', '').strip(),
+#             name=d.get('Naam', '').strip(),
+#         )
+#
+#
+# class MainLegalArea(UUIDModel):
+#     __tablename__ = "main_legal_area"
+#     lido_id = Column(db.Text, nullable=False)
+#     name = Column(db.Text, nullable=False)
+#
+#     @staticmethod
+#     def transform_main_legal_area(d):
+#         return dict(
+#             lido_id=d.get('Identifier', '').strip(),
+#             name=d.get('Naam', '').strip(),
+#         )
+#
+#
+# class SubLegalArea(UUIDModel):
+#     __tablename__ = "sub_legal_area"
+#     lido_id = Column(db.Text, nullable=False)
+#     name = Column(db.Text, nullable=False)
+#
+#     @staticmethod
+#     def transform_sub_legal_area(d):
+#         return dict(
+#             lido_id=d.get('Identifier', '').strip(),
+#             name=d.get('Naam', '').strip(),
+#         )
+#

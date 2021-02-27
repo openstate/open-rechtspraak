@@ -6,6 +6,7 @@ from flask import current_app
 from app.models import Person, ProfessionalDetail, SideJob
 from app.people_scraper.config import DETAILS_ENDPOINT, HEADERS, SEARCH_ENDPOINT
 from app.people_scraper.utils import (
+    find_institution_for_professional_detail,
     find_request_verification_token,
     format_payload,
     professional_detail_already_exists,
@@ -78,14 +79,24 @@ def enrich_people_handler():
                 beroepsgegeven
             )
             if not professional_detail_already_exists(person, pd_kwargs):
-                ProfessionalDetail.create(**{"person_id": person.id, **pd_kwargs})
+                institution = find_institution_for_professional_detail(
+                    pd_kwargs.get("organisation")
+                )
+                ProfessionalDetail.create(
+                    **{"person_id": person.id, **pd_kwargs}, institution=institution
+                )
 
         for historisch_beroepsgegeven in person_json.get("historieBeroepsgegevens", []):
             pd_kwargs = ProfessionalDetail.transform_historisch_beroepsgegevens_dict(
                 historisch_beroepsgegeven
             )
             if not professional_detail_already_exists(person, pd_kwargs):
-                ProfessionalDetail.create(**{"person_id": person.id, **pd_kwargs})
+                institution = find_institution_for_professional_detail(
+                    pd_kwargs.get("organisation")
+                )
+                ProfessionalDetail.create(
+                    **{"person_id": person.id, **pd_kwargs}, institution=institution
+                )
 
         for nevenbetrekking in person_json.get("huidigeNevenbetrekkingen", []):
             nb_kwargs = SideJob.transform_huidige_nevenbetrekkingen_dict(

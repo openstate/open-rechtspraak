@@ -3,7 +3,7 @@ import string
 
 from bs4 import BeautifulSoup
 
-from app.models import ProfessionalDetail, SideJob
+from app.models import Institution, ProfessionalDetail, SideJob
 
 
 def search_strings():
@@ -61,3 +61,8 @@ def side_job_already_exists(person, nb_kwargs):
 
     if side_jobs:
         return True
+
+
+def find_institution_for_professional_detail(organisation):
+    institution = Institution.query.filter(Institution.name.ilike(organisation)).first()
+    return institution
