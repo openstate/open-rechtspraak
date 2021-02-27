@@ -58,6 +58,6 @@ def find_institution_identifier(soup):
 
 
 def find_procedure_type_identifier(soup):
-    creator = soup.find("psi:procedure")
-    if creator:
-        return creator["resourceidentifier"]
+    procedure_type = soup.find("psi:procedure")
+    if procedure_type:
+        return procedure_type["resourceidentifier"]
