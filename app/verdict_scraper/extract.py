@@ -145,3 +145,10 @@ def find_institution_for_verdict(verdict):
     if institution:
         verdict.institution = institution
         verdict.save()
+        current_app.logger.info(
+            f"Institution {institution.name} matched with and verdict ({verdict.id} ({verdict.ecli})"
+        )
+    else:
+        current_app.logger.warning(
+            f"No institution found for verdict {verdict.id} ({verdict.ecli})"
+        )

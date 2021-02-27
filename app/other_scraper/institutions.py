@@ -1,4 +1,5 @@
 import requests
+from flask import current_app
 
 from app.models import Institution
 from app.verdict_scraper.soup_parsing import safe_find_text, to_soup
@@ -30,8 +31,13 @@ def import_institutions_handler():
     r.raise_for_status()
 
     institutions = to_soup(r.content).find_all("instantie")
+    current_app.logger.info(f"Found {len(institutions)} institutions")
+
     for institution in institutions:
         institution_dict = transform_institution_xml_to_dict(institution)
 
         if not institution_exists(institution_dict):
             Institution.create(**institution_dict)
+            current_app.logger.info(
+                f"New institution {institution_dict.get('name')} added"
+            )
