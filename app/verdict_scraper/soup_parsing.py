@@ -54,10 +54,19 @@ def find_beslissing(soup):
 def find_institution_identifier(soup):
     creator = soup.find("dcterms:creator")
     if creator:
-        return creator["resourceidentifier"]
+        identifier = creator.get("resourceidentifier")
+        if not identifier:
+            identifier = creator.get("psi:resourceIdentifier")
+        return identifier
 
 
 def find_procedure_type_identifier(soup):
     procedure_type = soup.find("psi:procedure")
     if procedure_type:
         return procedure_type["resourceidentifier"]
+
+
+def find_legal_area_identifier(soup):
+    legal_area = soup.find("dcterms:subject")
+    if legal_area:
+        return legal_area["resourceidentifier"]

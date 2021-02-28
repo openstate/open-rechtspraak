@@ -48,10 +48,13 @@ import_verdicts:
 enrich_verdicts:
 	$(FLASK) enrich_verdicts
 
-import_static: import_institutions import_procedure_types
+import_static: import_institutions import_procedure_types import_legal_areas
 
 import_institutions:
 	$(FLASK) import_institutions
+
+import_legal_areas:
+	$(FLASK) import_legal_areas
 
 import_procedure_types:
 	$(FLASK) import_procedure_types

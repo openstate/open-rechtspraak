@@ -158,6 +158,8 @@ class Verdict(UUIDModel):
     institution = relationship("Institution", backref="verdict", lazy="select")
     procedure_type_id = reference_col("procedure_type", nullable=True)
     procedure_type = relationship("ProcedureType", backref="verdict", lazy="select")
+    legal_area_id = reference_col("legal_area", nullable=True)
+    legal_area = relationship("LegalArea", backref="verdict", lazy="select")
 
 
 class Institution(UUIDModel):
@@ -176,28 +178,7 @@ class ProcedureType(UUIDModel):
     name = Column(db.Text, nullable=False)
 
 
-# class MainLegalArea(UUIDModel):
-#     __tablename__ = "main_legal_area"
-#     lido_id = Column(db.Text, nullable=False)
-#     name = Column(db.Text, nullable=False)
-#
-#     @staticmethod
-#     def transform_main_legal_area(d):
-#         return dict(
-#             lido_id=d.get('Identifier', '').strip(),
-#             name=d.get('Naam', '').strip(),
-#         )
-#
-#
-# class SubLegalArea(UUIDModel):
-#     __tablename__ = "sub_legal_area"
-#     lido_id = Column(db.Text, nullable=False)
-#     name = Column(db.Text, nullable=False)
-#
-#     @staticmethod
-#     def transform_sub_legal_area(d):
-#         return dict(
-#             lido_id=d.get('Identifier', '').strip(),
-#             name=d.get('Naam', '').strip(),
-#         )
-#
+class LegalArea(UUIDModel):
+    __tablename__ = "legal_area"
+    legal_area_lido_id = Column(db.Text, nullable=False)
+    legal_area_name = Column(db.Text, nullable=False)

@@ -1,10 +1,11 @@
+import math
 from datetime import datetime
 
 import requests
 from flask import current_app
 
 from app.errors import EnrichError
-from app.models import Institution, PersonVerdict, ProcedureType, Verdict
+from app.models import Institution, LegalArea, PersonVerdict, ProcedureType, Verdict
 from app.verdict_scraper.config import (
     DEFAULT_LIMIT,
     DEFAULT_SEARCH_QUERY_PARAMS,
@@ -15,6 +16,7 @@ from app.verdict_scraper.soup_parsing import (
     extract_verdicts,
     find_beslissing,
     find_institution_identifier,
+    find_legal_area_identifier,
     find_procedure_type_identifier,
     safe_find_text,
     to_soup,
@@ -69,19 +71,32 @@ def import_verdicts_handler(start_datetime, end_datetime):
 
 
 def enrich_verdicts_handler():
-    verdicts = Verdict.query.filter(Verdict.last_scraped_at.is_(None)).all()
-    for verdict in verdicts:
-        try:
-            if verdict.raw_xml is None:
-                enrich_verdict(verdict)
-            find_people_for_verdict(verdict)
-            find_institution_for_verdict(verdict)
-            find_procedure_type_for_verdict(verdict)
-        except EnrichError:
-            current_app.logger.error(
-                "An unknown problem during verdict enrichment was encountered."
-            )
-            pass
+    base_query = Verdict.query.filter(Verdict.last_scraped_at.is_(None))
+    total_no_of_verdicts = base_query.count()
+    runs = math.ceil(total_no_of_verdicts / 1000)
+    current_app.logger.info(
+        f"{runs} number of runs needed to enrich {total_no_of_verdicts} un-enriched verdicts"
+    )
+
+    for run in range(0, runs):
+        offset = run * 1000
+        current_app.logger.info(f"Run {run} with offset {offset}")
+        verdicts = base_query.limit(1000).all()
+        for verdict in verdicts:
+            try:
+                if verdict.raw_xml is None:
+                    enrich_verdict(verdict)
+
+                if verdict.raw_xml is not None:
+                    find_people_for_verdict(verdict)
+                    find_institution_for_verdict(verdict)
+                    find_procedure_type_for_verdict(verdict)
+                    find_legal_area_for_verdict(verdict)
+            except EnrichError:
+                current_app.logger.error(
+                    "An unknown problem during verdict enrichment was encountered."
+                )
+                pass
 
 
 def enrich_verdict(verdict):
@@ -115,7 +130,7 @@ def find_people_for_verdict(verdict):
     beslissing = find_beslissing(soup)
 
     if not beslissing:
-        current_app.logger.info(
+        current_app.logger.debug(
             f"No beslissing found in verdict {verdict.ecli} ({verdict.id})"
         )
         return
@@ -124,7 +139,7 @@ def find_people_for_verdict(verdict):
     verdict.save()
 
     related_people = recognize_people(beslissing)
-    current_app.logger.info(
+    current_app.logger.debug(
         f"Found {len(related_people)} related people in verdict {verdict.ecli} ({verdict.id})"
     )
 
@@ -151,7 +166,7 @@ def find_institution_for_verdict(verdict):
     if institution:
         verdict.institution = institution
         verdict.save()
-        current_app.logger.info(
+        current_app.logger.debug(
             f"Institution {institution.name} matched with and verdict {verdict.id} ({verdict.ecli})"
         )
     else:
@@ -164,7 +179,7 @@ def find_procedure_type_for_verdict(verdict):
     procedure_type_identifier = find_procedure_type_identifier(to_soup(verdict.raw_xml))
 
     if not procedure_type_identifier:
-        current_app.logger.info(
+        current_app.logger.debug(
             f"No procedure type found in xml from verdict {verdict.id} ({verdict.ecli})"
         )
         return
@@ -175,10 +190,34 @@ def find_procedure_type_for_verdict(verdict):
     if procedure_type:
         verdict.procedure_type = procedure_type
         verdict.save()
-        current_app.logger.info(
+        current_app.logger.debug(
             f"Procedure type {procedure_type.name} matched with and verdict {verdict.id} ({verdict.ecli})"
         )
     else:
         current_app.logger.warning(
             f"No procedure type found for verdict {verdict.id} ({verdict.ecli})"
+        )
+
+
+def find_legal_area_for_verdict(verdict):
+    legal_area_identifier = find_legal_area_identifier(to_soup(verdict.raw_xml))
+
+    if not legal_area_identifier:
+        current_app.logger.debug(
+            f"No legal area found in xml from verdict {verdict.id} ({verdict.ecli})"
+        )
+        return
+
+    legal_area = LegalArea.query.filter(
+        LegalArea.legal_area_lido_id.ilike(legal_area_identifier)
+    ).first()
+    if legal_area:
+        verdict.legal_area = legal_area
+        verdict.save()
+        current_app.logger.debug(
+            f"Legal area {legal_area.legal_area_name} matched with and verdict {verdict.id} ({verdict.ecli})"
+        )
+    else:
+        current_app.logger.warning(
+            f"No legal area found for verdict {verdict.id} ({verdict.ecli})"
         )
