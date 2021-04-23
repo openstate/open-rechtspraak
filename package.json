@@ -8,7 +8,7 @@
     "@openfonts/dosis_latin": "^0.0.11",
     "@openfonts/lexend-deca_latin": "^0.0.11",
     "@popperjs/core": "^2.6.0",
-    "bootstrap": "^5.0.0-beta1",
+    "bootstrap": "^5.0.0-beta3",
     "cross-env": "^5.2.1",
     "javascript-natural-sort": "^0.7.1",
     "jquery": "^3.5.1"
