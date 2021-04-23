@@ -17,107 +17,130 @@
     </div>
   </div>
 
-  <div>
-    <h2 class="mb-3">Beroepsgegevens</h2>
-    {% if professional_details|length > 0 %}
-      <div class="row mb-3">
-        {% for pd in professional_details %}
-          <div class="col-lg-4 mb-3" id="{{ pd.id }}">
-            <div class="card">
-              <div class="card-body">
-                <h5>{{ pd.function }}</h5>
-                <span>Gestart op <span class="start-date">{{ pd.start_date|date }}</span>.</span>
-              </div>
-              <div class="card-footer">
+  <div class="row">
+    <div class="col-sm-8">
+      <div>
+        <h2 class="mb-3">Beroepsgegevens</h2>
+        {% if professional_details|length > 0 %}
+          <div class="row mb-3">
+            {% for pd in professional_details %}
+              <div class="col-lg-6 mb-3" id="{{ pd.id }}">
+                <div class="card">
+                  <div class="card-body">
+                    <h5>{{ pd.function }}</h5>
+                    <span>Gestart op <span class="start-date">{{ pd.start_date|date }}</span>.</span>
+                  </div>
+                  <div class="card-footer">
                 <span class="badge rounded-pill bg-primary mt-2 me-2 overflow-hidden mw-100"
                       title="{{ pd.organisation }}">{{ pd.organisation }}</span>
+                  </div>
+                </div>
               </div>
-            </div>
+            {% endfor %}
           </div>
-        {% endfor %}
+        {% else %}
+          <p>Er zijn geen beroepsgegevens bekend.</p>
+        {% endif %}
       </div>
-    {% else %}
-      <p>Er zijn geen beroepsgegevens bekend.</p>
-    {% endif %}
-
-
-    <h2 class="mt-3 mb-3">Historische beroepsgegevens</h2>
-    {% if historical_professional_details|length > 0 %}
-      <div class="row mb-3">
-        {% for pd in historical_professional_details %}
-          <div class="col-lg-4 mb-3" id="{{ pd.id }}">
-            <div class="card">
-              <div class="card-body">
-                <h5>{{ pd.function }}</h5>
-                <span>Van <span class="start-date">{{ pd.start_date|date }}</span> tot <span
-                        class="end-date">{{ pd.end_date|date }}</span>.</span>
-              </div>
-              <div class="card-footer">
+      <div>
+        <h2 class="mt-3 mb-3">Historische beroepsgegevens</h2>
+        {% if historical_professional_details|length > 0 %}
+          <div class="row mb-3">
+            {% for pd in historical_professional_details %}
+              <div class="col-lg-6 mb-3" id="{{ pd.id }}">
+                <div class="card">
+                  <div class="card-body">
+                    <h5>{{ pd.function }}</h5>
+                    <span>Van <span class="start-date">{{ pd.start_date|date }}</span> tot <span
+                            class="end-date">{{ pd.end_date|date }}</span>.</span>
+                  </div>
+                  <div class="card-footer">
                 <span class="badge rounded-pill bg-primary mt-2 me-2 overflow-hidden mw-100"
                       title="{{ pd.organisation }}">{{ pd.organisation }}</span>
+                  </div>
+                </div>
               </div>
-            </div>
+            {% endfor %}
           </div>
-        {% endfor %}
+        {% else %}
+          <p>Er zijn geen historische beroepsgegevens bekend.</p>
+        {% endif %}
       </div>
-    {% else %}
-      <p>Er zijn geen historische beroepsgegevens bekend.</p>
-    {% endif %}
-  </div>
-
-  <div>
-    <h2 class="mt-3 mb-3">Nevenbetrekkingen</h2>
-    {% if side_jobs|length > 0 %}
-      <div class="row mb-3">
-        {% for sj in side_jobs %}
-          <div class="col-lg-4 mb-3" id="{{ sj.id }}">
-            <div class="card">
-              <div class="card-body">
-                <h5>{{ sj.function }}</h5>
-                <span>Gestart op <span class="start-date">{{ sj.start_date|date }}</span>.</span>
-              </div>
-              <div class="card-footer">
+      <div>
+        <h2 class="mt-3 mb-3">Nevenbetrekkingen</h2>
+        {% if side_jobs|length > 0 %}
+          <div class="row mb-3">
+            {% for sj in side_jobs %}
+              <div class="col-lg-6 mb-3" id="{{ sj.id }}">
+                <div class="card">
+                  <div class="card-body">
+                    <h5>{{ sj.function }}</h5>
+                    <span>Gestart op <span class="start-date">{{ sj.start_date|date }}</span>.</span>
+                  </div>
+                  <div class="card-footer">
                 <span class="badge rounded-pill bg-primary mt-2 me-2 overflow-hidden mw-100"
                       title="{{ sj.organisation_name }}">{{ sj.organisation_name }}</span>
-                <span class="badge rounded-pill bg-secondary mt-2 me-2 overflow-hidden mw-100"
-                      title="{{ sj.organisation_type }}">{{ sj.organisation_type }}</span>
-                {% with paid=sj.paid %}
-                  {% include 'person/_bezoldiging.html' %}
-                {% endwith %}
+                    <span class="badge rounded-pill bg-secondary mt-2 me-2 overflow-hidden mw-100"
+                          title="{{ sj.organisation_type }}">{{ sj.organisation_type }}</span>
+                    {% with paid=sj.paid %}
+                      {% include 'person/_bezoldiging.html' %}
+                    {% endwith %}
+                  </div>
+                </div>
               </div>
-            </div>
+            {% endfor %}
           </div>
-        {% endfor %}
+        {% else %}
+          <p>Er zijn geen nevenbetrekkingen bekend.</p>
+        {% endif %}
       </div>
-    {% else %}
-      <p>Er zijn geen nevenbetrekkingen bekend.</p>
-    {% endif %}
-
-    <h2 class="mt-3 mb-3">Historische nevenbetrekkingen</h2>
-    {% if historical_side_jobs|length > 0 %}
-      <div class="row">
-        {% for hsj in historical_side_jobs %}
-          <div class="col-lg-4 mb-3" id="{{ hsj.id }}">
-            <div class="card">
-              <div class="card-body">
-                <h5>{{ hsj.function }}</h5>
-                <span>Gestart op <span class="start-date">{{ hsj.start_date|date }}</span>.</span>
-              </div>
-              <div class="card-footer">
+      <div>
+        <h2 class="mt-3 mb-3">Historische nevenbetrekkingen</h2>
+        {% if historical_side_jobs|length > 0 %}
+          <div class="row">
+            {% for hsj in historical_side_jobs %}
+              <div class="col-lg-6 mb-3" id="{{ hsj.id }}">
+                <div class="card">
+                  <div class="card-body">
+                    <h5>{{ hsj.function }}</h5>
+                    <span>Gestart op <span class="start-date">{{ hsj.start_date|date }}</span>.</span>
+                  </div>
+                  <div class="card-footer">
                 <span class="badge rounded-pill bg-primary mt-2 me-2 overflow-hidden mw-100"
                       title="{{ hsj.organisation_name }}">{{ hsj.organisation_name }}</span>
-                <span class="badge rounded-pill bg-secondary mt-2 me-2 overflow-hidden mw-100"
-                      title="{{ hsj.organisation_type }}">{{ hsj.organisation_type }}</span>
-                {% with paid=hsj.paid %}
-                  {% include 'person/_bezoldiging.html' %}
-                {% endwith %}
+                    <span class="badge rounded-pill bg-secondary mt-2 me-2 overflow-hidden mw-100"
+                          title="{{ hsj.organisation_type }}">{{ hsj.organisation_type }}</span>
+                    {% with paid=hsj.paid %}
+                      {% include 'person/_bezoldiging.html' %}
+                    {% endwith %}
+                  </div>
+                </div>
               </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p>Er zijn geen historische nevenbetrekkingen bekend.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="col-sm-4">
+      <h3 class="mb-3">Recente uitspraken</h3>
+      {% if verdicts|length > 0 %}
+        {% for verdict in verdicts %}
+          <div class="card mb-3">
+            <div class="card-body">
+              <a class="btn btn-secondary btn-sm float-sm-end"
+                 href="{{ url_for('redirect.rechtspraak_uitspraak', ecli=verdict.ecli) }}"><i
+                      class="fas fa-eye"></i></a>
+              <h5>{{ verdict.ecli }}</h5>
+              <span>{{ verdict.issued|date }}</span>
             </div>
           </div>
         {% endfor %}
-      </div>
-    {% else %}
-      <p>Er zijn geen historische nevenbetrekkingen bekend.</p>
-    {% endif %}
+      {% else %}
+        <p>Er zijn geen uitspraken gevonden van deze rechter.</p>
+      {% endif %}
+    </div>
   </div>
 {% endblock %}

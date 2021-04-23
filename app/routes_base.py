@@ -1,6 +1,8 @@
 from flask import Blueprint, abort, render_template
 
-from app.models import People, ProfessionalDetails, SideJobs
+from app.extensions import sitemap
+from app.models import Person, PersonVerdict, ProfessionalDetail, SideJob, Verdict
+from app.verdict_scraper.soup_parsing import find_beslissing, to_soup
 
 base_bp = Blueprint("base", __name__)
 
@@ -15,33 +17,65 @@ def about():
     return render_template("pages/about.html")
 
 
+@base_bp.route("/verdict/<id>")
+def verdict_detail(id):
+    verdict = Verdict.query.filter(Verdict.id == id).first()
+    beslissing = find_beslissing(to_soup(verdict.raw_xml))
+    related_people = (
+        Person.query.join(Person.verdicts)
+        .filter(PersonVerdict.verdict_id == verdict.id)
+        .filter(Person.protected.isnot(True))
+        .all()
+    )
+    return render_template(
+        "verdicts/detail.html",
+        verdict=verdict,
+        beslissing=beslissing,
+        related_people=related_people,
+    )
+
+
+@base_bp.route("/verdict/ecli/<ecli>")
+def verdict_by_ecli(ecli):
+    verdict = Verdict.query.filter(Verdict.ecli == ecli).first()
+    return verdict_detail(verdict.id)
+
+
 @base_bp.route("/person/<id>")
 def person_detail(id):
-    person = People.query.filter(People.id == id).first()
+    person = Person.query.filter(Person.id == id).first()
 
     if person.protected:
         abort(404)
 
     professional_details = (
-        ProfessionalDetails.query.filter(ProfessionalDetails.person_id == person.id)
-        .filter(ProfessionalDetails.end_date.is_(None))
+        ProfessionalDetail.query.filter(ProfessionalDetail.person_id == person.id)
+        .filter(ProfessionalDetail.end_date.is_(None))
         .all()
     )
     historical_professional_details = (
-        ProfessionalDetails.query.filter(ProfessionalDetails.person_id == person.id)
-        .filter(ProfessionalDetails.end_date.isnot(None))
+        ProfessionalDetail.query.filter(ProfessionalDetail.person_id == person.id)
+        .filter(ProfessionalDetail.end_date.isnot(None))
         .all()
     )
     side_jobs = (
-        SideJobs.query.filter(SideJobs.person_id == person.id)
-        .filter(SideJobs.end_date.is_(None))
+        SideJob.query.filter(SideJob.person_id == person.id)
+        .filter(SideJob.end_date.is_(None))
         .all()
     )
     historical_side_jobs = (
-        SideJobs.query.filter(SideJobs.person_id == person.id)
-        .filter(SideJobs.end_date.isnot(None))
+        SideJob.query.filter(SideJob.person_id == person.id)
+        .filter(SideJob.end_date.isnot(None))
         .all()
     )
+    verdicts = (
+        Verdict.query.join(Verdict.people)
+        .filter(PersonVerdict.person_id == person.id)
+        .order_by(Verdict.issued.desc())
+        .limit(10)
+        .all()
+    )
+
     return render_template(
         "person/detail.html",
         person=person,
@@ -49,4 +83,20 @@ def person_detail(id):
         historical_professional_details=historical_professional_details,
         side_jobs=side_jobs,
         historical_side_jobs=historical_side_jobs,
+        verdicts=verdicts,
     )
+
+
+@sitemap.register_generator
+def post_blog():
+    yield "base.index", {}, "", "daily", 1.0
+    yield "base.about", {}, "", "weekly", 1.0
+
+    for person in (
+        Person.query.filter(Person.protected.isnot(True))
+        .order_by(Person.last_scraped_at.desc())
+        .all()
+    ):
+        yield "base.person_detail", {
+            "id": person.id
+        }, person.last_scraped_at, "weekly", 0.9
