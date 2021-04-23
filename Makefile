@@ -25,7 +25,7 @@ db-schema:
 	$(FLASK) db upgrade
 
 test:
-	$(COMPOSE) exec -e FLASK_DEBUG=0 -e FLASK_ENV=test app pytest -rP
+	$(COMPOSE) exec -e FLASK_DEBUG=0 -e FLASK_ENV=test app pytest
 
 cli:
 	$(COMPOSE) run --rm app bash
