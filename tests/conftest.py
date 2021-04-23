@@ -13,6 +13,8 @@ def init_db():
 
 @pytest.fixture
 def client(app):
+    context = app.test_request_context()
+    context.push()
     return app.test_client()
 
 

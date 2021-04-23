@@ -1,18 +1,20 @@
+from flask import url_for
+
 from tests.factories import PersonFactory
 
 
 def test_index(client):
-    r = client.get("/")
+    r = client.get(url_for("base.index"))
     assert r.status_code == 200
 
 
 def test_about(client):
-    r = client.get("/about")
+    r = client.get(url_for("base.about"))
     assert r.status_code == 200
 
 
 def test_sitemap(client):
-    r = client.get("/sitemap.xml")
+    r = client.get(url_for("flask_sitemap.sitemap"))
     assert r.status_code == 200
 
 

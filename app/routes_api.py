@@ -6,7 +6,7 @@ api_bp = Blueprint("api", __name__, url_prefix="/api/v1")
 
 
 @api_bp.route("/person/search")
-def search_person():
+def person_search():
     q = request.args.get("q", None)
     limit = request.args.get("limit", default=20, type=int)
 
