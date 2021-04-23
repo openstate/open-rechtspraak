@@ -1,8 +1,10 @@
+from flask import current_app
+
 from app.models import Person, PersonVerdict, Verdict
 
 
-def verdict_already_exists(verdict):
-    verdicts = Verdict.query.filter(Verdict.ecli == verdict.get("ecli")).all()
+def verdict_already_exists(ecli):
+    verdicts = Verdict.query.filter(Verdict.ecli == ecli).all()
 
     if verdicts:
         return True
@@ -19,12 +21,21 @@ def person_verdict_already_exists(pv):
         return True
 
 
-def recognize_people(text):
-    people = Person.query.all()
+def recognize_people(text, people=None):
+    if not people:
+        current_app.logger.info("No people received, querying people table")
+        people = Person.query.all()
+
     found = []
+    text = text.lower()
     for person in people:
-        if person.toon_naam.lower() in text.lower():
+        name = person.toon_naam.lower()
+        if name in text:
             found.append(person)
-        elif person.toon_naam_kort.lower() in text.lower():
+            continue
+
+        short_name = person.toon_naam_kort.lower()
+        if short_name in text:
             found.append(person)
+            continue
     return found

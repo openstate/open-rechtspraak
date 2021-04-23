@@ -41,7 +41,11 @@ class Person(UUIDModel):
             "toon_naam_kort": self.toon_naam_kort,
             "rechtspraak_id": self.rechtspraak_id,
             "beroepsgegevens": [
-                {"function": pd.function.title(), "organisation": pd.organisation}
+                {
+                    "id": pd.id,
+                    "function": pd.function.title(),
+                    "organisation": pd.organisation,
+                }
                 for pd in professional_details
             ],
         }
@@ -154,6 +158,7 @@ class Verdict(UUIDModel):
     last_scraped_at = Column(db.DateTime, nullable=True)
     people = relationship("PersonVerdict", back_populates="verdict", uselist=False)
     contains_beslissing = Column(db.Boolean, nullable=False, default=False)
+    beslissings_text = Column(db.Text, nullable=True)
     institution_id = reference_col("institution", nullable=True)
     institution = relationship("Institution", backref="verdict", lazy="select")
     procedure_type_id = reference_col("procedure_type", nullable=True)
@@ -164,7 +169,7 @@ class Verdict(UUIDModel):
 
 class Institution(UUIDModel):
     __tablename__ = "institution"
-    lido_id = Column(db.Text, nullable=False)
+    lido_id = Column(db.Text, nullable=False, unique=True)
     name = Column(db.Text, nullable=False)
     abbrevation = Column(db.Text, nullable=True)
     type = Column(db.Text, nullable=False)
@@ -174,11 +179,11 @@ class Institution(UUIDModel):
 
 class ProcedureType(UUIDModel):
     __tablename__ = "procedure_type"
-    lido_id = Column(db.Text, nullable=False)
+    lido_id = Column(db.Text, nullable=False, unique=True)
     name = Column(db.Text, nullable=False)
 
 
 class LegalArea(UUIDModel):
     __tablename__ = "legal_area"
-    legal_area_lido_id = Column(db.Text, nullable=False)
+    legal_area_lido_id = Column(db.Text, nullable=False, unique=True)
     legal_area_name = Column(db.Text, nullable=False)

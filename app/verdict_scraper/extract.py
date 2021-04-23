@@ -58,7 +58,7 @@ def import_verdicts_handler(start_datetime, end_datetime):
                 "summary": verdict.summary.text,
                 "uri": verdict.link["href"],
             }
-            if not verdict_already_exists(verdict_kwargs):
+            if not verdict_already_exists(verdict_kwargs.get("ecli")):
                 Verdict.create(**verdict_kwargs)
             else:
                 current_app.logger.debug(
@@ -125,8 +125,13 @@ def enrich_verdict(verdict):
     verdict.save()
 
 
-def find_people_for_verdict(verdict):
-    soup = to_soup(verdict.raw_xml)
+def find_people_for_verdict(verdict, people=None, soup=None):
+    current_app.logger.debug(
+        f"Starting with people finding for verdict {verdict.ecli} ({verdict.id})"
+    )
+
+    if not soup:
+        soup = to_soup(verdict.raw_xml)
     beslissing = find_beslissing(soup)
 
     if not beslissing:
@@ -138,7 +143,7 @@ def find_people_for_verdict(verdict):
     verdict.contains_beslissing = True
     verdict.save()
 
-    related_people = recognize_people(beslissing)
+    related_people = recognize_people(beslissing, people)
     current_app.logger.debug(
         f"Found {len(related_people)} related people in verdict {verdict.ecli} ({verdict.id})"
     )
@@ -154,8 +159,10 @@ def find_people_for_verdict(verdict):
             )
 
 
-def find_institution_for_verdict(verdict):
-    institution_identifier = find_institution_identifier(to_soup(verdict.raw_xml))
+def find_institution_for_verdict(verdict, soup=None):
+    if not soup:
+        soup = to_soup(verdict.raw_xml)
+    institution_identifier = find_institution_identifier(soup)
 
     if not institution_identifier:
         return
@@ -175,8 +182,10 @@ def find_institution_for_verdict(verdict):
         )
 
 
-def find_procedure_type_for_verdict(verdict):
-    procedure_type_identifier = find_procedure_type_identifier(to_soup(verdict.raw_xml))
+def find_procedure_type_for_verdict(verdict, soup=None):
+    if not soup:
+        soup = to_soup(verdict.raw_xml)
+    procedure_type_identifier = find_procedure_type_identifier(soup)
 
     if not procedure_type_identifier:
         current_app.logger.debug(
@@ -199,8 +208,11 @@ def find_procedure_type_for_verdict(verdict):
         )
 
 
-def find_legal_area_for_verdict(verdict):
-    legal_area_identifier = find_legal_area_identifier(to_soup(verdict.raw_xml))
+def find_legal_area_for_verdict(verdict, soup=None):
+    if not soup:
+        soup = to_soup(verdict.raw_xml)
+
+    legal_area_identifier = find_legal_area_identifier(soup)
 
     if not legal_area_identifier:
         current_app.logger.debug(

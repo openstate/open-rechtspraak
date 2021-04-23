@@ -57,3 +57,9 @@ These env variables are required for production:
 
 ## Contact details
 Questions? Contact [developers@openstate.eu](mailto:developers@openstate.eu).
+
+## Local dev
+Without Flask in Docker, but a Docker based DB:
+- `cp .env.dist .env`
+- `export $(cat .env | xargs)`
+- `export DATABASE_URL=postgresql://ors2user:ors2@localhost:54322/ors2`

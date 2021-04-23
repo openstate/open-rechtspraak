@@ -13,6 +13,7 @@ from app.other_scraper.legal_areas import import_legal_areas_handler
 from app.other_scraper.procedure_types import import_procedure_types_handler
 from app.people_scraper.extract import enrich_people_handler, import_people_handler
 from app.verdict_scraper.extract import enrich_verdicts_handler, import_verdicts_handler
+from app.verdict_scraper.from_files import import_verdicts_from_files_handler
 
 
 @click.command("placeholder")
@@ -103,3 +104,9 @@ def import_procedure_types():
 @with_appcontext
 def import_legal_areas():
     import_legal_areas_handler()
+
+
+@click.command("import_verdicts_from_files")
+@with_appcontext
+def import_verdicts_from_files():
+    import_verdicts_from_files_handler()
