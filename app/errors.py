@@ -11,3 +11,7 @@ def page_not_found(e):
 
 def internal_server_error(e):
     return render_template("pages/error.html"), 500
+
+
+class EnrichError(Exception):
+    pass

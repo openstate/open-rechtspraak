@@ -16,3 +16,8 @@ def rechtspraak_search():
 @redirect_bp.route("/rechtspraak/persoon/<id>")
 def rechtspraak_persoon(id):
     return redirect(f"https://namenlijst.rechtspraak.nl/#!/details/{id}")
+
+
+@redirect_bp.route("/rechtspraak/uitspraak/<ecli>")
+def rechtspraak_uitspraak(ecli):
+    return redirect(f"https://uitspraken.rechtspraak.nl/InzienDocument?id={ecli}")
