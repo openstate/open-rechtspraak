@@ -60,4 +60,4 @@ jobs:
         ENV: development
         FLASK_ENV: development
         FLASK_app: main.py
-        DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
