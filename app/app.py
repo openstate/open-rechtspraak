@@ -4,7 +4,7 @@ from flask_talisman import Talisman
 from app import commands
 from app.config import get_config
 from app.errors import internal_server_error, page_not_found, unauthorized_error
-from app.extensions import cors, db, migrate, sitemap, toolbar
+from app.extensions import cors, db, migrate, sitemap
 from app.routes_api import api_bp
 from app.routes_base import base_bp
 from app.routes_redirect import redirect_bp
@@ -26,7 +26,6 @@ def flask_extensions(app):
     initialize_talisman(app)
     db.init_app(app)
     migrate.init_app(app, db)
-    toolbar.init_app(app)
     sitemap.init_app(app)
     cors.init_app(app)
     return None

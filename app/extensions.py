@@ -6,6 +6,5 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 migrate = Migrate()
-toolbar = DebugToolbarExtension()
 sitemap = Sitemap()
 cors = CORS()

@@ -48,7 +48,7 @@ const queryString = () => {
 }
 
 const url = () => {
-  return `/api/v1/search?${queryString()}`;
+  return `/api/v1/people/search?${queryString()}`;
 }
 
 $(document).ready(function () {
