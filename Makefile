@@ -2,10 +2,12 @@
 
 COMPOSE = docker-compose
 FLASK = $(COMPOSE) run --rm app flask
+WEBPACK = $(COMPOSE) run --rm webpack
 
 build: env
 	$(COMPOSE) pull
 	$(COMPOSE) build
+	$(WEBPACK) npm install
 
 up:
 	$(COMPOSE) up -d
