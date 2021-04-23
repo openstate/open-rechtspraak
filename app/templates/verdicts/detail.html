@@ -1,0 +1,27 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+  <div class="row mb-5">
+    <div class="col-sm-8 mb-3">
+      <h1>{{ verdict.ecli }}</h1>
+    </div>
+    <div class="col-sm-4">
+      <a class="btn btn-primary float-sm-end"
+         href="{{ url_for('redirect.rechtspraak_uitspraak', ecli=verdict.ecli) }}">Bekijk
+        op rechtspraak.nl</a>
+    </div>
+  </div>
+
+  <h2>Personen</h2>
+  <ul>
+    {% for person in related_people %}
+      <li><a href="{{ url_for('base.person_detail', id=person.id) }}">{{ person.toon_naam }}</a>, {{ person.verdicts.role }}</li>
+    {% endfor %}
+  </ul>
+
+  <h2>Beslissing</h2>
+  <pre class="verdict-xml">{{ beslissing }}</pre>
+
+  <h2>Raw xml</h2>
+  <pre class="verdict-xml">{{ verdict.raw_xml }}</pre>
+{% endblock %}

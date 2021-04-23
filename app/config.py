@@ -6,11 +6,11 @@ def build_dsn(test=False):
         return get_env_variable("DATABASE_URL")
 
     dialect = get_env_variable("DB_DIALECT", default="postgresql")
-    user = get_env_variable("DB_USER", default="ors2user")
-    password = get_env_variable("DB_PASSWORD", default="ors2")
-    host = get_env_variable("DB_HOST", default="db")
-    port = get_env_variable("DB_PORT", default=5432)
-    db = get_env_variable("DB_NAME", default="ors2") + ("_test" if test else "")
+    user = get_env_variable("POSTGRES_USER", default="ors2user")
+    password = get_env_variable("POSTGRES_PASSWORD", default="ors2")
+    host = get_env_variable("POSTGRES_DB_HOST", default="db")
+    port = get_env_variable("POSTGRES_PORT", default=5432)
+    db = get_env_variable("POSTGRES_DB", default="ors2") + ("_test" if test else "")
     return f"{dialect}://{user}:{password}@{host}:{port}/{db}"
 
 
@@ -19,6 +19,7 @@ class Config:
     FLASK_ENV = get_env_variable("FLASK_ENV", default="development")
     DEBUG = False
     TESTING = False
+    LOG_LEVEL = get_env_variable("LOG_LEVEL", "info").upper()
 
     TALISMAN_FORCE_HTTPS = True
 

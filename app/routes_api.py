@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 
-from app.models import People
+from app.models import Person
 
 api_bp = Blueprint("api", __name__, url_prefix="/api/v1")
 
@@ -14,15 +14,15 @@ def search():
         limit = 20
 
     offset = request.args.get("offset", type=int)
-    query = People.query.filter(People.protected.isnot(True))
+    query = Person.query.filter(Person.protected.isnot(True))
 
     if q:
-        query = query.filter(People.toon_naam.ilike(f"%{q}%"))
+        query = query.filter(Person.toon_naam.ilike(f"%{q}%"))
 
     return jsonify(
         data=[
             person.serialize
-            for person in query.order_by(People.last_name.asc())
+            for person in query.order_by(Person.last_name.asc())
             .offset(offset)
             .limit(limit)
             .all()

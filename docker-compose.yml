@@ -15,6 +15,14 @@ services:
       - "5000:5000"
     command: "python ./main.py"
 
+  webpack:
+    build:
+      context: "."
+      dockerfile: "Dockerfile-webpack"
+    volumes:
+      - .:/app
+    command: "npm run watch"
+
   db:
     image: "postgres:13-alpine"
     volumes:
