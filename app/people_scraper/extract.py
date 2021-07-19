@@ -14,6 +14,8 @@ from app.people_scraper.utils import (
     side_job_already_exists,
 )
 
+FAULTY_URL = "https://mededeling.rechtspraak.nl/400"
+
 
 def import_people_handler():
     with requests.Session() as s:
@@ -34,7 +36,7 @@ def import_people_handler():
                 f"Collecting people from {r.url} with payload {payload}"
             )
 
-            if not r.ok:
+            if not r.ok or r.url == FAULTY_URL:
                 current_app.logger.error(
                     f"Error during people collection: STATUS_CODE {r.status_code} | URL {r.url} | CONTENT {r.content}"
                 )
@@ -66,7 +68,7 @@ def enrich_people_handler():
             f"Enriching person {person.id} with information from {r.url}"
         )
 
-        if not r.ok:
+        if not r.ok or r.url == FAULTY_URL:
             current_app.logger.error(
                 f"Error during person enrichment: {person.id}, {r.status_code}, {r.url}, {r.content}"
             )
