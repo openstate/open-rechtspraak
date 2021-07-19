@@ -32,15 +32,11 @@ def flask_extensions(app):
 
 
 def initialize_talisman(app):
-    SELF = (
-        "'self' 'unsafe-inline' 'unsafe-eval'"
-        if app.config["FLASK_ENV"] == "development"
-        else "'self'"
-    )
+    SELF = "'self'"
 
     csp = {
         "default-src": [SELF],
-        "style-src": [SELF, "'unsafe-inline'", "fonts.googleapis.com", "unpkg.com"],
+        "style-src": [SELF, "fonts.googleapis.com", "cdnjs.cloudflare.com"],
         "script-src": [SELF, "analytics.openstate.eu", "cdnjs.cloudflare.com"],
         "connect-src": [SELF, "analytics.openstate.eu"],
         "img-src": [SELF, "analytics.openstate.eu"],
