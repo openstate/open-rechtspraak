@@ -21,7 +21,7 @@ services:
       dockerfile: "Dockerfile-webpack"
     volumes:
       - .:/app
-    command: "npm run watch"
+    command: "npm run dev"
 
   db:
     image: "postgres:13-alpine"
