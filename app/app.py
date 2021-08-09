@@ -32,27 +32,86 @@ def flask_extensions(app):
 
 
 def initialize_talisman(app):
-    SELF = (
-        "'self' 'unsafe-inline' 'unsafe-eval'"
-        if app.config["FLASK_ENV"] == "development"
-        else "'self'"
-    )
+    SELF = "'self'"
 
     csp = {
         "default-src": [SELF],
-        "style-src": [SELF, "'unsafe-inline'", "fonts.googleapis.com", "unpkg.com"],
-        "script-src": [SELF, "analytics.openstate.eu"],
+        "style-src": [SELF, "fonts.googleapis.com", "cdnjs.cloudflare.com"],
+        "script-src": [SELF, "analytics.openstate.eu", "cdnjs.cloudflare.com"],
         "connect-src": [SELF, "analytics.openstate.eu"],
         "img-src": [SELF, "analytics.openstate.eu"],
         "font-src": [SELF, "fonts.gstatic.com"],
         "base-uri": [],
         "object-src": [],
     }
+
+    feature_policy = {
+        "accelerometer": "'none'",
+        "ambient-light-sensor": "'none'",
+        "autoplay": "'none'",
+        "battery": "'none'",
+        "camera": "'none'",
+        "cross-origin-isolated": "'none'",
+        "display-capture": "'none'",
+        "document-domain": "'none'",
+        "encrypted-media": "'none'",
+        "execution-while-not-rendered": "'none'",
+        "execution-while-out-of-viewport": "'none'",
+        "fullscreen": "'none'",
+        "geolocation": "'none'",
+        "gyroscope": "'none'",
+        "interest-cohort": "'none'",
+        "magnetometer": "'none'",
+        "microphone": "'none'",
+        "midi": "'none'",
+        "navigation-override": "'none'",
+        "payment": "'none'",
+        "picture-in-picture": "'none'",
+        "publickey-credentials-get": "'none'",
+        "screen-wake-lock": "'none'",
+        "sync-xhr": "'none'",
+        "usb": "'none'",
+        "web-share": "'none'",
+        "xr-spatial-tracking": "'none'",
+    }
+
+    permissions_policy = {
+        "accelerometer": "()",
+        "ambient-light-sensor": "()",
+        "autoplay": "()",
+        "battery": "()",
+        "camera": "()",
+        "cross-origin-isolated": "()",
+        "display-capture": "()",
+        "document-domain": "()",
+        "encrypted-media": "()",
+        "execution-while-not-rendered": "()",
+        "execution-while-out-of-viewport": "()",
+        "fullscreen": "()",
+        "geolocation": "()",
+        "gyroscope": "()",
+        "interest-cohort": "()",
+        "magnetometer": "()",
+        "microphone": "()",
+        "midi": "()",
+        "navigation-override": "()",
+        "payment": "()",
+        "picture-in-picture": "()",
+        "publickey-credentials-get": "()",
+        "screen-wake-lock": "()",
+        "sync-xhr": "()",
+        "usb": "()",
+        "web-share": "()",
+        "xr-spatial-tracking": "()",
+    }
+
     app = Talisman(
         app,
         force_https=app.config["TALISMAN_FORCE_HTTPS"],
         content_security_policy=csp,
         content_security_policy_nonce_in=["script-src"],
+        feature_policy=feature_policy,
+        permissions_policy=permissions_policy,
     )
     return app
 

@@ -7,12 +7,12 @@
 ## Stack
 
 ### Back end
-- Python 3.8.6+
+- Python 3.8+
 - Flask
 - Postgres 13
 
 ### Front end
-- Bootstrap 5 (v5.0.0-beta1)
+- Bootstrap 5
 - For JS see [package.json](/package.json)
 - Webpacker for compilation
 
