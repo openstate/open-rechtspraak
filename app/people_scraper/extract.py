@@ -1,4 +1,5 @@
 from datetime import datetime
+from json import JSONDecodeError
 
 import requests
 from flask import current_app
@@ -42,7 +43,13 @@ def import_people_handler():
                 )
                 continue
 
-            people = r.json().get("result", {}).get("model", {}).get("groupedItems", {})
+            try:
+                people = (
+                    r.json().get("result", {}).get("model", {}).get("groupedItems", {})
+                )
+            except JSONDecodeError:
+                current_app.logger.error(f"JSONDecodeError found when scraping {r.url}")
+                people = []
 
             current_app.logger.debug(f"{len(people)} people found for {r.url}")
 
@@ -70,7 +77,7 @@ def enrich_people_handler():
 
         if not r.ok or r.url == FAULTY_URL:
             current_app.logger.error(
-                f"Error during person enrichment: {person.id}, {r.status_code}, {r.url}, {r.content}"
+                f"Error during person enrichment: {person.id}, {r.status_code}, {r.url}"
             )
             continue
 
