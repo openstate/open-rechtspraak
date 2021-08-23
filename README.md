@@ -49,9 +49,10 @@ These env variables are required for production:
 - `LOG_LEVEL` = a valid level from Python's [logging](https://docs.python.org/3/library/logging.html) module; generally `WARN` or higher is recommended in production
 
 ## How to deploy this app to production
-1. Compiling new assets, i.e. by running `npm run prod`
-2. Running the latest migrations, i.e. by running [release/tasks.sh](/release/tasks.sh)
-3. Ensure a cron is running with the jobs mentioned in cron.sh
+1. `docker-compose up -d`
+2. Compiling new assets: `docker exec ors_webpack_1 npm run prod`
+3. Running the latest migrations: `docker exec ors_app_1 sh ./release/tasks.sh`
+4. Ensure a cron is running with the jobs mentioned in `release/cron.sh`
 
 ## Sitemap
 - A self-updating sitemap is included at `/sitemap.xml`. You can submit this sitemap to search engines to be indexed faster.

@@ -1,0 +1,22 @@
+version: '3.7'
+
+services:
+  app:
+    ports:
+      - "5000:5000"
+    restart: "no"
+
+  webpack:
+    command: "npm run dev"
+    restart: "no"
+
+  db:
+    ports:
+      - "${POSTGRES_PORT_EXT:-5432}:${POSTGRES_PORT:-5432}"
+    restart: "no"
+
+networks:
+  internal:
+  nginx-load-balancer:
+    external:
+      name: docker_nginx-load-balancer
