@@ -128,3 +128,5 @@ dmypy.json
 /node_modules/
 
 .dataset/
+
+*.swp
