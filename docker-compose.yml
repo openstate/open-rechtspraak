@@ -11,9 +11,11 @@ services:
       - "db"
     env_file:
       - .env
-    ports:
-      - "5000:5000"
     command: "python ./main.py"
+    networks:
+      - nginx-load-balancer
+      - internal
+    restart: always
 
   webpack:
     build:
@@ -21,7 +23,11 @@ services:
       dockerfile: "Dockerfile-webpack"
     volumes:
       - .:/app
-    command: "npm run dev"
+    networks:
+      - internal
+    # Use this to keep the container running
+    tty: true
+    restart: always
 
   db:
     image: "postgres:13-alpine"
@@ -32,8 +38,15 @@ services:
       - POSTGRES_MULTIPLE_DATABASES=${POSTGRES_DB},${POSTGRES_DB}_test
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-    ports:
-      - "${POSTGRES_PORT_EXT:-5432}:${POSTGRES_PORT:-5432}"
+    networks:
+      - internal
+    restart: always
 
 volumes:
   db: {}
+
+networks:
+  internal:
+  nginx-load-balancer:
+    external:
+      name: docker_nginx-load-balancer
