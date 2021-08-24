@@ -1,5 +1,5 @@
 {
-  "name": "openrechtspraak",
+  "name": "Open Rechtspraak",
   "description": "A database of judges and verdicts of the Dutch judiciary.",
   "version": "1.0.0",
   "main": "index.js",
