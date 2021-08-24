@@ -1,6 +1,6 @@
 .PHONY: test
 
-COMPOSE = docker-compose
+COMPOSE = docker-compose -f docker-compose-dev.yml
 FLASK = $(COMPOSE) run --rm app flask
 WEBPACK = $(COMPOSE) run --rm webpack
 
