@@ -3,6 +3,12 @@
 
 
 {% block content %}
+  {% if request.args.get('no_match') %}
+    <div class="alert alert-warning">
+    Deze persoon kunnen we helaas niet vinden in onze database. Je kan hieronder gaan zoeken naar de juiste persoon!
+    </div>
+  {% endif %}
+
   <p>Op <a href="{{ url_for('redirect.rechtspraak_search') }}">namenlijst.rechtspraak.nl</a> worden nevenfuncties van diverse functionarissen in de rechtspraak geregistreerd. Dit
     publieke register is enkel toegankelijk op deelniveau, dus als je weet wat je zoekt. Open Rechtspraak maakt deze
     informatie direct toegankelijk.</p>

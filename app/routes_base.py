@@ -1,4 +1,4 @@
-from flask import Blueprint, abort, render_template
+from flask import Blueprint, abort, redirect, render_template, url_for
 
 from app.extensions import sitemap
 from app.models import Person, PersonVerdict, ProfessionalDetail, SideJob, Verdict
@@ -85,6 +85,18 @@ def person_detail(id):
         historical_side_jobs=historical_side_jobs,
         verdicts=verdicts,
     )
+
+
+@base_bp.get("/rechtspraak/persoon/<slug>")
+def redirect_from_old_paths(slug):
+    slug = slug.replace("+", " ")
+
+    person = Person.query.filter(Person.toon_naam == slug).first()
+
+    if person:
+        return redirect(url_for("base.person_detail", id=person.id), code=301)
+    else:
+        return redirect(url_for("base.index", no_match=True), code=404)
 
 
 @sitemap.register_generator
