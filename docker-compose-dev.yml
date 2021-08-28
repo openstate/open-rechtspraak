@@ -2,38 +2,20 @@ version: '3.7'
 
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - .:/app
-    depends_on:
-      - "db"
-    env_file:
-      - .env
     ports:
       - "5000:5000"
-    command: "python ./main.py"
+    restart: "on-failure:5"
 
   webpack:
-    build:
-      context: "."
-      dockerfile: "Dockerfile-webpack"
-    volumes:
-      - .:/app
     command: "npm run dev"
+    restart: "no"
 
   db:
-    image: "postgres:13-alpine"
-    volumes:
-      - "db:/var/lib/postgresql/data"
-      - "./postgres-dev-init.sh:/docker-entrypoint-initdb.d/postgres-dev.init.sh"
-    environment:
-      - POSTGRES_MULTIPLE_DATABASES=${POSTGRES_DB},${POSTGRES_DB}_test
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     ports:
       - "${POSTGRES_PORT_EXT:-5432}:${POSTGRES_PORT:-5432}"
+    restart: "no"
 
-volumes:
-  db: {}
+networks:
+  internal:
+  nginx-load-balancer:
+    external: false
