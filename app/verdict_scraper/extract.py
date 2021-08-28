@@ -3,6 +3,7 @@ from datetime import datetime
 
 import requests
 from flask import current_app
+from sqlalchemy.exc import DataError
 
 from app.errors import EnrichError
 from app.models import Institution, LegalArea, PersonVerdict, ProcedureType, Verdict
@@ -27,6 +28,8 @@ from app.verdict_scraper.utils import (
     verdict_already_exists,
 )
 
+FAULTY_URL = "https://mededeling.rechtspraak.nl/404"
+
 
 def import_verdicts_handler(start_datetime, end_datetime):
     # The search endpoint returns verdicts between two 'date' query params. If only one 'date' query param is given,
@@ -37,7 +40,7 @@ def import_verdicts_handler(start_datetime, end_datetime):
         r = requests.get(SEARCH_ENDPOINT, params=DEFAULT_SEARCH_QUERY_PARAMS)
         current_app.logger.info(f"Collecting verdicts from {r.url}")
 
-        if not r.ok or r.url == "https://mededeling.rechtspraak.nl/404":
+        if not r.ok or r.url == FAULTY_URL:
             current_app.logger.error(
                 f"Error during verdict collection: STATUS_CODE {r.status_code} | URL {r.url} | CONTENT {r.content}"
             )
@@ -105,7 +108,7 @@ def enrich_verdict(verdict):
     r = requests.get(DETAILS_ENDPOINT, params=params)
     current_app.logger.info(f"Collecting verdict information from {r.url}")
 
-    if not r.ok or r.url == "https://mededeling.rechtspraak.nl/404":
+    if not r.ok or r.url == FAULTY_URL:
         current_app.logger.error(
             f"Error during verdict enrichment: {verdict.id}, {verdict.ecli}, {r.status_code}, {r.url}"
         )
@@ -122,7 +125,11 @@ def enrich_verdict(verdict):
     verdict.procedure = safe_find_text(soup, "psi:procedure")
     verdict.raw_xml = str(soup)
     verdict.last_scraped_at = datetime.now()
-    verdict.save()
+
+    try:
+        verdict.save()
+    except DataError as e:
+        current_app.logger.error(f"Error during verdict saving: {verdict.ecli}, {e}")
 
 
 def find_people_for_verdict(verdict, people=None, soup=None):
