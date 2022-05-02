@@ -90,13 +90,14 @@ def person_detail(id):
 @base_bp.get("/rechtspraak/persoon/<slug>")
 def redirect_from_old_paths(slug):
     slug = slug.replace("+", " ")
+    slug = slug.rstrip()
 
     person = Person.query.filter(Person.toon_naam == slug).first()
 
     if person:
         return redirect(url_for("base.person_detail", id=person.id), code=301)
     else:
-        return redirect(url_for("base.index", no_match=True), code=404)
+        return redirect(url_for("base.index", no_match=True), code=301)
 
 
 @sitemap.register_generator
