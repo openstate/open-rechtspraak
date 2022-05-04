@@ -112,6 +112,7 @@ def initialize_talisman(app):
         content_security_policy_nonce_in=["script-src"],
         feature_policy=feature_policy,
         permissions_policy=permissions_policy,
+        strict_transport_security=False,
     )
     return app
 
