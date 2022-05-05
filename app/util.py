@@ -3,7 +3,6 @@ from datetime import datetime
 from typing import Union
 
 import pytz
-from flask import current_app
 
 
 def get_env_variable(name, default=None) -> str:
