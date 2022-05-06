@@ -30,12 +30,12 @@ def parse_rechtspraak_datetime(dt: str) -> Union[datetime, None]:
     3. Treat the datetime as if it is UTC and localize it to Europe/Amsterdam (datetime object with tzinfo)
     4. Remove the tzinfo from the datetime object, giving us a 'correct' UTC datetime object
     """
-    if len(dt) != 26:
-        # length of the datetime string is not exactly 26; we can't parse the epoch
+    if len(dt) < 5:
+        # length of the datetime string is too short, we can't parse it to a valid epoch epoch
         return
 
     # Strip timezone and remove milliseconds, convert to datetime
-    epoch = dt[6:19]  # strip /Date( and +0200) from the string, yields epoch with milliseconds
+    epoch = dt[6:][:-7]  # strip /Date( and +0200) from the string, yields epoch with milliseconds
     epoch = remove_milliseconds_from_epoch(epoch)
     dt = datetime.fromtimestamp(epoch)
 
