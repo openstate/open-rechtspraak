@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import url_for
 
 from tests.factories import PersonFactory
@@ -18,8 +20,8 @@ def test_search_contains_person(client):
 
 
 def test_search_query(client):
-    found_person = PersonFactory().save()
-    not_found_person = PersonFactory().save()
+    found_person = PersonFactory()
+    not_found_person = PersonFactory()
     params = {"q": found_person.last_name}
     r = client.get(url_for("api.person_search"), query_string=params)
     response_data = r.get_json().get("data")
@@ -29,6 +31,7 @@ def test_search_query(client):
 
 
 def test_search_limit(client):
+    PersonFactory()
     params = {"limit": 1}
     r = client.get(url_for("api.person_search"), query_string=params)
     response_data = r.get_json().get("data")
@@ -36,6 +39,8 @@ def test_search_limit(client):
 
 
 def test_offset_limit(client):
+    PersonFactory.create_batch(2)
+
     params = {"limit": 1, "offset": 0}
     r = client.get(url_for("api.person_search"), query_string=params)
     person_id = r.get_json().get("data")[0].get("id")
@@ -47,10 +52,30 @@ def test_offset_limit(client):
 
 
 def test_search_protected_person_is_hidden(client):
-    PersonFactory().save()
-    hidden_person = PersonFactory(protected=True).save()
+    PersonFactory()
+    hidden_person = PersonFactory(protected=True)
     r = client.get(url_for("api.person_search"))
     response_data = r.get_json().get("data")
 
     for p in response_data:
         assert p.get("last_name") != hidden_person.last_name
+
+
+def test_search_by_default_removed_at_are_not_included(client):
+    removed_person = PersonFactory(removed_from_rechtspraak_at=datetime.now())
+    r = client.get(url_for("api.person_search"))
+    response_data = r.get_json().get("data")
+
+    for p in response_data:
+        assert p.get("last_name") != removed_person.last_name
+
+
+def test_search_former_judges_may_be_included_with_query_param(client):
+    removed_person = PersonFactory(removed_from_rechtspraak_at=datetime.now())
+
+    params = {"former_judges": "true"}
+    r = client.get(url_for("api.person_search"), query_string=params)
+    response_data = r.get_json().get("data")
+
+    for p in response_data:
+        assert p.get("last_name") == removed_person.last_name

@@ -30,7 +30,7 @@ db-truncate:
 	$(FLASK) db_truncate
 
 test:
-	$(COMPOSE) exec -e FLASK_DEBUG=0 -e FLASK_ENV=test app pytest
+	$(COMPOSE) exec -e FLASK_DEBUG=0 -e FLASK_ENV=test app pytest ${TEST_PATH}
 
 cli:
 	$(COMPOSE) run --rm app bash

@@ -8,13 +8,17 @@ api_bp = Blueprint("api", __name__, url_prefix="/api/v1")
 @api_bp.route("/person/search")
 def person_search():
     q = request.args.get("q", None)
-    limit = request.args.get("limit", default=20, type=int)
 
+    limit = request.args.get("limit", default=20, type=int)
     if limit > 100:
         limit = 20
-
     offset = request.args.get("offset", type=int)
+
     query = Person.query.filter(Person.protected.isnot(True))
+
+    former_judges = request.args.get("former_judges", None)
+    if not former_judges:
+        query = query.filter(Person.removed_from_rechtspraak_at.is_(None))
 
     if q:
         query = query.filter(Person.toon_naam.ilike(f"%{q}%"))

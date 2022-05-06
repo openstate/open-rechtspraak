@@ -35,7 +35,8 @@ def parse_rechtspraak_datetime(dt: str) -> Union[datetime, None]:
         return
 
     # Strip timezone and remove milliseconds, convert to datetime
-    epoch = dt[6:][:-7]  # strip /Date( and +0200) from the string, yields epoch with milliseconds
+    # strips /Date( and +0200) from the string, yields epoch with milliseconds
+    epoch = dt[6:][:-7]  # noqa
     epoch = remove_milliseconds_from_epoch(epoch)
     dt = datetime.fromtimestamp(epoch)
 
