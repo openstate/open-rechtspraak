@@ -1,10 +1,10 @@
-.PHONY: test
+.PHONY: build destroy down logs reset schema up test
 
 COMPOSE = docker-compose -f docker-compose.yml -f docker-compose-dev.yml
 FLASK = $(COMPOSE) run --rm app flask
 WEBPACK = $(COMPOSE) run --rm webpack
 
-build: env
+build: .env
 	$(COMPOSE) pull
 	$(COMPOSE) build
 	$(WEBPACK) npm install
@@ -35,7 +35,7 @@ test:
 cli:
 	$(COMPOSE) run --rm app bash
 
-env:
+.env:
 	cp .env.dist .env
 
 import_people:
