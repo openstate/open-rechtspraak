@@ -20,6 +20,7 @@ class PersonFactory(factory.alchemy.SQLAlchemyModelFactory):
         lambda a: "{} {}".format(a.initials, a.last_name)
     )
     protected = False
+    removed_from_rechtspraak_at = None
 
 
 class VerdictFactory(factory.alchemy.SQLAlchemyModelFactory):

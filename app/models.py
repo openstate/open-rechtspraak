@@ -23,7 +23,12 @@ class Person(UUIDModel):
     rechtspraak_id = Column(db.Text, nullable=False, unique=True)
     last_scraped_at = Column(db.DateTime, nullable=True)
     protected = Column(db.Boolean, default=False)
+    removed_from_rechtspraak_at = Column(db.DateTime, nullable=True)
     verdicts = relationship("PersonVerdict", back_populates="person", uselist=False)
+
+    @property
+    def former_judge(self):
+        return True if self.removed_from_rechtspraak_at else False
 
     @property
     def serialize(self):
