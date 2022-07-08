@@ -7,7 +7,7 @@
 ## Stack
 
 ### Back end
-- Python 3.9+
+- Python 3.10
 - Flask
 - Postgres 13
 
