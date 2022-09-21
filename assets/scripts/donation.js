@@ -45,11 +45,11 @@ const initDonationModal = () => {
   const user = new DonationUser()
   const modal = new Modal('#donationModal')
 
-  modal.show();
   if (user.shouldShowModal()) {
+    modal.show();
     user.registerModalShown();
   }
 }
 
 // Only initialize modal logic after 5 seconds to prevent an annoying popup on first visit
-setTimeout(initDonationModal, 50)
+setTimeout(initDonationModal, 5000)
