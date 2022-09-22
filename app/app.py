@@ -39,7 +39,7 @@ def initialize_talisman(app):
         "style-src": [SELF, "fonts.googleapis.com", "cdnjs.cloudflare.com"],
         "script-src": [SELF, "analytics.openstate.eu", "cdnjs.cloudflare.com"],
         "connect-src": [SELF, "analytics.openstate.eu"],
-        "img-src": [SELF, "analytics.openstate.eu"],
+        "img-src": [SELF, "data:", "analytics.openstate.eu"],
         "font-src": [SELF, "fonts.gstatic.com"],
         "base-uri": [],
         "object-src": [],
