@@ -1,10 +1,7 @@
 const path = require("path");
 const webpack = require("webpack");
-const CopyPlugin = require("copy-webpack-plugin");
 
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
-const TerserPlugin = require("terser-webpack-plugin");
+const CopyPlugin = require("copy-webpack-plugin");
 
 const debug = (process.env.NODE_ENV !== "production");
 const rootAssetPath = path.join(__dirname, "assets");
@@ -30,8 +27,6 @@ module.exports = {
   },
   devtool: debug ? "source-map" : false,
   plugins: [
-    new webpack.ProvidePlugin({$: "jquery", jQuery: "jquery"}),
-    new MiniCssExtractPlugin(),
     new CopyPlugin({
       patterns: [
         {from: "images", to: "images"}
@@ -41,21 +36,18 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /.s?css$/,
-        use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
+        test: /\.(png|jpg|ico|webp|svg|webmanifest|xml)$/i,
+        type: 'asset/resource'
       },
-      // {
-      //   test: /\.js$/, exclude: /node_modules/, loader: "babel-loader", query: { presets: ["@babel/preset-env"], cacheDirectory: true },
-      // },
-    ],
-  },
-  optimization: {
-    minimizer: [
-      new TerserPlugin({
-        extractComments: false,
-        terserOptions: {output: {comments: false}}
-      }),
-      new CssMinimizerPlugin(),
+      {
+        test: /.scss/,
+        exclude: /node_modules/,
+        type: "asset/resource",
+        generator: {
+          filename: "styles.css",
+        },
+        use: ["sass-loader"],
+      },
     ],
   },
 };
