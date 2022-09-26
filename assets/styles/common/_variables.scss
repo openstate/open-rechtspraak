@@ -1,12 +1,3 @@
-// Grid settings
-$main-sm-columns: 12;
-$sidebar-sm-columns: 4;
-
-// We use Bootstrap's horizontal <dl> to format the openingstijden, but
-// we don't want the <dd> to go below the <dt> on smaller screens, so
-// set the breakpoint to 0
-$dl-horizontal-breakpoint: 0;
-
 $primary: #a62689;
 $secondary: #5b4864;
 $info: #31A8DF;

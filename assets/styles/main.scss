@@ -1,8 +1,7 @@
 @import "common/_variables";
-@import "common/_fonts";
 @import "node_modules/bootstrap/scss/bootstrap";
+@import "common/_fonts";
 
-@import "common/_global";
 @import "components/_search";
 @import "components/_verdict";
 @import "layouts/_header";

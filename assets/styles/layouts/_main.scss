@@ -1,3 +1,10 @@
 main {
-  min-height: 65vh;
+  background-color: $white;
+  padding: 20px;
+    min-height: 65vh;
+}
+
+body {
+  background-color: $light-grey;
+  color: $dark-grey;
 }
