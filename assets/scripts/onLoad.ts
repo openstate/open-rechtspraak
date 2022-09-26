@@ -1,23 +1,23 @@
-import {Tooltip} from 'bootstrap';
-
-
-import {config, library, dom} from '@fortawesome/fontawesome-svg-core'
-import {far} from '@fortawesome/free-regular-svg-icons'
-import {faTwitter, faLinkedin, faFacebook, faGithub} from '@fortawesome/free-brands-svg-icons'
+import { config, dom, library } from '@fortawesome/fontawesome-svg-core';
+import {
+  faFacebook, faGithub,
+  faLinkedin, faTwitter,
+} from '@fortawesome/free-brands-svg-icons';
+import { far } from '@fortawesome/free-regular-svg-icons';
+import { Tooltip } from 'bootstrap';
 
 const initFontawesome = () => {
-  config.autoAddCss = false
-  library.add(far, faTwitter, faLinkedin, faFacebook, faGithub)
-  dom.watch()
-}
+  config.autoAddCss = false;
+  library.add(far, faTwitter, faLinkedin, faFacebook, faGithub);
+  dom.watch();
+};
 
 const initTooltips = () => {
-  const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-  tooltipTriggerList.map(function (tooltipTriggerEl) {
-    return new Tooltip(tooltipTriggerEl)
-  })
-}
-window.addEventListener('load', (event) => {
+  const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  tooltipTriggerList.map((tooltipTriggerEl) => new Tooltip(tooltipTriggerEl));
+};
+
+window.addEventListener('load', () => {
   initTooltips();
   initFontawesome();
-})
+});

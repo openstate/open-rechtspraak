@@ -1,3 +1,4 @@
 import './onLoad';
-import './search';
 import './donation';
+// React components
+import './pages/index/index';

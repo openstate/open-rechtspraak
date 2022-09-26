@@ -1,4 +1,10 @@
-import {Modal} from 'bootstrap';
+import { Modal } from 'bootstrap';
+
+const lastMonth = (): Date => {
+  const date = new Date();
+  date.setMonth(date.getMonth() - 1);
+  return date;
+};
 
 class DonationUser {
   STORAGE_KEY = 'last-donation-modal-shown-at';
@@ -8,15 +14,15 @@ class DonationUser {
   }
 
   registerModalShown(): void {
-    const date = new Date()
-    this.store(date)
+    const date = new Date();
+    this.store(date);
   }
 
   lastTimeModalShown(): (Date | null) {
-    let value = localStorage.getItem(this.STORAGE_KEY);
+    const value = localStorage.getItem(this.STORAGE_KEY);
 
     if (value === null) {
-      return null
+      return null;
     }
 
     return new Date(value);
@@ -26,20 +32,14 @@ class DonationUser {
     return this.lastTimeModalShown() === null;
   }
 
-  lastMonth(): Date {
-    const date = new Date();
-    date.setMonth(date.getMonth() - 1);
-    return date
-  }
-
   modalShownInLastMonth(): boolean {
     const lastTimeModalShown = this.lastTimeModalShown();
 
     if (lastTimeModalShown === null) {
-      return false
+      return false;
     }
 
-    return lastTimeModalShown < this.lastMonth()
+    return lastTimeModalShown < lastMonth();
   }
 
   shouldShowModal(): boolean {
@@ -51,16 +51,15 @@ class DonationUser {
   }
 }
 
-
 const initDonationModal = () => {
-  const user = new DonationUser()
-  const modal = new Modal('#donationModal')
+  const user = new DonationUser();
+  const modal = new Modal('#donationModal');
 
   if (user.shouldShowModal()) {
     modal.show();
     user.registerModalShown();
   }
-}
+};
 
 // Only initialize modal logic after 5 seconds to prevent an annoying popup on first visit
-setTimeout(initDonationModal, 5000)
+setTimeout(initDonationModal, 5000);
