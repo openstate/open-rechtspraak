@@ -3,35 +3,46 @@ import {Modal} from 'bootstrap';
 class DonationUser {
   STORAGE_KEY = 'last-donation-modal-shown-at';
 
-  store(value) {
+  store(value: any): void {
     localStorage.setItem(this.STORAGE_KEY, value);
   }
 
-  registerModalShown() {
+  registerModalShown(): void {
     const date = new Date()
     this.store(date)
   }
 
-  lastTimeModalShown() {
+  lastTimeModalShown(): (Date | null) {
     let value = localStorage.getItem(this.STORAGE_KEY);
-    return value === null ? null : Date.parse(value);
+
+    if (value === null) {
+      return null
+    }
+
+    return new Date(value);
   }
 
-  modalNeverShown() {
+  modalNeverShown(): boolean {
     return this.lastTimeModalShown() === null;
   }
 
-  lastMonth() {
+  lastMonth(): Date {
     const date = new Date();
     date.setMonth(date.getMonth() - 1);
     return date
   }
 
-  modalShownInLastMonth() {
-    return this.lastTimeModalShown() < this.lastMonth()
+  modalShownInLastMonth(): boolean {
+    const lastTimeModalShown = this.lastTimeModalShown();
+
+    if (lastTimeModalShown === null) {
+      return false
+    }
+
+    return lastTimeModalShown < this.lastMonth()
   }
 
-  shouldShowModal() {
+  shouldShowModal(): boolean {
     /* Show a modal if either:
       1. a donation modal was never shown, or
       2. the last modal was shown over a month ago

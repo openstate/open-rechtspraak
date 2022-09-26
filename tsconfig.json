@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "outDir": "build/dist",
+    "sourceMap": true,
+    "strict": true,
+    "target": "ES6"
+  },
+  "exclude": [
+    "node_modules",
+    "venv"
+  ]
+}

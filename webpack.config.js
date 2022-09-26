@@ -10,7 +10,7 @@ module.exports = {
   // configuration
   context: rootAssetPath,
   entry: {
-    scripts: "./scripts/main.js",
+    scripts: "./scripts/main.ts",
     styles: [
       path.join(__dirname, "assets", "styles", "main.scss"),
     ],
@@ -23,7 +23,7 @@ module.exports = {
     publicPath: "/static/dist/",
   },
   resolve: {
-    extensions: [".js", ".jsx", ".css", ".scss"],
+    extensions: [".ts", ".tsx", ".scss"],
   },
   devtool: debug ? "source-map" : false,
   plugins: [
@@ -35,6 +35,11 @@ module.exports = {
   ],
   module: {
     rules: [
+      {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
       {
         test: /\.(png|jpg|ico|webp|svg|webmanifest|xml)$/i,
         type: 'asset/resource'
