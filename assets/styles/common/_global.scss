@@ -8,22 +8,8 @@ main {
   padding: 20px;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-weight: bold;
-}
-
 a {
   color: $info;
-}
-
-@media(max-width:767px) {
-  h1 {
-    font-size: 26px;
-  }
-
-  h2 {
-    font-size: 18px;
-  }
 }
 
 .background-lighter-grey {

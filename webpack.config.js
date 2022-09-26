@@ -1,8 +1,6 @@
 const path = require("path");
 const webpack = require("webpack");
 
-const CopyPlugin = require("copy-webpack-plugin");
-
 const debug = (process.env.NODE_ENV !== "production");
 const rootAssetPath = path.join(__dirname, "assets");
 
@@ -10,7 +8,6 @@ module.exports = {
   // configuration
   context: rootAssetPath,
   entry: {
-    scripts: "./scripts/onload.ts",
     scripts: "./scripts/main.ts",
     styles: [
       path.join(__dirname, "assets", "styles", "main.scss"),
@@ -27,13 +24,6 @@ module.exports = {
     extensions: [".ts", ".tsx", ".scss"],
   },
   devtool: debug ? "source-map" : false,
-  plugins: [
-    new CopyPlugin({
-      patterns: [
-        {from: "images", to: "images"}
-      ]
-    })
-  ],
   module: {
     rules: [
       {
@@ -43,6 +33,10 @@ module.exports = {
       },
       {
         test: /\.(png|jpg|ico|webp|svg|webmanifest|xml)$/i,
+        type: 'asset/resource'
+      },
+      {
+        test: /\.(woff|woff2)$/i,
         type: 'asset/resource'
       },
       {
