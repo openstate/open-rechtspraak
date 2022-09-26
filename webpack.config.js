@@ -10,6 +10,7 @@ module.exports = {
   // configuration
   context: rootAssetPath,
   entry: {
+    scripts: "./scripts/onload.ts",
     scripts: "./scripts/main.ts",
     styles: [
       path.join(__dirname, "assets", "styles", "main.scss"),

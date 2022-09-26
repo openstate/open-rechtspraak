@@ -36,8 +36,8 @@ def initialize_talisman(app):
 
     csp = {
         "default-src": [SELF],
-        "style-src": [SELF, "fonts.googleapis.com", "cdnjs.cloudflare.com"],
-        "script-src": [SELF, "analytics.openstate.eu", "cdnjs.cloudflare.com"],
+        "style-src": [SELF, "fonts.googleapis.com"],
+        "script-src": [SELF, "analytics.openstate.eu"],
         "connect-src": [SELF, "analytics.openstate.eu"],
         "img-src": [SELF, "data:", "analytics.openstate.eu"],
         "font-src": [SELF, "fonts.gstatic.com"],
