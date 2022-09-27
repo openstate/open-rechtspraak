@@ -22,14 +22,22 @@ function SearchResultRow({ id, toon_naam, beroepsgegevens }: Person) {
         <div className="card-body">
           <h3 className="search-result-person__name">{toon_naam}</h3>
           {beroepsgegevens.length > 0 && <h4 className="text-secondary">{beroepsgegevens[0]?.function}</h4>}
-
         </div>
+
         <div className="card-footer">
           {beroepsgegevens.map((professionalDetail: ProfessionalDetail) => (
-            <>
-              <ProfessionalDetailPill value={professionalDetail.organisation} variant="primary" />
-              <ProfessionalDetailPill value={professionalDetail.function} variant="secondary" />
-            </>
+            <React.Fragment key={professionalDetail.id}>
+              <ProfessionalDetailPill
+                key={`org-${professionalDetail.id}`}
+                value={professionalDetail.organisation}
+                variant="primary"
+              />
+              <ProfessionalDetailPill
+                key={`func-${professionalDetail.id}`}
+                value={professionalDetail.function}
+                variant="secondary"
+              />
+            </React.Fragment>
           ))}
         </div>
       </div>
