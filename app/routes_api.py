@@ -5,8 +5,8 @@ from app.models import Person
 api_bp = Blueprint("api", __name__, url_prefix="/api/v1")
 
 
-@api_bp.route("/person/search")
-def person_search():
+@api_bp.route("/person")
+def person():
     q = request.args.get("q", None)
 
     limit = request.args.get("limit", default=20, type=int)

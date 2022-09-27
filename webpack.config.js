@@ -21,15 +21,25 @@ module.exports = {
     publicPath: "/static/dist/",
   },
   resolve: {
-    extensions: [".ts", ".tsx", ".scss"],
+    extensions: [".js", ".ts", ".tsx", ".scss"],
   },
   devtool: debug ? "source-map" : false,
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
-        use: 'ts-loader',
+        test: /\.(js|ts|tsx)$/,
         exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              '@babel/preset-env',
+              '@babel/preset-react',
+              '@babel/preset-typescript',
+            ],
+            plugins: ['@babel/transform-runtime'],
+          },
+        },
       },
       {
         test: /\.(png|jpg|ico|webp|svg|webmanifest|xml)$/i,
