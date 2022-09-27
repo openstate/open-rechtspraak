@@ -9,9 +9,9 @@ module.exports = {
   context: rootAssetPath,
   entry: {
     scripts: "./scripts/main.ts",
-    styles: [
-      path.join(__dirname, "assets", "styles", "main.scss"),
-    ],
+    styles: "./styles/main.scss",
+    scripts_docs: "./docs/scripts/docs.ts",
+    styles_docs: "./docs/styles/docs.scss",
   },
   mode: debug,
   output: {
@@ -54,7 +54,7 @@ module.exports = {
         exclude: /node_modules/,
         type: "asset/resource",
         generator: {
-          filename: "styles.css",
+          filename: "[name].css",
         },
         use: ["sass-loader"],
       },

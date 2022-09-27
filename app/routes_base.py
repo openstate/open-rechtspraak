@@ -17,6 +17,11 @@ def about():
     return render_template("pages/about.html")
 
 
+@base_bp.route("/api_docs")
+def api_docs():
+    return render_template("pages/api_docs.html")
+
+
 @base_bp.route("/verdict/<id>")
 def verdict_detail(id):
     verdict = Verdict.query.filter(Verdict.id == id).first()

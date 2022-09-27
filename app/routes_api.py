@@ -16,8 +16,8 @@ def person():
 
     query = Person.query.filter(Person.protected.isnot(True))
 
-    former_judges = request.args.get("former_judges", None)
-    if not former_judges:
+    former_judges = request.args.get("former_judges", "false")
+    if former_judges == "false":
         query = query.filter(Person.removed_from_rechtspraak_at.is_(None))
 
     if q:

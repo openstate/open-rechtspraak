@@ -1,0 +1,36 @@
+<div id="generalConcepts" class="my-5">
+  <h2>General concepts</h2>
+  <hr />
+
+  <h3>Offset pagination</h3>
+
+  <p>You might have noticed that the response from the quickstart only returned a list of 20 people. The API only
+    returns a limited number of people per request, which ensures you'll get a quick response. This is called a
+    page.</p>
+
+  <p>Offset pagination allows you to retrieve a subsequent list of records, in other words: it allows you to retrieve
+    the
+    next page. Offset pagination works with two query parameters: <code>offset</code> and <code>limit</code>.</p>
+
+  <p><code>offset</code> determines the number of records that should be skipped. <code>limit</code> determines the number
+    of records per page. The maximum limit for our API is 100. If our API includes 1.000 people, that means you'll need
+    to perform at least 10 requests.</p>
+
+  <p>Here is an example that retrieves the first 5 pages of people from our API:</p>
+
+  <pre><code class="language-python">limit = 5
+people = []
+
+for page in range(0, 5):
+    r = requests.get("http://localhost:5000/api/v1/person", params={
+        'offset': limit * page,
+        'limit': limit
+    })
+    response = r.json()
+    people.extend(response.get("data"))
+
+    print(f"Retrieved records for page {page}")
+
+print(f"Done! Retrieved {len(people)} people")
+</code></pre>
+</div>

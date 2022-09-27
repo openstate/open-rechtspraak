@@ -26,7 +26,8 @@
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
 
-    <link rel="stylesheet" href="/static/dist/styles.css"/>
+    <link rel="stylesheet" href="/static/dist/main.css"/>
+    <link rel="stylesheet" href="/static/dist/docs.css"/>
 
     <!-- Matomo -->
     {% if config['FLASK_ENV'] != 'development' %}
@@ -86,5 +87,6 @@
 
 {% block scripts %}
   <script src="/static/dist/scripts.js"></script>
+  <script src="/static/dist/scripts_docs.js"></script>
 {% endblock %}
 </body>

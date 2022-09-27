@@ -1,0 +1,65 @@
+<div id="routes" class="my-5">
+  <h2>Routes</h2>
+
+  <hr/>
+
+  <div>
+    <h3>LIST person</h3>
+    <div class="row">
+      <div class="col-lg-6">
+        <dl>
+          <dt>Path</dt>
+          <dd>{{ url_for('api.person') }}</dd>
+        </dl>
+
+        <h4>Query parameters</h4>
+        <dl>
+          <dt>q</dt>
+          <dd>String based search. Use % for a wildcard.</dd>
+          <dt>former_judges</dt>
+          <dd>Boolean (true/false, default: false) that determines whether former judges should be included in the resultset.</dd>
+          <dt>limit</dt>
+          <dd>Integer (default: 20, max: 100) that determines the size of the resultset.</dd>
+          <dt>offset</dt>
+          <dd>Integer (default: 0) that determines the number of records that should be skipped.</dd>
+        </dl>
+
+        <h4>Example url</h4>
+        <a href="{{ url_for('api.person', limit=2, offset=2, q='van', _external=true) }}">
+          {{ url_for('api.person', limit=2, offset=2, q='van', _external=true) }}
+        </a>
+      </div>
+
+      <div class="col-lg-6">
+        <h4>Response 200</h4>
+        <pre><code class="language-js">{
+  "count": 4075,
+  "data": [
+    {
+      "beroepsgegevens": [
+        {
+          "function": "Rechter-Plaatsvervanger",
+          "id": "e303527c-5ebb-43e1-aae0-bbaf87449d5a",
+          "organisation": "Rechtbank Amsterdam"
+        }
+      ],
+      "first_name": null,
+      "gender": "male",
+      "id": "19e099ff-c05e-46b9-afa2-4d9e55ae7c28",
+      "initials": "B.G.L.",
+      "last_name": "Aa",
+      "rechtspraak_id": "OdESTwJMbvW70UdZPqTFX1dqz78u__71",
+      "titles": "dhr. mr.",
+      "toon_naam": "dhr. mr. B.G.L. van der Aa",
+      "toon_naam_kort": "B.G.L. van der Aa"
+    },
+    ...
+  ]
+}
+</code></pre>
+      </div>
+    </div>
+  </div>
+
+
+</div>

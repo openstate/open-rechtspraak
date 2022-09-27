@@ -13,6 +13,11 @@ def test_about(client):
     assert r.status_code == 200
 
 
+def test_apidocs(client):
+    r = client.get(url_for("base.api_docs"))
+    assert r.status_code == 200
+
+
 def test_sitemap(client):
     r = client.get(url_for("flask_sitemap.sitemap"))
     assert r.status_code == 200
