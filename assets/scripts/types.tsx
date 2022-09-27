@@ -9,5 +9,5 @@ export type ProfessionalDetail = Model & {
 
 export type Person = Model & {
   toon_naam: string
-  beroepsgegevens: ProfessionalDetail[]
+  professional_details: ProfessionalDetail[]
 };
