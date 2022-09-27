@@ -11,9 +11,11 @@
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item me-3 mt-3 mt-lg-0"><a class="nav-link fs-5" href="{{ url_for('base.index') }}">Home</a></li>
-        <li class="nav-item me-3"><a class="nav-link fs-5" href="{{ url_for('base.about') }}">Over deze website</a></li>
+        <li class="nav-item me-3"><a class="nav-link fs-5" href="{{ url_for('base.about') }}">Over</a></li>
+        <li class="nav-item me-3"><a class="nav-link fs-5" href="{{ url_for('base.api_docs') }}">API</a></li>
         <li class="nav-item"><a class="nav-link fs-5"
-                                     href="{{ url_for('redirect.rechtspraak_open_data') }}" target="_blank" rel="noopener">Rechtspraak.nl open data</a></li>
+                                href="{{ url_for('redirect.rechtspraak_open_data') }}" target="_blank" rel="noopener">Rechtspraak.nl</a>
+        </li>
       </ul>
     </div>
   </div>

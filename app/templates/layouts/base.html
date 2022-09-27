@@ -60,7 +60,16 @@
 
 <header>
   {% include 'partials/_nav.html' %}
-  {% include 'partials/_lead.html' %}
+
+  <div class="lead">
+    <div class="container">
+      <div class="row header">
+        <div class="col-12">
+          <h1 class="text-center my-3">{% block main_title %}Transparantie in de rechtspraak{% endblock %}</h1>
+        </div>
+      </div>
+    </div>
+  </div>
 </header>
 
 <main>

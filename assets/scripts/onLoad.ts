@@ -3,12 +3,12 @@ import {
   faFacebook, faGithub,
   faLinkedin, faTwitter,
 } from '@fortawesome/free-brands-svg-icons';
-import { far } from '@fortawesome/free-regular-svg-icons';
+import { fas } from '@fortawesome/free-solid-svg-icons';
 import { Tooltip } from 'bootstrap';
 
 const initFontawesome = () => {
   config.autoAddCss = false;
-  library.add(far, faTwitter, faLinkedin, faFacebook, faGithub);
+  library.add(fas, faTwitter, faLinkedin, faFacebook, faGithub);
   dom.watch();
 };
 

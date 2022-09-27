@@ -1,26 +1,27 @@
 {% extends 'layouts/base.html' %}
 {% block title %}{{ person.toon_naam }}{% endblock %}
+{% block main_title %}{{ person.toon_naam }}{% endblock %}
+
 {% block og_title %}
   <meta property="og:title" content="{{ person.toon_naam }}"/>{% endblock %}
 {% block og_description %}Op deze pagina zie je alle beroepsgegevens en nevenfuncties van {{ person.toon_naam }}
   .{% endblock %}
 
 {% block content %}
-  <div class="row mb-5">
-    <div class="col-sm-8 mb-3">
-      <h1>{{ person.toon_naam }}</h1>
-    </div>
-    <div class="col-sm-4">
-      <a class="btn btn-primary float-sm-end"
-         href="{{ url_for('redirect.rechtspraak_persoon', id=person.rechtspraak_id) }}" target="_blank" rel="noopener">Bekijk
-        op rechtspraak.nl</a>
-    </div>
-  </div>
-
   <div class="row">
     <div class="col-lg-8">
       <div>
-        <h2 class="mb-3">Beroepsgegevens</h2>
+        <div class="d-flex justify-content-between">
+          <h2 class="mb-3">Beroepsgegevens</h2>
+
+          <div class="mt-1">
+            <a class="btn btn-primary btn-sm"
+               href="{{ url_for('redirect.rechtspraak_persoon', id=person.rechtspraak_id) }}" target="_blank"
+               rel="noopener">
+              <i class="fa-solid fa-arrow-up-right-from-square me-2"></i>Bron</a>
+          </div>
+        </div>
+
         {% if professional_details|length > 0 %}
           <div class="row mb-3">
             {% for pd in professional_details %}
@@ -136,9 +137,9 @@
     <div class="col-lg-4">
       <div class="d-flex justify-content-between">
         <h3 class="mb-3">Recente uitspraken</h3>
-        <div class="h4 pt-1" data-bs-toggle="tooltip" data-bs-placement="top"
+        <div class="h4 mt-1" data-bs-toggle="tooltip" data-bs-placement="top"
              title="Deze lijst is mogelijk niet compleet. Rechter en uitspraak worden gematched op basis van de titel, voorletters en achternaam van de rechter. Als de naam van de rechter op een andere manier in de uitspraak voorkomt (bijvoorbeeld door een typefout), dan wordt de rechter niet herkend.">
-          <i class="fa-regular fa-question-circle"></i>
+          <i class="fa-solid fa-question-circle"></i>
         </div>
       </div>
 
@@ -147,7 +148,9 @@
           <div class="card mb-3">
             <div class="card-body">
               <h5>{{ verdict.ecli }}</h5>
-              <p><time>{{ verdict.issued|date }}</time></p>
+              <p>
+                <time>{{ verdict.issued|date }}</time>
+              </p>
 
               <a class="btn btn-secondary mt-"
                  href="{{ url_for('redirect.rechtspraak_uitspraak', ecli=verdict.ecli) }}" target="_blank"
