@@ -9,7 +9,7 @@ type ProfessionalDetailPillProps = {
 
 function ProfessionalDetailPill({ value, variant = 'primary' }: ProfessionalDetailPillProps) {
   return (
-    <span className={`badge rounded-pill bg-${variant} ms-2`}>
+    <span className={`badge rounded-pill bg-${variant} text-wrap me-2`}>
       {value}
     </span>
   );
