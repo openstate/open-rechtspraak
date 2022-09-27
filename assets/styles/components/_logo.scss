@@ -1,0 +1,108 @@
+#logo-svg-text {
+  fill: $dark-grey;
+}
+
+#logo-svg-icon {
+  .dot {
+    fill: #e6e6e6
+  }
+
+  .large-figure {
+    opacity: 0.9;
+    mix-blend-mode: multiply;
+    fill: none;
+    stroke-width: 16px;
+    stroke-linejoin: bevel
+  }
+
+  .rectangle {
+    stroke: #751c58;
+  }
+
+  .triangle {
+    stroke: #5cbdb9;
+  }
+
+  .circle {
+    stroke: #c21889;
+    stroke-miterlimit: 10;
+  }
+}
+
+#logo:hover #logo-svg-icon {
+  .rectangle {
+    animation: moveRectangle 1.5s ease-in-out alternate infinite;
+  }
+
+  .triangle {
+    animation: moveTriangle 3.5s ease-in-out normal infinite;
+  }
+
+  .circle {
+    animation: moveCircle 1.75s linear normal infinite;
+  }
+
+  // Moving the dots
+  $x: (left: 5%, center: 0%, right: -5%);
+  $y: (top: 5%, middle: 0%, bottom: -5%);
+
+  @each $xPos, $translateX in $x {
+    @each $yPos, $translateY in $y {
+      .#{$xPos}-#{$yPos} {
+        animation: #{$xPos}-#{$yPos} 1s ease alternate infinite;
+        animation-delay: 0.1s;
+      }
+
+      @keyframes #{$xPos}-#{$yPos} {
+        from {
+          transform: translate(0, 0)
+        }
+
+        to {
+          transform: translate($translateX, $translateY)
+        }
+      }
+    }
+  }
+}
+
+@keyframes moveRectangle {
+  0% {
+    transform: translate(0, 0)
+  }
+  100% {
+    transform: translate(0, 47%)
+  }
+}
+
+@keyframes moveTriangle {
+  0% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: rotate(180deg);
+    transform-origin: 50% 50%;
+  }
+  100% {
+    transform: rotate(360deg);
+    transform-origin: 50% 50%;
+  }
+}
+
+@keyframes moveCircle {
+  0% {
+    transform: translate(0, 0)
+  }
+  25% {
+    transform: translate(25%, 25%)
+  }
+  50% {
+    transform: translate(47%, 0);
+  }
+  75% {
+    transform: translate(25%, -25%)
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
