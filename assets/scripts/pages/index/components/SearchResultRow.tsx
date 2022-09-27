@@ -20,8 +20,8 @@ function SearchResultRow({ id, toon_naam, beroepsgegevens }: Person) {
     <a className="search-result-person" href={`person/${id}`}>
       <div className="card mb-3">
         <div className="card-body">
-          <h3 className="search-result-person__name">{toon_naam}</h3>
-          {beroepsgegevens.length > 0 && <h4 className="text-secondary">{beroepsgegevens[0]?.function}</h4>}
+          <h2 className="search-result-person__name">{toon_naam}</h2>
+          {beroepsgegevens.length > 0 && <p className="h3 text-secondary">{beroepsgegevens[0]?.function}</p>}
         </div>
 
         <div className="card-footer">
