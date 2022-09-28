@@ -5,8 +5,8 @@ import requests
 from flask import current_app
 
 from app.models import Person, ProfessionalDetail, SideJob
-from app.people_scraper.config import DETAILS_ENDPOINT, HEADERS, SEARCH_ENDPOINT
-from app.people_scraper.utils import (
+from app.scraper.people.config import DETAILS_ENDPOINT, HEADERS, SEARCH_ENDPOINT
+from app.scraper.people.utils import (
     find_institution_for_professional_detail,
     find_request_verification_token,
     format_payload,

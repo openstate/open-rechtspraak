@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from app.people_scraper.extract import enrich_person, person_details_url
+from app.scraper.people.extract import enrich_person, person_details_url
 from app.tests.factories import PersonFactory
 
 

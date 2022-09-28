@@ -6,13 +6,13 @@ from setuptools import glob
 from tqdm import tqdm
 
 from app.models import Verdict
-from app.verdict_scraper.extract import (
+from app.scraper.verdicts.extract import (
     find_institution_for_verdict,
     find_legal_area_for_verdict,
     find_procedure_type_for_verdict,
 )
-from app.verdict_scraper.soup_parsing import find_beslissing, safe_find_text, to_soup
-from app.verdict_scraper.utils import verdict_already_exists
+from app.scraper.verdicts.soup_parsing import find_beslissing, safe_find_text, to_soup
+from app.scraper.verdicts.utils import verdict_already_exists
 
 
 def ecli_to_local_verdict_filename(ecli):

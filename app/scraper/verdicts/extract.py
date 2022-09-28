@@ -7,13 +7,13 @@ from sqlalchemy.exc import DataError
 
 from app.errors import EnrichError
 from app.models import Institution, LegalArea, PersonVerdict, ProcedureType, Verdict
-from app.verdict_scraper.config import (
+from app.scraper.verdicts.config import (
     DEFAULT_LIMIT,
     DEFAULT_SEARCH_QUERY_PARAMS,
     DETAILS_ENDPOINT,
     SEARCH_ENDPOINT,
 )
-from app.verdict_scraper.soup_parsing import (
+from app.scraper.verdicts.soup_parsing import (
     extract_verdicts,
     find_beslissing,
     find_institution_identifier,
@@ -22,7 +22,7 @@ from app.verdict_scraper.soup_parsing import (
     safe_find_text,
     to_soup,
 )
-from app.verdict_scraper.utils import (
+from app.scraper.verdicts.utils import (
     person_verdict_already_exists,
     recognize_people,
     verdict_already_exists,
