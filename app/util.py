@@ -55,7 +55,7 @@ def determine_gender(toonnaam):
     elif "mw." in toonnaam:
         return "female"
     else:
-        "other"
+        return "other"
 
 
 def extract_initials(toonnaam_kort):
