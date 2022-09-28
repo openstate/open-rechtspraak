@@ -1,6 +1,6 @@
 from flask import url_for
 
-from tests.factories import VerdictFactory
+from app.tests.factories import VerdictFactory
 
 
 def test_verdict_detail(client):

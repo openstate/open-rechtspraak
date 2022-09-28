@@ -2,12 +2,12 @@ from flask import Flask
 from flask_talisman import Talisman
 
 from app import commands
+from app.api.routes import api_bp
 from app.config import get_config
+from app.core.routes import core_bp
 from app.errors import internal_server_error, page_not_found, unauthorized_error
 from app.extensions import cors, db, migrate, sitemap
-from app.routes_api import api_bp
-from app.routes_base import base_bp
-from app.routes_redirect import redirect_bp
+from app.redirect.routes import redirect_bp
 
 
 def create_app(env=None):
@@ -112,7 +112,7 @@ def register_error_handlers(app):
 
 
 def register_routes(app):
-    app.register_blueprint(base_bp)
+    app.register_blueprint(core_bp)
     app.register_blueprint(api_bp)
     app.register_blueprint(redirect_bp)
 

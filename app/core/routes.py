@@ -4,25 +4,25 @@ from app.extensions import sitemap
 from app.models import Person, PersonVerdict, ProfessionalDetail, SideJob, Verdict
 from app.verdict_scraper.soup_parsing import find_beslissing, to_soup
 
-base_bp = Blueprint("base", __name__)
+core_bp = Blueprint("base", __name__)
 
 
-@base_bp.route("/")
+@core_bp.route("/")
 def index():
     return render_template("pages/index.html")
 
 
-@base_bp.route("/about")
+@core_bp.route("/about")
 def about():
     return render_template("pages/about.html")
 
 
-@base_bp.route("/api_docs")
+@core_bp.route("/api_docs")
 def api_docs():
     return render_template("pages/api_docs.html")
 
 
-@base_bp.route("/verdict/<id>")
+@core_bp.route("/verdict/<id>")
 def verdict_detail(id):
     verdict = Verdict.query.filter(Verdict.id == id).first()
     beslissing = find_beslissing(to_soup(verdict.raw_xml))
@@ -40,13 +40,13 @@ def verdict_detail(id):
     )
 
 
-@base_bp.route("/verdict/ecli/<ecli>")
+@core_bp.route("/verdict/ecli/<ecli>")
 def verdict_by_ecli(ecli):
     verdict = Verdict.query.filter(Verdict.ecli == ecli).first()
     return verdict_detail(verdict.id)
 
 
-@base_bp.route("/person/<id>")
+@core_bp.route("/person/<id>")
 def person_detail(id):
     person = Person.query.filter(Person.id == id).first()
 
@@ -92,7 +92,7 @@ def person_detail(id):
     )
 
 
-@base_bp.get("/rechtspraak/persoon/<slug>")
+@core_bp.get("/rechtspraak/persoon/<slug>")
 def redirect_from_old_paths(slug):
     slug = slug.replace("+", " ")
     slug = slug.rstrip()

@@ -1,7 +1,7 @@
 import pytest
 from pytest_factoryboy import register
 
-import tests.factories as f
+import app.tests.factories as f
 from app.app import create_app
 from app.database import db as db_
 

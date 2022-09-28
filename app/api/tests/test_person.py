@@ -2,7 +2,7 @@ from datetime import datetime
 
 from flask import url_for
 
-from tests.factories import PersonFactory
+from app.tests.factories import PersonFactory
 
 
 def test_search(client):

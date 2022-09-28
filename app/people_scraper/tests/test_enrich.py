@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from app.people_scraper.extract import enrich_person, person_details_url
-from tests.factories import PersonFactory
+from app.tests.factories import PersonFactory
 
 
 def test_removed_at_is_not_set(requests_mock):
