@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Person, ProfessionalDetail } from '../../../types';
+import { personUrl } from '../../../urls';
 
 type ProfessionalDetailPillProps = {
   value: string
@@ -17,7 +18,7 @@ function ProfessionalDetailPill({ value, variant = 'primary' }: ProfessionalDeta
 
 function SearchResultRow({ id, toon_naam, professional_details }: Person) {
   return (
-    <a className="search-result-person" href={`person/${id}`}>
+    <a className="search-result-person" href={personUrl(id)}>
       <div className="card mb-3">
         <div className="card-body">
           <h2 className="search-result-person__name">{toon_naam}</h2>

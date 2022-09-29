@@ -17,7 +17,7 @@ const setup = () => {
 
 it('renders an input field', () => {
   const { input } = setup();
-  expect(input).toBeTruthy();
+  expect(input).toBeVisible();
 });
 
 it('can enter a value in the input field', async () => {
