@@ -22,7 +22,8 @@
     "dev": "npm run development",
     "development": "NODE_ENV=debug webpack --mode development --watch",
     "prod": "NODE_ENV=production webpack --progress",
-    "test": "jest --config assets/jest.config.ts"
+    "test": "jest --config assets/jest.config.ts",
+    "lint": "eslint ./assets/ --ext=.ts,.tsx"
   },
   "devDependencies": {
     "@babel/core": "^7.19.3",
