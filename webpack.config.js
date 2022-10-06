@@ -1,10 +1,5 @@
 const path = require("path");
 const webpack = require("webpack");
-const CopyPlugin = require("copy-webpack-plugin");
-
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
-const TerserPlugin = require("terser-webpack-plugin");
 
 const debug = (process.env.NODE_ENV !== "production");
 const rootAssetPath = path.join(__dirname, "assets");
@@ -13,10 +8,10 @@ module.exports = {
   // configuration
   context: rootAssetPath,
   entry: {
-    scripts: "./scripts/main.js",
-    styles: [
-      path.join(__dirname, "assets", "styles", "main.scss"),
-    ],
+    scripts: "./scripts/main.ts",
+    styles: "./styles/main.scss",
+    scripts_docs: "./docs/scripts/docs.ts",
+    styles_docs: "./docs/styles/docs.scss",
   },
   mode: debug,
   output: {
@@ -26,36 +21,43 @@ module.exports = {
     publicPath: "/static/dist/",
   },
   resolve: {
-    extensions: [".js", ".jsx", ".css", ".scss"],
+    extensions: [".js", ".ts", ".tsx", ".scss"],
   },
   devtool: debug ? "source-map" : false,
-  plugins: [
-    new webpack.ProvidePlugin({$: "jquery", jQuery: "jquery"}),
-    new MiniCssExtractPlugin(),
-    new CopyPlugin({
-      patterns: [
-        {from: "images", to: "images"}
-      ]
-    })
-  ],
   module: {
     rules: [
       {
-        test: /.s?css$/,
-        use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
+        test: /\.(js|ts|tsx)$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              '@babel/preset-env',
+              '@babel/preset-react',
+              '@babel/preset-typescript',
+            ],
+            plugins: ['@babel/transform-runtime'],
+          },
+        },
       },
-      // {
-      //   test: /\.js$/, exclude: /node_modules/, loader: "babel-loader", query: { presets: ["@babel/preset-env"], cacheDirectory: true },
-      // },
-    ],
-  },
-  optimization: {
-    minimizer: [
-      new TerserPlugin({
-        extractComments: false,
-        terserOptions: {output: {comments: false}}
-      }),
-      new CssMinimizerPlugin(),
+      {
+        test: /\.(png|jpg|ico|webp|svg|webmanifest|xml)$/i,
+        type: 'asset/resource'
+      },
+      {
+        test: /\.(woff|woff2)$/i,
+        type: 'asset/resource'
+      },
+      {
+        test: /.scss/,
+        exclude: /node_modules/,
+        type: "asset/resource",
+        generator: {
+          filename: "[name].css",
+        },
+        use: ["sass-loader"],
+      },
     ],
   },
 };

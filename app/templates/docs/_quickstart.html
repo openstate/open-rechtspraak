@@ -1,0 +1,20 @@
+<div id="quickstart" class="my-5">
+  <h2>Quickstart</h2>
+  <hr />
+
+  <p>The base URL of the API is <a href="https://openrechtspraak.nl/api/v1/">https://openrechtspraak.nl/api/v1/</a>.</p>
+
+  <p>Everywhere in this documentation, the requests package is used to prepare and execute HTTP requests. To install
+    the requests package, run <code>pip install requests</code> in your cli. Subsequently, import the requests package
+    as shown below. This line will not reappear in other code snippets to enhance readability.</p>
+
+  <pre><code class="language-python">import requests</code></pre>
+
+  <p>We're now ready to perform our first request. To retrieve a list of people from the API, we can use the
+    <code>person</code> endpoint.</p>
+  <pre><code class="language-python">r = requests.get("{{ url_for('api.person', _external=true) }}")
+response = r.json()
+
+print(len(response.get("data")))
+print(response.get("count"))</code></pre>
+</div>

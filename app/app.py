@@ -2,12 +2,12 @@ from flask import Flask
 from flask_talisman import Talisman
 
 from app import commands
+from app.api.routes import api_bp
 from app.config import get_config
+from app.core.routes import core_bp
 from app.errors import internal_server_error, page_not_found, unauthorized_error
 from app.extensions import cors, db, migrate, sitemap
-from app.routes_api import api_bp
-from app.routes_base import base_bp
-from app.routes_redirect import redirect_bp
+from app.redirect.routes import redirect_bp
 
 
 def create_app(env=None):
@@ -36,27 +36,23 @@ def initialize_talisman(app):
 
     csp = {
         "default-src": [SELF],
-        "style-src": [SELF, "fonts.googleapis.com", "cdnjs.cloudflare.com"],
-        "script-src": [SELF, "analytics.openstate.eu", "cdnjs.cloudflare.com"],
+        "style-src": [SELF],
+        "script-src": [SELF, "analytics.openstate.eu"],
         "connect-src": [SELF, "analytics.openstate.eu"],
         "img-src": [SELF, "data:", "analytics.openstate.eu"],
-        "font-src": [SELF, "fonts.gstatic.com"],
+        "font-src": [SELF],
         "base-uri": [],
         "object-src": [],
     }
 
     feature_policy = {
         "accelerometer": "'none'",
-        "ambient-light-sensor": "'none'",
         "autoplay": "'none'",
-        "battery": "'none'",
         "camera": "'none'",
         "cross-origin-isolated": "'none'",
         "display-capture": "'none'",
         "document-domain": "'none'",
         "encrypted-media": "'none'",
-        "execution-while-not-rendered": "'none'",
-        "execution-while-out-of-viewport": "'none'",
         "fullscreen": "'none'",
         "geolocation": "'none'",
         "gyroscope": "'none'",
@@ -64,29 +60,23 @@ def initialize_talisman(app):
         "magnetometer": "'none'",
         "microphone": "'none'",
         "midi": "'none'",
-        "navigation-override": "'none'",
         "payment": "'none'",
         "picture-in-picture": "'none'",
         "publickey-credentials-get": "'none'",
         "screen-wake-lock": "'none'",
         "sync-xhr": "'none'",
         "usb": "'none'",
-        "web-share": "'none'",
         "xr-spatial-tracking": "'none'",
     }
 
     permissions_policy = {
         "accelerometer": "()",
-        "ambient-light-sensor": "()",
         "autoplay": "()",
-        "battery": "()",
         "camera": "()",
         "cross-origin-isolated": "()",
         "display-capture": "()",
         "document-domain": "()",
         "encrypted-media": "()",
-        "execution-while-not-rendered": "()",
-        "execution-while-out-of-viewport": "()",
         "fullscreen": "()",
         "geolocation": "()",
         "gyroscope": "()",
@@ -94,14 +84,12 @@ def initialize_talisman(app):
         "magnetometer": "()",
         "microphone": "()",
         "midi": "()",
-        "navigation-override": "()",
         "payment": "()",
         "picture-in-picture": "()",
         "publickey-credentials-get": "()",
         "screen-wake-lock": "()",
         "sync-xhr": "()",
         "usb": "()",
-        "web-share": "()",
         "xr-spatial-tracking": "()",
     }
 
@@ -124,7 +112,7 @@ def register_error_handlers(app):
 
 
 def register_routes(app):
-    app.register_blueprint(base_bp)
+    app.register_blueprint(core_bp)
     app.register_blueprint(api_bp)
     app.register_blueprint(redirect_bp)
 

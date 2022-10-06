@@ -1,0 +1,32 @@
+{
+  "extends": [
+    "airbnb",
+    "airbnb/hooks",
+    "airbnb-typescript",
+    ".eslintrc.typescript.json"
+  ],
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "plugins": ["simple-import-sort"],
+  "env": {
+    "browser": true
+  },
+  "rules": {
+    "max-len": ["error", {"code":  120}],
+    "consistent-return": "off",
+    "import/prefer-default-export": "off",
+    "simple-import-sort/imports": "error",
+    "simple-import-sort/exports": "error",
+    "implicit-arrow-linebreak": "off",
+        "react/jsx-no-useless-fragment": ["error", {
+      "allowExpressions": true
+    }],
+    "react/no-unescaped-entities": 0,
+    "react/jsx-props-no-spreading": "off",
+    "react-hooks/exhaustive-deps": "off",
+    "react/jsx-filename-extension": [1, { "extensions": [".jsx", ".ts",".tsx"] }],
+    "react/require-default-props": "off",
+    "semi": 0
+  }
+}

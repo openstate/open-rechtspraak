@@ -2,17 +2,20 @@ nav {
   border-bottom: 4px solid $light-grey !important;
 }
 
+nav.navbar {
+  height: 5rem;
+}
+
 .navbar-brand {
   padding: 0;
   max-width: 50%;
 
   img {
-    height: 100%;
-    width: 40%;
+    max-height: 3.5rem;
   }
 }
 
 .lead {
   background-color: $light-grey;
-  padding: 100px 0 20px 0;
+  padding: 6rem 0 1.5rem 0;
 }

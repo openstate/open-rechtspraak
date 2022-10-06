@@ -11,7 +11,7 @@ on:
     branches: [ develop, main ]
 
 jobs:
-  flake8:
+  lint-python:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code Repository
@@ -30,7 +30,7 @@ jobs:
       - name: Lint with flake8
         run: flake8
 
-  test:
+  test-python:
     runs-on: ubuntu-latest
 
     services:
@@ -61,3 +61,35 @@ jobs:
         FLASK_ENV: development
         FLASK_app: main.py
         DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
+
+  lint-js:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install packages
+        run: npm i
+
+      - name: Run ESLint
+        run: npm run lint
+
+  test-react:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install packages
+        run: npm i
+
+      - name: Run tests
+        run: npm run test

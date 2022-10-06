@@ -19,6 +19,7 @@
 ## Getting started
 - You can initialize the full development environment with `make init`.
 - Pre-commit hooks are configured, and it is recommended you install them through `pre-commit install`.
+- For Python linting, we use various linters as specified in pre-commit-config.yaml. For javascript, we use ESLint with the rules in eslintrc.json. Make sure you configure these linters before contributing, because CI tests might fail if you don't.
 - Seed is available with `make seed`.
 - Visit [localhost:5000](localhost:5000).
 

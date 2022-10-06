@@ -1,0 +1,51 @@
+<div id="examples" class="my-5">
+  <h2>Examples</h2>
+  <hr />
+
+  <div class="mb-5">
+    <h3>Retrieving all people with 'aa' in their name </h3>
+    <pre><code class="language-python">import requests
+
+limit = 100
+page = 0
+people = []
+
+while True:
+    r = requests.get("http://localhost:5000/api/v1/person", params={
+        'offset': limit * page,
+        'limit': limit,
+        'q': 'aa'
+    })
+    r.raise_for_status()
+    response = r.json()
+
+    data = response.get("data")
+
+    if len(data) == 0:
+        break
+
+    people.extend(data)
+
+    print(f"Retrieved records for page {page}")
+    page += 1
+
+print(f"Done! Retrieved {len(people)} people")
+</code></pre>
+  </div>
+
+  <div class="mb-5">
+    <h3>Retrieving a list of people and writing them to a json file</h3>
+    <pre><code class="language-python">import json
+import requests
+
+r = requests.get("http://localhost:5000/api/v1/person")
+r.raise_for_status()
+response = r.json()
+data = response.get("data")
+
+with open('export.json', 'w') as file:
+    json.dump(data, file)
+</code></pre>
+  </div>
+
+</div>

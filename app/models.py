@@ -30,31 +30,6 @@ class Person(UUIDModel):
     def former_judge(self):
         return True if self.removed_from_rechtspraak_at else False
 
-    @property
-    def serialize(self):
-        professional_details = ProfessionalDetail.query.filter(
-            ProfessionalDetail.person_id == self.id
-        ).filter(ProfessionalDetail.end_date.is_(None))
-        return {
-            "id": self.id,
-            "titles": self.titles,
-            "initials": self.initials,
-            "first_name": self.first_name,
-            "last_name": self.last_name,
-            "gender": self.gender,
-            "toon_naam": self.toon_naam,
-            "toon_naam_kort": self.toon_naam_kort,
-            "rechtspraak_id": self.rechtspraak_id,
-            "beroepsgegevens": [
-                {
-                    "id": pd.id,
-                    "function": pd.function.title(),
-                    "organisation": pd.organisation,
-                }
-                for pd in professional_details
-            ],
-        }
-
     @staticmethod
     def from_dict(d):
         toon_naam = (d.get("toonnaam") or "").strip()

@@ -1,12 +1,12 @@
 @import "common/_variables";
 @import "node_modules/bootstrap/scss/bootstrap";
-
-@import "common/_global";
 @import "common/_fonts";
+
+@import "components/_logo";
 @import "components/_search";
 @import "components/_verdict";
 @import "layouts/_header";
 @import "layouts/_main";
 @import "layouts/_footer";
 
-@import 'https://fonts.googleapis.com/css?family=Montserrat';
+@import "@fortawesome/fontawesome-svg-core/styles";

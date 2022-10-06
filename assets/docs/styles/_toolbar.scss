@@ -1,0 +1,45 @@
+// Modified from https://github.com/PrismJS/prism/blob/1cac35591ce5c1fbf70fe8b24c607998ddf4d296/plugins/toolbar/prism-toolbar.css
+
+.code-toolbar {
+  position: relative;
+  margin-bottom: 1rem;
+
+  .toolbar {
+    position: absolute;
+    z-index: 10;
+    top: 0;
+    right: 0;
+
+    .toolbar-item {
+      display: inline-block;
+
+      button {
+        background: none;
+        border: 0;
+        color: inherit;
+        font: inherit;
+        line-height: normal;
+        overflow: visible;
+        padding: 0;
+        -webkit-user-select: none; /* for button */
+        -moz-user-select: none;
+        -ms-user-select: none;
+      }
+
+      a, span {
+        cursor: pointer;
+        color: white;
+        font-size: .8em;
+        padding: .3rem .5em;
+        background: #f5f2f0;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 0 0 0 .5em;
+      }
+
+      a:hover, button:hover, span:hover {
+        color: lightgray;
+        text-decoration: none;
+      }
+    }
+  }
+}
