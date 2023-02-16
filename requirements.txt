@@ -54,4 +54,4 @@ toml==0.10.2
 tqdm==4.64.1
 urllib3==1.26.12
 virtualenv==20.16.5
-Werkzeug==2.2.2
+Werkzeug==2.2.3
