@@ -1,6 +1,6 @@
 .PHONY: build destroy down logs reset schema up test
 
-COMPOSE = docker-compose -f docker-compose.yml -f docker-compose-dev.yml
+COMPOSE = docker compose -f docker-compose.yml -f docker-compose-dev.yml
 FLASK = $(COMPOSE) run --rm app flask
 WEBPACK = $(COMPOSE) run --rm webpack
 

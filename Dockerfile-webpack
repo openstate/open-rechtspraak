@@ -1,7 +1,7 @@
 FROM node:18
 ENV npm_config_cache /tmp/
 
-RUN npm install -g npm@8.19.2
+RUN npm install -g npm@latest
 
 WORKDIR /app
 COPY package* /app/
