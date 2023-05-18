@@ -16,7 +16,6 @@ from app.scraper.verdicts.extract import (
     enrich_verdicts_handler,
     import_verdicts_handler,
 )
-from app.scraper.verdicts.from_files import import_verdicts_from_files_handler
 
 
 @click.command("placeholder")
@@ -107,9 +106,3 @@ def import_procedure_types():
 @with_appcontext
 def import_legal_areas():
     import_legal_areas_handler()
-
-
-@click.command("import_verdicts_from_files")
-@with_appcontext
-def import_verdicts_from_files():
-    import_verdicts_from_files_handler()

@@ -125,7 +125,6 @@ def register_commands(app):
     app.cli.add_command(commands.import_institutions)
     app.cli.add_command(commands.import_procedure_types)
     app.cli.add_command(commands.import_legal_areas)
-    app.cli.add_command(commands.import_verdicts_from_files)
     app.cli.add_command(commands.seed)
     app.cli.add_command(commands.db_truncate)
 
