@@ -4,7 +4,13 @@ from app.database import db
 from app.models import Person, Verdict
 
 
-class PersonFactory(factory.alchemy.SQLAlchemyModelFactory):
+class BaseFactory(factory.alchemy.SQLAlchemyModelFactory):
+    class Meta:
+        sqlalchemy_session = db.session
+        abstract = True
+
+
+class PersonFactory(BaseFactory):
     class Meta:
         model = Person
         sqlalchemy_session = db.session
@@ -23,10 +29,9 @@ class PersonFactory(factory.alchemy.SQLAlchemyModelFactory):
     removed_from_rechtspraak_at = None
 
 
-class VerdictFactory(factory.alchemy.SQLAlchemyModelFactory):
+class VerdictFactory(BaseFactory):
     class Meta:
         model = Verdict
-        sqlalchemy_session = db.session
 
     ecli = "ECLI:NL:TEST:2020:1"
     title = factory.LazyAttribute(lambda a: "{}".format(a.ecli))
