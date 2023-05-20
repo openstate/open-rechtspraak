@@ -132,6 +132,8 @@ def register_commands(app):
 def register_template_filters(app):
     @app.template_filter("date")
     def _jinja2_filter_datetime(datetime):
-        return datetime.strftime("%d-%m-%Y")
+        if datetime:
+            return datetime.strftime("%d-%m-%Y")
+        return ""
 
     return
