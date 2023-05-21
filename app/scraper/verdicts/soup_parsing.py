@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 
 
 def to_soup(content):
-    return BeautifulSoup(content, "lxml")
+    return BeautifulSoup(content, features="xml")
 
 
 def extract_verdicts(soup):
