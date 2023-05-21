@@ -61,6 +61,16 @@ def test_search_protected_person_is_hidden(client):
         assert p.get("last_name") != hidden_person.last_name
 
 
+def test_count(client):
+    count = 3
+    PersonFactory.create_batch(count)
+
+    params = {"limit": 1}
+    r = client.get(url_for("api.person"), query_string=params)
+
+    assert count == r.get_json().get("count")
+
+
 def test_search_by_default_removed_at_are_not_included(client):
     removed_person = PersonFactory(removed_from_rechtspraak_at=datetime.now())
     r = client.get(url_for("api.person"))
