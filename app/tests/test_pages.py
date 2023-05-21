@@ -1,7 +1,5 @@
 from flask import url_for
 
-from app.tests.factories import PersonFactory
-
 
 def test_index(client):
     r = client.get(url_for("base.index"))
@@ -23,13 +21,11 @@ def test_sitemap(client):
     assert r.status_code == 200
 
 
-def test_unprotected_person_in_sitemap(client):
-    person = PersonFactory().save()
+def test_unprotected_person_in_sitemap(client, person):
     r = client.get("/sitemap.xml")
     assert str(person.id) in r.get_data(as_text=True)
 
 
-def test_protected_person_not_in_sitemap(client):
-    person = PersonFactory(protected=True).save()
+def test_protected_person_not_in_sitemap(client, protected_person):
     r = client.get("/sitemap.xml")
-    assert str(person.id) not in r.get_data(as_text=True)
+    assert str(protected_person.id) not in r.get_data(as_text=True)
