@@ -1,4 +1,4 @@
-from app.models import Person, ProfessionalDetail
+from app.models import Person, ProfessionalDetail, Verdict
 
 
 def person_list_serializer(person: Person):
@@ -23,4 +23,27 @@ def person_list_serializer(person: Person):
             }
             for pd in professional_details
         ],
+    }
+
+
+def verdict_serializer(verdict: Verdict):
+    return {
+        "id": verdict.id,
+        "ecli": verdict.ecli,
+        "title": verdict.title,
+        "summary": verdict.summary,
+        "uri": verdict.uri,
+        "issued": verdict.issued,
+        "type": verdict.type,
+        "coverage": verdict.coverage,
+        "subject": verdict.subject,
+        "spatial": verdict.spatial,
+        "procedure": verdict.procedure,
+        "institution": verdict.institution.lido_id if verdict.institution else None,
+        "procedure_type": verdict.procedure_type.lido_id
+        if verdict.procedure_type
+        else None,
+        "legal_area": verdict.legal_area.legal_area_lido_id
+        if verdict.legal_area
+        else None,
     }

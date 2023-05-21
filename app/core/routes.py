@@ -19,7 +19,8 @@ def about():
 
 @core_bp.route("/api_docs")
 def api_docs():
-    return render_template("pages/api_docs.html")
+    person = Person.query.first()
+    return render_template("pages/api_docs.html", person=person)
 
 
 @core_bp.route("/verdict/<id>")
