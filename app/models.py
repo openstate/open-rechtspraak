@@ -126,7 +126,6 @@ class Verdict(UUIDModel):
     title = Column(db.Text, nullable=True)
     summary = Column(db.Text, nullable=True)
     uri = Column(db.Text, nullable=True)
-    deep_link = Column(db.Text, nullable=True)
     issued = Column(db.DateTime, nullable=True)
     zaak_nummer = Column(db.Text, nullable=True)
     type = Column(db.Text, nullable=True)
