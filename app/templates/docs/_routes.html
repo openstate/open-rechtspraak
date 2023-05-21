@@ -17,17 +17,23 @@
           <dt>q</dt>
           <dd>String based search. Use % for a wildcard.</dd>
           <dt>former_judges</dt>
-          <dd>Boolean (true/false, default: false) that determines whether former judges should be included in the resultset.</dd>
+          <dd>Boolean (true/false, default: false) that determines whether former judges should be included in the
+            result set.
+          </dd>
           <dt>limit</dt>
-          <dd>Integer (default: 20, max: 100) that determines the size of the resultset.</dd>
+          <dd>Integer (default: 20, max: 100) that determines the size of the result set.</dd>
           <dt>offset</dt>
           <dd>Integer (default: 0) that determines the number of records that should be skipped.</dd>
         </dl>
 
         <h4>Example url</h4>
-        <a href="{{ url_for('api.person', limit=2, offset=2, q='van', _external=true) }}">
+        <p><a href="{{ url_for('api.person', limit=2, offset=2, q='van', _external=true) }}">
           {{ url_for('api.person', limit=2, offset=2, q='van', _external=true) }}
-        </a>
+        </a></p>
+
+        <h4>Origin of data</h4>
+        <p>We scrape the names, professional details, side jobs and other information of judges from a <a
+          href="https://namenlijst.rechtspraak.nl/">database of the Dutch judiciary</a> (Dutch only).</p>
       </div>
 
       <div class="col-lg-6">
@@ -61,5 +67,62 @@
     </div>
   </div>
 
+  <hr />
+  <div>
+    <h3>LIST verdicts for person</h3>
+    <div class="row">
+      <div class="col-lg-6">
+        <dl>
+          <dt>Path</dt>
+          <dd>{{ url_for('api.person_verdicts', id="id") }}</dd>
+        </dl>
+
+        <h4>Query parameters</h4>
+        <dl>
+          <dt>limit</dt>
+          <dd>Integer (default: 20, max: 100) that determines the size of the result set.</dd>
+          <dt>offset</dt>
+          <dd>Integer (default: 0) that determines the number of records that should be skipped.</dd>
+        </dl>
+
+        <h4>Example url</h4>
+        <p><a href="{{ url_for('api.person_verdicts', id=person.id, _external=true) }}">
+          {{ url_for('api.person_verdicts', id=person.id, _external=true) }}
+        </a></p>
+
+        <h4>Origin of data</h4>
+        <p>We scrape verdicts directly from the API of the Dutch judiciary. You can query a verdict through this URL: <a
+          href="https://data.rechtspraak.nl/uitspraken/content?id=ECLI:NL:RBAMS:2023:3197">https://data.rechtspraak.nl/uitspraken/content?id=ECLI:NL:RBAMS:2023:3197</a>.
+          Note that the Dutch judiciary does not support querying verdicts by judge. </p>
+      </div>
+
+      <div class="col-lg-6">
+        <h4>Response 200</h4>
+        <pre><code class="language-js">{
+  "count": 24,
+  "data": [
+    {
+      "coverage": "NL",
+      "ecli": "ECLI:NL:RBAMS:2023:3197",
+      "id": "9f84c60f-2ace-4c9c-9e7f-626db0d3314e",
+      "institution": "http://standaarden.overheid.nl/owms/terms/Rechtbank_Amsterdam",
+      "issued": "Fri, 19 May 2023 00:00:00 GMT",
+      "legal_area": "http://psi.rechtspraak.nl/rechtsgebied#civielRecht",
+      "procedure": "Kort geding",
+      "procedure_type": "http://psi.rechtspraak.nl/procedure#kortGeding",
+      "spatial": "Amsterdam",
+      "subject": "Civiel recht",
+      "summary": "De gevraagde voorzieningen worden geweigerd, met uitzondering van het verbod ten aanzien van de vooraankondigingen/het promotiemateriaal.",
+      "title": "ECLI:NL:RBAMS:2023:3197, Rechtbank Amsterdam, 19-05-2023, C/13/733232 / KG ZA 23-375",
+      "type": "Uitspraak",
+      "uri": "https://uitspraken.rechtspraak.nl/InzienDocument?id=ECLI:NL:RBAMS:2023:3197"
+    },
+    ...
+  ]
+}
+</code></pre>
+      </div>
+    </div>
+  </div>
 
 </div>
