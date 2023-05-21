@@ -34,6 +34,9 @@
         <h4>Origin of data</h4>
         <p>We scrape the names, professional details, side jobs and other information of judges from a <a
           href="https://namenlijst.rechtspraak.nl/">database of the Dutch judiciary</a> (Dutch only).</p>
+        <p>A judge is labeled as a 'former judge' if their profile is no longer accessible in this database. This is
+          indicated in the API response through the <code>removed_from_rechtspraak_at</code> field, which contains the
+          datetime of when we tried to access that persons profile but got an error response.</p>
       </div>
 
       <div class="col-lg-6">
@@ -55,6 +58,7 @@
       "initials": "B.G.L.",
       "last_name": "Aa",
       "rechtspraak_id": "OdESTwJMbvW70UdZPqTFX1dqz78u__71",
+      "removed_from_rechtspraak_at": "2023-05-21T20:35:30",
       "titles": "dhr. mr.",
       "toon_naam": "dhr. mr. B.G.L. van der Aa",
       "toon_naam_kort": "B.G.L. van der Aa"
@@ -67,7 +71,7 @@
     </div>
   </div>
 
-  <hr />
+  <hr/>
   <div>
     <h3>LIST verdicts for person</h3>
     <div class="row">
@@ -106,7 +110,7 @@
       "ecli": "ECLI:NL:RBAMS:2023:3197",
       "id": "9f84c60f-2ace-4c9c-9e7f-626db0d3314e",
       "institution": "http://standaarden.overheid.nl/owms/terms/Rechtbank_Amsterdam",
-      "issued": "Fri, 19 May 2023 00:00:00 GMT",
+      "issued": "2023-05-19T12:33:23",
       "legal_area": "http://psi.rechtspraak.nl/rechtsgebied#civielRecht",
       "procedure": "Kort geding",
       "procedure_type": "http://psi.rechtspraak.nl/procedure#kortGeding",
