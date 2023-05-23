@@ -1,5 +1,7 @@
+import sentry_sdk
 from flask import Flask
 from flask_talisman import Talisman
+from sentry_sdk.integrations.flask import FlaskIntegration
 
 from app import commands, seed
 from app.api.routes import api_bp
@@ -8,9 +10,11 @@ from app.core.routes import core_bp
 from app.errors import internal_server_error, page_not_found, unauthorized_error
 from app.extensions import cors, db, migrate, sitemap
 from app.redirect.routes import redirect_bp
+from app.util import get_env_variable
 
 
 def create_app(env=None):
+    initialize_sentry()
     app = Flask(__name__, static_folder="static")
     app.config.from_object(get_config(env))
     app.logger.setLevel(app.config["LOG_LEVEL"])
@@ -29,6 +33,18 @@ def flask_extensions(app):
     sitemap.init_app(app)
     cors.init_app(app)
     return None
+
+
+def initialize_sentry():
+    sentry_sdk.init(
+        dsn=get_env_variable("SENTRY_DSN", default=""),
+        integrations=[
+            FlaskIntegration(),
+        ],
+        environment=get_env_variable("SENTRY_ENV", default="development"),
+        traces_sample_rate=0.1,
+        profiles_sample_rate=0.01,
+    )
 
 
 def initialize_talisman(app):
