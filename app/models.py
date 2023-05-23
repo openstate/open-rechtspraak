@@ -24,7 +24,7 @@ class Person(UUIDModel):
     last_scraped_at = Column(db.DateTime, nullable=True)
     protected = Column(db.Boolean, default=False)
     removed_from_rechtspraak_at = Column(db.DateTime, nullable=True)
-    verdicts = relationship("PersonVerdict", back_populates="person", uselist=False)
+    verdicts = relationship("PersonVerdict", back_populates="person")
 
     @property
     def former_judge(self):
@@ -126,7 +126,6 @@ class Verdict(UUIDModel):
     title = Column(db.Text, nullable=True)
     summary = Column(db.Text, nullable=True)
     uri = Column(db.Text, nullable=True)
-    deep_link = Column(db.Text, nullable=True)
     issued = Column(db.DateTime, nullable=True)
     zaak_nummer = Column(db.Text, nullable=True)
     type = Column(db.Text, nullable=True)
@@ -136,7 +135,7 @@ class Verdict(UUIDModel):
     procedure = Column(db.Text, nullable=True)
     raw_xml = Column(db.Text, nullable=True)
     last_scraped_at = Column(db.DateTime, nullable=True)
-    people = relationship("PersonVerdict", back_populates="verdict", uselist=False)
+    people = relationship("PersonVerdict", back_populates="verdict")
     contains_beslissing = Column(db.Boolean, nullable=False, default=False)
     beslissings_text = Column(db.Text, nullable=True)
     institution_id = reference_col("institution", nullable=True)

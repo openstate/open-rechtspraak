@@ -23,7 +23,7 @@ def person_verdict_already_exists(pv):
 
 def recognize_people(text, people=None):
     if not people:
-        current_app.logger.info("No people received, querying people table")
+        current_app.logger.debug("No people received, querying people table")
         people = Person.query.all()
 
     found = []

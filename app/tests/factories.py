@@ -17,6 +17,7 @@ class BaseFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         sqlalchemy_session = db.session
         abstract = True
+        sqlalchemy_session_persistence = "commit"
 
 
 class PersonFactory(BaseFactory):
@@ -45,6 +46,6 @@ class VerdictFactory(BaseFactory):
         model = Verdict
 
     ecli = factory.LazyAttribute(lambda x: generate_ecli())
-    title = factory.LazyAttribute(lambda a: "{}".format(a.ecli))
     issued = factory.Faker("date")
+    title = factory.LazyAttribute(lambda a: "Uitspraak {}".format(a.ecli))
     raw_xml = "<?xml><rdf:description></rdf:rdf></open-rechtspraak>"

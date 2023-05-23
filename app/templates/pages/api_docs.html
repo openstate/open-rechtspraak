@@ -1,23 +1,28 @@
 {% extends 'layouts/base.html' %}
-{% block title %}Home{% endblock %}
+{% block title %}API documentation{% endblock %}
 
 {% block content %}
   <div class="alert alert-info mb-4" role="alert">
-    Deze pagina is alleen beschikbaar in het Engels. Kom je er niet uit? Open dan een issue op onze publieke <a href="https://github.com/openstate/open-rechtspraak/issues">Github Issue Tracker</a>.
+    Deze pagina is alleen beschikbaar in het Engels. Kom je er niet uit? Open dan een issue op onze publieke <a
+    href="https://github.com/openstate/open-rechtspraak/issues">Github Issue Tracker</a>.
   </div>
 
   <h2>Before you get started</h2>
   <ul>
     <li>Our <a href="https://en.wikipedia.org/wiki/Representational_state_transfer">REST</a> <a
-        href="https://en.wikipedia.org/wiki/API">API</a> allows you to programmatically search through the judges in our
+      href="https://en.wikipedia.org/wiki/API">API</a> allows you to programmatically search through the judges in our
       database.
     </li>
     <li>There is no authentication required. It's free to use.</li>
     <li>The examples in this documentation are written in curl or Python using the <a
-        href="https://pypi.org/project/requests/">requests package</a>.
+      href="https://pypi.org/project/requests/">requests package</a>.
     </li>
     <li>If you need help, or if you'd like to show us what you made with our API, open up an <a
-        href="https://github.com/openstate/open-rechtspraak/issues">issue</a>!
+      href="https://github.com/openstate/open-rechtspraak/issues">issue</a>!
+    </li>
+    <li>Most data that we use comes from the website of the Dutch judiciary. For more information on what certain fields
+      mean, please visit <a href="https://www.rechtspraak.nl/Uitspraken/paginas/open-data.aspx">their open data
+        website</a> (Dutch only).
     </li>
   </ul>
 
