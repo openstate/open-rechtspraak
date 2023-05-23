@@ -1,13 +1,9 @@
-import random
-import string
 from datetime import datetime, timedelta
 
 import click
-from faker import Faker
 from flask.cli import with_appcontext
 
 from app.database import db
-from app.models import Person
 from app.scraper.other.institutions import import_institutions_handler
 from app.scraper.other.legal_areas import import_legal_areas_handler
 from app.scraper.other.procedure_types import import_procedure_types_handler
@@ -16,7 +12,6 @@ from app.scraper.verdicts.extract import (
     enrich_verdicts_handler,
     import_verdicts_handler,
 )
-from app.scraper.verdicts.from_files import import_verdicts_from_files_handler
 
 
 @click.command("placeholder")
@@ -56,31 +51,6 @@ def enrich_verdicts():
     enrich_verdicts_handler()
 
 
-def person_generator():
-    fake = Faker()
-    initials = fake.first_name()[0]
-    titles = fake.prefix()
-    last_name = fake.last_name()
-    return {
-        "titles": titles,
-        "last_name": last_name,
-        "gender": random.choice(["male", "female"]),
-        "toon_naam": titles + " " + initials + " " + last_name,
-        "toon_naam_kort": initials + " " + last_name,
-        "rechtspraak_id": "".join(
-            random.choices(string.ascii_uppercase + string.digits, k=10)
-        ),
-    }
-
-
-@click.command("seed")
-@with_appcontext
-def seed():
-    people = [person_generator() for i in range(0, 10)]
-    for person in people:
-        Person.update_or_create(person)
-
-
 @click.command("db_truncate")
 @with_appcontext
 def db_truncate():
@@ -107,9 +77,3 @@ def import_procedure_types():
 @with_appcontext
 def import_legal_areas():
     import_legal_areas_handler()
-
-
-@click.command("import_verdicts_from_files")
-@with_appcontext
-def import_verdicts_from_files():
-    import_verdicts_from_files_handler()

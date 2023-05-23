@@ -24,13 +24,13 @@ def test_removed_at_is_set_on_http_error(requests_mock):
     assert person.removed_from_rechtspraak_at is not None
 
 
-def test_removed_at_is_removed_on_succesful_scrape(requests_mock):
+def test_removed_at_is_removed_on_successful_scrape(requests_mock):
     dt = datetime.now()
     person = PersonFactory(removed_from_rechtspraak_at=dt).save()
     requests_mock.get(
         person_details_url(person.rechtspraak_id), json={}, status_code=200
     )
 
-    assert person.removed_from_rechtspraak_at is dt
+    assert person.removed_from_rechtspraak_at == dt
     enrich_person(person)
     assert person.removed_from_rechtspraak_at is None

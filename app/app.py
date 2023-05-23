@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_talisman import Talisman
 
-from app import commands
+from app import commands, seed
 from app.api.routes import api_bp
 from app.config import get_config
 from app.core.routes import core_bp
@@ -125,14 +125,15 @@ def register_commands(app):
     app.cli.add_command(commands.import_institutions)
     app.cli.add_command(commands.import_procedure_types)
     app.cli.add_command(commands.import_legal_areas)
-    app.cli.add_command(commands.import_verdicts_from_files)
-    app.cli.add_command(commands.seed)
     app.cli.add_command(commands.db_truncate)
+    app.cli.add_command(seed.seed)
 
 
 def register_template_filters(app):
     @app.template_filter("date")
     def _jinja2_filter_datetime(datetime):
-        return datetime.strftime("%d-%m-%Y")
+        if datetime:
+            return datetime.strftime("%d-%m-%Y")
+        return ""
 
     return

@@ -1,6 +1,6 @@
 .PHONY: build destroy down logs reset schema up test
 
-COMPOSE = docker-compose -f docker-compose.yml -f docker-compose-dev.yml
+COMPOSE = docker compose -f docker-compose.yml -f docker-compose-dev.yml
 FLASK = $(COMPOSE) run --rm app flask
 WEBPACK = $(COMPOSE) run --rm webpack
 
@@ -30,7 +30,7 @@ db-truncate:
 	$(FLASK) db_truncate
 
 test:
-	$(COMPOSE) exec -e FLASK_DEBUG=0 -e FLASK_ENV=test app pytest ${TEST_PATH}
+	$(COMPOSE) exec app pytest ${TEST_PATH}
 
 cli:
 	$(COMPOSE) run --rm app bash
