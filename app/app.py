@@ -43,6 +43,7 @@ def initialize_sentry():
         ],
         environment=get_env_variable("SENTRY_ENV", default="development"),
         traces_sample_rate=0.1,
+        profiles_sample_rate=0.01,
     )
 
 
