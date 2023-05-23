@@ -1,69 +1,15 @@
 from datetime import datetime
-from json import JSONDecodeError
 
 import requests
 from flask import current_app
 
 from app.models import Person, ProfessionalDetail, SideJob
-from app.scraper.people.config import DETAILS_ENDPOINT, HEADERS, SEARCH_ENDPOINT
+from app.scraper.people.config import DETAILS_ENDPOINT, FAULTY_URL
 from app.scraper.people.utils import (
     find_institution_for_professional_detail,
-    find_request_verification_token,
-    format_payload,
     professional_detail_already_exists,
-    search_strings,
     side_job_already_exists,
 )
-
-FAULTY_URL = "https://mededeling.rechtspraak.nl/400"
-
-
-def import_people_handler():
-    with requests.Session() as s:
-        # We first need a CSRF token to be able to query the namenlijst.rechtspraak.nl API
-        r = s.get("https://namenlijst.rechtspraak.nl/#!/zoeken/index")
-        HEADERS["__RequestVerificationToken"] = find_request_verification_token(
-            r.content
-        )
-        current_app.logger.debug(
-            f'Found CSRF token: {HEADERS["__RequestVerificationToken"]}'
-        )
-
-        for search_string in search_strings():
-            payload = format_payload(search_string)
-            r = s.post(SEARCH_ENDPOINT, json=payload, headers=HEADERS)
-
-            current_app.logger.info(
-                f"Collecting people from {r.url} with payload {payload}"
-            )
-
-            if not r.ok or r.url == FAULTY_URL:
-                current_app.logger.error(
-                    f"Error during people collection: STATUS_CODE {r.status_code} | URL {r.url} | CONTENT {r.content}"
-                )
-                continue
-
-            try:
-                people = (
-                    r.json().get("result", {}).get("model", {}).get("groupedItems", {})
-                )
-            except JSONDecodeError:
-                current_app.logger.error(f"JSONDecodeError found when scraping {r.url}")
-                people = []
-
-            current_app.logger.debug(f"{len(people)} people found for {r.url}")
-
-            for person in people:
-                p_kwargs = Person.from_dict(person)
-                person_already_exists = Person.query.filter(
-                    Person.toon_naam == p_kwargs.get("toon_naam")
-                ).all()
-                if not person_already_exists:
-                    Person.create(**p_kwargs)
-                else:
-                    current_app.logger.debug(
-                        f'Person with rechtspraak_id {p_kwargs.get("rechtspraak_id")} already exists'
-                    )
 
 
 def enrich_people_handler():

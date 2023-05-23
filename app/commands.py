@@ -7,7 +7,8 @@ from app.database import db
 from app.scraper.other.institutions import import_institutions_handler
 from app.scraper.other.legal_areas import import_legal_areas_handler
 from app.scraper.other.procedure_types import import_procedure_types_handler
-from app.scraper.people.extract import enrich_people_handler, import_people_handler
+from app.scraper.people.enrich_people import enrich_people_handler
+from app.scraper.people.import_people import import_people_handler
 from app.scraper.verdicts.extract import (
     enrich_verdicts_handler,
     import_verdicts_handler,

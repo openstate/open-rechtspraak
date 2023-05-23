@@ -2,12 +2,20 @@
 {% block title %}{{ person.toon_naam }}{% endblock %}
 {% block main_title %}{{ person.toon_naam }}{% endblock %}
 
+{% block sub_title %}
+  {% if person.former_judge %}
+    is sinds {{ person.removed_from_rechtspraak_at|date }} geen rechter meer
+  {% endif %}
+{% endblock %}
+
 {% block og_title %}
   <meta property="og:title" content="{{ person.toon_naam }}"/>{% endblock %}
 {% block og_description %}Op deze pagina zie je alle beroepsgegevens en nevenfuncties van {{ person.toon_naam }}
   .{% endblock %}
 
 {% block content %}
+  {{ person.former_judge }}
+
   <div class="row">
     <div class="col-lg-8">
       <div>
