@@ -24,7 +24,7 @@ def test_removed_at_is_set_on_http_error(requests_mock, person):
 
 def test_removed_at_is_removed_on_successful_scrape(requests_mock):
     dt = datetime.now()
-    person = PersonFactory(removed_from_rechtspraak_at=dt).save()
+    person = PersonFactory(removed_from_rechtspraak_at=dt)
     requests_mock.get(
         person_details_url(person.rechtspraak_id), json={}, status_code=200
     )

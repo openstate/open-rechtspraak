@@ -1,20 +1,23 @@
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import Query, joinedload
 from werkzeug.datastructures import MultiDict
 
 from app.models import Person, PersonVerdict, Verdict
 
 
 class BaseService:
+    DEFAULT_OFFSET = 0
     DEFAULT_LIMIT = 20
     MAX_LIMIT = 100
 
-    def __init__(self, query_params=MultiDict[str, str]):
+    def __init__(
+        self, query_params: MultiDict, queryset: Query = None, order: list = None
+    ):
         self.limit = self._max_limit(
             query_params.get("limit", default=self.DEFAULT_LIMIT, type=int)
         )
-        self.offset = query_params.get("offset", default=0, type=int)
-        self.queryset = None
-        self.order: list = []
+        self.offset = query_params.get("offset", default=self.DEFAULT_OFFSET, type=int)
+        self.queryset = queryset or Query([])
+        self.order = order or []
 
     def _max_limit(self, limit: int):
         if limit > self.MAX_LIMIT:

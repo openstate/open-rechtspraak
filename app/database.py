@@ -91,7 +91,6 @@ class PkModel(Model):
 
 
 class UUIDModel(Model):
-
     __abstract__ = True
     id = Column(
         UUID(as_uuid=True),
