@@ -15,8 +15,13 @@ def redirect_api_docs():
 @api_bp.route("/person")
 def person():
     service = PersonService(request.args)
+    service.apply_filtering()
+
     count = service.queryset.count()
-    people = service.list_query(request.args).all()
+
+    service.apply_ordering()
+    service.apply_pagination()
+    people = service.queryset.all()
 
     return jsonify(
         data=[person_list_serializer(item) for item in people],
@@ -33,7 +38,10 @@ def person_verdicts(id):
 
     service = PersonVerdictsService(person, request.args)
     count = service.queryset.count()
-    verdicts = service.list_query().all()
+
+    service.apply_ordering()
+    service.apply_pagination()
+    verdicts = service.queryset().all()
 
     return jsonify(
         data=[verdict_serializer(item) for item in verdicts],
