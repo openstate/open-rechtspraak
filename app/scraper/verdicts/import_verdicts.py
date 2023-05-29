@@ -12,14 +12,21 @@ from app.scraper.verdicts.config import (
 from app.scraper.verdicts.utils import verdict_already_exists
 
 
-def import_verdicts_handler(start_datetime, end_datetime):
-    # The search endpoint returns verdicts between two 'date' query params. If only one 'date' query param is given,
-    # then only the verdicts of that date are returned.
-    DEFAULT_SEARCH_QUERY_PARAMS["date"] = [start_datetime, end_datetime]
+def import_verdicts_handler(start_datetime: str, end_datetime: str):
+    """
+    Datetime parameters must be formatted as such: %Y-%m-%dT%H:%M:%S
+
+    See https://www.rechtspraak.nl/Uitspraken/paginas/open-data.aspx for more details on how the search endpoint works.
+    """
+
+    params = DEFAULT_SEARCH_QUERY_PARAMS
+    params["date"] = [start_datetime, end_datetime]
 
     while True:
-        r = requests.get(SEARCH_ENDPOINT, params=DEFAULT_SEARCH_QUERY_PARAMS)
-        current_app.logger.info(f"Collecting verdicts from {r.url}")
+        current_app.logger.info(
+            f"Collecting verdicts from {SEARCH_ENDPOINT} with params: {params}"
+        )
+        r = requests.get(SEARCH_ENDPOINT, params=params)
 
         if not r.ok or r.url == FAULTY_URL:
             current_app.logger.error(
@@ -29,11 +36,7 @@ def import_verdicts_handler(start_datetime, end_datetime):
 
         verdicts = extract_verdicts(to_soup(r.content))
 
-        if len(verdicts) == 0:
-            current_app.logger.debug(f"No more verdicts found for {r.url}")
-            break
-        else:
-            current_app.logger.debug(f"{len(verdicts)} verdicts found for {r.url}")
+        current_app.logger.info(f"{len(verdicts)} verdicts found for {r.url}")
 
         for verdict in verdicts:
             verdict_kwargs = {
@@ -49,6 +52,10 @@ def import_verdicts_handler(start_datetime, end_datetime):
                     f'Verdict for {verdict_kwargs.get("ecli")} already exists'
                 )
 
-        DEFAULT_SEARCH_QUERY_PARAMS["from"] = (
-            DEFAULT_SEARCH_QUERY_PARAMS["from"] + DEFAULT_LIMIT
-        )
+        params["from"] = params["from"] + DEFAULT_LIMIT
+
+        if len(verdicts) < DEFAULT_LIMIT:
+            current_app.logger.info(
+                f"Last scrape yielded less than {DEFAULT_LIMIT}, indicating no more verdicts can be found."
+            )
+            break
