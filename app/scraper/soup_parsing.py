@@ -63,10 +63,10 @@ def find_institution_identifier(soup):
 def find_procedure_type_identifier(soup):
     procedure_type = soup.find("psi:procedure")
     if procedure_type:
-        return procedure_type["resourceidentifier"]
+        return procedure_type["resourceIdentifier"]
 
 
 def find_legal_area_identifier(soup):
     legal_area = soup.find("dcterms:subject")
     if legal_area:
-        return legal_area["resourceidentifier"]
+        return legal_area["resourceIdentifier"]

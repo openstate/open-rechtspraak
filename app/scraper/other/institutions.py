@@ -2,7 +2,7 @@ import requests
 from flask import current_app
 
 from app.models import Institution
-from app.scraper.verdicts.soup_parsing import safe_find_text, to_soup
+from app.scraper.soup_parsing import safe_find_text, to_soup
 
 
 def transform_institution_xml_to_dict(soup):
