@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pytest
 from pytest_factoryboy import register
 
@@ -42,6 +44,11 @@ def person() -> Person:
 @pytest.fixture
 def protected_person() -> Person:
     return f.PersonFactory(protected=True)
+
+
+@pytest.fixture
+def removed_person() -> Person:
+    return f.PersonFactory(removed_from_rechtspraak_at=datetime.now())
 
 
 @pytest.fixture

@@ -15,12 +15,6 @@ from app.scraper.verdicts.extract import (
 )
 
 
-@click.command("placeholder")
-@with_appcontext
-def placeholder():
-    print("Still here!")
-
-
 @click.command("import_people")
 @with_appcontext
 def import_people():

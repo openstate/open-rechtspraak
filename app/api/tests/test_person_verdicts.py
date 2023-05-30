@@ -68,3 +68,9 @@ def test_offset_limit(client, person_with_verdicts):
 def test_protected_person_is_hidden(client, protected_person):
     r = client.get(url_for("api.person_verdicts", id=protected_person.id))
     assert r.status_code == 404
+
+
+def test_illegal_id(client, person):
+    illegal_id = "abc"
+    r = client.get(url_for("api.person_verdicts", id=illegal_id))
+    assert r.status_code == 404
