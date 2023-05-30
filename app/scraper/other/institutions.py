@@ -2,17 +2,18 @@ import requests
 from flask import current_app
 
 from app.models import Institution
+from app.scraper.other.config import INSTITUTIONS_URL
 from app.scraper.verdicts.soup_parsing import safe_find_text, to_soup
 
 
 def transform_institution_xml_to_dict(soup):
     return {
-        "lido_id": safe_find_text(soup, "identifier"),
-        "name": safe_find_text(soup, "naam"),
-        "abbrevation": safe_find_text(soup, "afkorting") or None,
-        "type": safe_find_text(soup, "type"),
-        "begin_date": safe_find_text(soup, "begindate") or None,
-        "end_date": safe_find_text(soup, "enddate") or None,
+        "lido_id": safe_find_text(soup, "Identifier"),
+        "name": safe_find_text(soup, "Naam"),
+        "abbrevation": safe_find_text(soup, "Afkorting") or None,
+        "type": safe_find_text(soup, "Type"),
+        "begin_date": safe_find_text(soup, "BeginDate") or None,
+        "end_date": safe_find_text(soup, "EndDate") or None,
     }
 
 
@@ -25,12 +26,10 @@ def institution_exists(institution_dict):
 
 
 def import_institutions_handler():
-    BASE_URL = "http://data.rechtspraak.nl/Waardelijst/Instanties"
-
-    r = requests.get(BASE_URL)
+    r = requests.get(INSTITUTIONS_URL)
     r.raise_for_status()
 
-    institutions = to_soup(r.content).find_all("instantie")
+    institutions = to_soup(r.content).find_all("Instantie")
     current_app.logger.info(f"Found {len(institutions)} institutions")
 
     for institution in institutions:
