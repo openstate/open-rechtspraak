@@ -2,13 +2,14 @@ import requests
 from flask import current_app
 
 from app.models import LegalArea
+from app.scraper.other.config import LEGAL_AREAS_URL
 from app.scraper.soup_parsing import safe_find_text, to_soup
 
 
 def transform_legal_area_xml_to_dict(area):
     return {
-        "legal_area_lido_id": safe_find_text(area, "identifier"),
-        "legal_area_name": safe_find_text(area, "naam"),
+        "legal_area_lido_id": safe_find_text(area, "Identifier"),
+        "legal_area_name": safe_find_text(area, "Naam"),
     }
 
 
@@ -21,15 +22,13 @@ def legal_area_exists(legal_area_dict):
 
 
 def import_legal_areas_handler():
-    BASE_URL = "http://data.rechtspraak.nl/Waardelijst/Rechtsgebieden"
-
-    r = requests.get(BASE_URL)
+    r = requests.get(LEGAL_AREAS_URL)
     r.raise_for_status()
 
     main_areas = (
         to_soup(r.content)
-        .find("rechtsgebieden")
-        .findChildren("rechtsgebied", recursive=False)
+        .find("Rechtsgebieden")
+        .findChildren("Rechtsgebied", recursive=False)
     )
     current_app.logger.info(f"Found {len(main_areas)} main legal areas")
 
@@ -38,7 +37,7 @@ def import_legal_areas_handler():
         if not legal_area_exists(legal_area_dict):
             LegalArea.create(**legal_area_dict)
 
-        sub_areas = main_area.find_all("rechtsgebied")
+        sub_areas = main_area.find_all("Rechtsgebied")
         current_app.logger.info(f"Found {len(sub_areas)} sub areas")
 
         for sub_area in sub_areas:

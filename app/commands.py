@@ -13,12 +13,6 @@ from app.scraper.verdicts.enrich_verdicts import enrich_verdicts_handler
 from app.scraper.verdicts.import_verdicts import import_verdicts_handler
 
 
-@click.command("placeholder")
-@with_appcontext
-def placeholder():
-    print("Still here!")
-
-
 @click.command("import_people")
 @with_appcontext
 def import_people():

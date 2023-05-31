@@ -1,6 +1,5 @@
 from json import JSONDecodeError
 
-import requests
 from flask import current_app
 
 from app.models import Person
@@ -10,12 +9,13 @@ from app.scraper.people.utils import (
     format_payload,
     search_strings,
 )
+from app.scraper.rechtspraak_session import RechtspraakScrapeSession
 
 
 def import_people_handler():
-    with requests.Session() as s:
+    with RechtspraakScrapeSession() as session:
         # We first need a CSRF token to be able to query the namenlijst.rechtspraak.nl API
-        r = s.get("https://namenlijst.rechtspraak.nl/#!/zoeken/index")
+        r = session.get("https://namenlijst.rechtspraak.nl/#!/zoeken/index")
         HEADERS["__RequestVerificationToken"] = find_request_verification_token(
             r.content
         )
@@ -24,32 +24,35 @@ def import_people_handler():
         )
 
         for search_string in search_strings():
-            payload = format_payload(search_string)
-            r = s.post(SEARCH_ENDPOINT, json=payload, headers=HEADERS)
+            import_people_by_search_string(search_string, session)
 
-            current_app.logger.info(
-                f"Collecting people from {r.url} with payload {payload}"
-            )
 
-            if not r.ok or r.url == FAULTY_URL:
-                current_app.logger.error(
-                    f"Error during people collection: STATUS_CODE {r.status_code} | URL {r.url} | CONTENT {r.content}"
-                )
-                continue
+def import_people_by_search_string(
+    search_string: str, session: RechtspraakScrapeSession
+):
+    payload = format_payload(search_string)
+    current_app.logger.info(
+        f"Importing people by search string '{search_string}' from {SEARCH_ENDPOINT}"
+    )
 
-            try:
-                people = (
-                    r.json().get("result", {}).get("model", {}).get("groupedItems", {})
-                )
-            except JSONDecodeError:
-                current_app.logger.error(f"JSONDecodeError found when scraping {r.url}")
-                people = []
+    r = session.post(SEARCH_ENDPOINT, json=payload, headers=HEADERS, timeout=3)
 
-            current_app.logger.debug(f"{len(people)} people found for {r.url}")
+    if not r.ok or r.url == FAULTY_URL:
+        current_app.logger.error(
+            f"Error during people collection: STATUS_CODE {r.status_code} | URL {r.url} | CONTENT {r.content}"
+        )
+        return
 
-            for person in people:
-                print(person)
-                update_or_create_person(person)
+    try:
+        people = r.json().get("result", {}).get("model", {}).get("groupedItems", {})
+    except JSONDecodeError:
+        current_app.logger.error(f"JSONDecodeError found when scraping {r.url}")
+        people = []
+
+    current_app.logger.debug(f"{len(people)} people found for {r.url}")
+
+    for person in people:
+        update_or_create_person(person)
 
 
 def update_or_create_person(person: dict) -> Person:

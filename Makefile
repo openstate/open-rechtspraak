@@ -33,7 +33,7 @@ test:
 	$(COMPOSE) exec app pytest ${TEST_PATH}
 
 cli:
-	$(COMPOSE) run --rm app bash
+	$(COMPOSE) exec app bash
 
 .env:
 	cp .env.dist .env

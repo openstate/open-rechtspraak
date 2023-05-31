@@ -3,6 +3,7 @@ from flask import Blueprint, abort, redirect, render_template, url_for
 from app.extensions import sitemap
 from app.models import Person, PersonVerdict, ProfessionalDetail, SideJob, Verdict
 from app.scraper.soup_parsing import find_beslissing, to_soup
+from app.util import is_valid_uuid
 
 core_bp = Blueprint("base", __name__)
 
@@ -49,6 +50,9 @@ def verdict_by_ecli(ecli):
 
 @core_bp.route("/person/<id>")
 def person_detail(id):
+    if not is_valid_uuid(id):
+        abort(404)
+
     person = Person.query.filter(Person.id == id).first()
 
     if person.protected:

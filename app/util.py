@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 from typing import Union
+from uuid import UUID
 
 import pytz
 
@@ -60,3 +61,11 @@ def determine_gender(toonnaam):
 
 def extract_initials(toonnaam_kort):
     return toonnaam_kort.split()[0]
+
+
+def is_valid_uuid(uuid):
+    try:
+        UUID(uuid, version=4)
+        return True
+    except ValueError:
+        return False
