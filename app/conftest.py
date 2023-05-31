@@ -42,6 +42,11 @@ def person() -> Person:
 
 
 @pytest.fixture
+def second_person() -> Person:
+    return f.PersonFactory()
+
+
+@pytest.fixture
 def protected_person() -> Person:
     return f.PersonFactory(protected=True)
 

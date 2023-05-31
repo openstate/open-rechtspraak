@@ -1,27 +1,26 @@
+from typing import List
+
 from flask import current_app
 
 from app.models import Person, PersonVerdict, Verdict
 
 
-def verdict_already_exists(ecli):
+def verdict_already_exists(ecli: str) -> bool:
     verdicts = Verdict.query.filter(Verdict.ecli == ecli).all()
-
-    if verdicts:
-        return True
+    return True if verdicts else False
 
 
-def person_verdict_already_exists(pv):
+def person_verdict_already_exists(pv: dict) -> bool:
     pv = (
         PersonVerdict.query.filter(PersonVerdict.person_id == pv.get("person_id"))
         .filter(PersonVerdict.verdict_id == pv.get("verdict_id"))
         .filter(PersonVerdict.role == pv.get("role"))
         .all()
     )
-    if pv:
-        return True
+    return True if pv else False
 
 
-def recognize_people(text, people=None):
+def recognize_people(text: str, people: List[Person] = None) -> List[Person]:
     if not people:
         current_app.logger.debug("No people received, querying people table")
         people = Person.query.all()

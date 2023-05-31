@@ -9,10 +9,8 @@ from app.scraper.other.legal_areas import import_legal_areas_handler
 from app.scraper.other.procedure_types import import_procedure_types_handler
 from app.scraper.people.enrich_people import enrich_people_handler
 from app.scraper.people.import_people import import_people_handler
-from app.scraper.verdicts.extract import (
-    enrich_verdicts_handler,
-    import_verdicts_handler,
-)
+from app.scraper.verdicts.enrich_verdicts import enrich_verdicts_handler
+from app.scraper.verdicts.import_verdicts import import_verdicts_handler
 
 
 @click.command("import_people")

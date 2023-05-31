@@ -2,7 +2,7 @@ from flask import Blueprint, abort, redirect, render_template, url_for
 
 from app.extensions import sitemap
 from app.models import Person, PersonVerdict, ProfessionalDetail, SideJob, Verdict
-from app.scraper.verdicts.soup_parsing import find_beslissing, to_soup
+from app.scraper.soup_parsing import find_beslissing, to_soup
 from app.util import is_valid_uuid
 
 core_bp = Blueprint("base", __name__)

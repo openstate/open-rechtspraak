@@ -3,7 +3,7 @@ from flask import current_app
 
 from app.models import ProcedureType
 from app.scraper.other.config import PROCEDURE_TYPES_URL
-from app.scraper.verdicts.soup_parsing import safe_find_text, to_soup
+from app.scraper.soup_parsing import safe_find_text, to_soup
 
 
 def transform_procedure_type_xml_to_dict(soup):
