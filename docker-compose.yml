@@ -48,5 +48,5 @@ volumes:
 networks:
   internal:
   nginx-load-balancer:
-    external:
-      name: docker_nginx-load-balancer
+    name: docker_nginx-load-balancer
+    external: true
