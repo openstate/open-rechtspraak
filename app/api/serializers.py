@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Union
 
-from app.models import Person, ProfessionalDetail, Verdict
+from app.models import Person, Verdict
 
 
 def serialize_dt(dt: datetime) -> Union[str, None]:
@@ -9,9 +9,10 @@ def serialize_dt(dt: datetime) -> Union[str, None]:
 
 
 def person_list_serializer(person: Person):
-    professional_details = ProfessionalDetail.query.filter(
-        ProfessionalDetail.person_id == person.id
-    ).filter(ProfessionalDetail.end_date.is_(None))
+    # only show professional details that are still active
+    professional_details = [
+        detail for detail in person.professional_detail if detail.end_date is not None
+    ]
     return {
         "id": person.id,
         "titles": person.titles,
