@@ -47,7 +47,9 @@ class PersonService(BaseService):
     def __init__(self, query_params=MultiDict[str, str]):
         super().__init__(query_params)
         self.query_params = query_params
-        self.queryset = Person.query.filter(Person.protected.isnot(True))
+        self.queryset = Person.query.filter(Person.protected.isnot(True)).options(
+            joinedload(Person.professional_detail)
+        )
         self.order = [Person.last_name.asc(), Person.id.asc()]
 
     def apply_filtering(self):
@@ -58,7 +60,6 @@ class PersonService(BaseService):
         include_former_judges = self.query_params.get(
             "former_judges", default=False, type=lambda v: v.lower() == "true"
         )
-        print(include_former_judges, type(include_former_judges), flush=True)
         if include_former_judges is False:
             self.queryset = self.queryset.filter(
                 Person.removed_from_rechtspraak_at.is_(None)
