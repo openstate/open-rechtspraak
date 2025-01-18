@@ -1,5 +1,7 @@
 from requests import Session
-from requests.adapters import HTTPAdapter, Retry
+from requests.adapters import Retry
+
+from requests_ratelimiter import LimiterAdapter
 
 
 class RechtspraakScrapeSession(Session):
@@ -14,14 +16,16 @@ class RechtspraakScrapeSession(Session):
 
     def __init__(self):
         super().__init__()
+
         retries = Retry(
             total=3,
             backoff_factor=2,
             raise_on_status=False,
             status_forcelist=tuple(range(401, 600)),
         )
-        self.mount("http://", HTTPAdapter(max_retries=retries))
-        self.mount("https://", HTTPAdapter(max_retries=retries))
+        adapter = LimiterAdapter(per_second=0.5, per_minute=30, burst=1, max_retries=retries)
+        self.mount("http://", adapter)
+        self.mount("https://", adapter)
 
     def request(self, *args, **kwargs):
         kwargs.setdefault("timeout", 2)

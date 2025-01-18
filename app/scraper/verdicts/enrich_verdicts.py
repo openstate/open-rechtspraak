@@ -1,12 +1,12 @@
 import math
 from datetime import datetime
 
-import requests
 from flask import current_app
 from sqlalchemy.exc import DataError
 
 from app.errors import EnrichError
 from app.models import Institution, LegalArea, PersonVerdict, ProcedureType, Verdict
+from app.scraper.rechtspraak_session import RechtspraakScrapeSession
 from app.scraper.soup_parsing import (
     find_beslissing,
     find_institution_identifier,
@@ -27,31 +27,33 @@ def enrich_verdicts_handler():
         f"{runs} number of runs needed to enrich {total_no_of_verdicts} un-enriched verdicts"
     )
 
-    for run in range(0, runs):
-        offset = run * 1000
-        current_app.logger.info(f"Run {run} with offset {offset}")
-        verdicts = base_query.limit(1000).all()
-        for verdict in verdicts:
-            try:
-                if verdict.raw_xml is None:
-                    enrich_verdict(verdict)
+    with RechtspraakScrapeSession() as session:
+        for run in range(0, runs):
+            offset = run * 1000
+            current_app.logger.info(f"Run {run} with offset {offset}")
+            verdicts = base_query.limit(1000).all()
 
-                if verdict.raw_xml is not None:
-                    find_people_for_verdict(verdict)
-                    find_institution_for_verdict(verdict)
-                    find_procedure_type_for_verdict(verdict)
-                    find_legal_area_for_verdict(verdict)
-            except EnrichError:
-                current_app.logger.error(
-                    "An unknown problem during verdict enrichment was encountered."
-                )
-                pass
+            for verdict in verdicts:
+                try:
+                    if verdict.raw_xml is None:
+                        enrich_verdict(session, verdict)
+
+                    if verdict.raw_xml is not None:
+                        find_people_for_verdict(verdict)
+                        find_institution_for_verdict(verdict)
+                        find_procedure_type_for_verdict(verdict)
+                        find_legal_area_for_verdict(verdict)
+                except EnrichError:
+                    current_app.logger.error(
+                        "An unknown problem during verdict enrichment was encountered."
+                    )
+                    pass
 
 
-def enrich_verdict(verdict):
+def enrich_verdict(session: RechtspraakScrapeSession, verdict):
     current_app.logger.debug(f"Enriching {verdict.ecli}")
     params = {"id": verdict.ecli}
-    r = requests.get(DETAILS_ENDPOINT, params=params)
+    r = session.get(DETAILS_ENDPOINT, params=params)
     current_app.logger.info(f"Collecting verdict information from {r.url}")
 
     if not r.ok or r.url == FAULTY_URL:
