@@ -1,8 +1,8 @@
-import requests
 from flask import current_app
 
 from app.models import LegalArea
 from app.scraper.other.config import LEGAL_AREAS_URL
+from app.scraper.rechtspraak_session import RechtspraakScrapeSession
 from app.scraper.soup_parsing import safe_find_text, to_soup
 
 
@@ -22,29 +22,30 @@ def legal_area_exists(legal_area_dict):
 
 
 def import_legal_areas_handler():
-    r = requests.get(LEGAL_AREAS_URL)
-    r.raise_for_status()
+    with RechtspraakScrapeSession() as session:
+        r = session.get(LEGAL_AREAS_URL)
+        r.raise_for_status()
 
-    main_areas = (
-        to_soup(r.content)
-        .find("Rechtsgebieden")
-        .findChildren("Rechtsgebied", recursive=False)
-    )
-    current_app.logger.info(f"Found {len(main_areas)} main legal areas")
+        main_areas = (
+            to_soup(r.content)
+            .find("Rechtsgebieden")
+            .findChildren("Rechtsgebied", recursive=False)
+        )
+        current_app.logger.info(f"Found {len(main_areas)} main legal areas")
 
-    for main_area in main_areas:
-        legal_area_dict = transform_legal_area_xml_to_dict(main_area)
-        if not legal_area_exists(legal_area_dict):
-            LegalArea.create(**legal_area_dict)
-
-        sub_areas = main_area.find_all("Rechtsgebied")
-        current_app.logger.info(f"Found {len(sub_areas)} sub areas")
-
-        for sub_area in sub_areas:
-            legal_area_dict = transform_legal_area_xml_to_dict(sub_area)
-
+        for main_area in main_areas:
+            legal_area_dict = transform_legal_area_xml_to_dict(main_area)
             if not legal_area_exists(legal_area_dict):
                 LegalArea.create(**legal_area_dict)
-                current_app.logger.info(
-                    f"New legal area {legal_area_dict.get('legal_area_name')} added"
-                )
+
+            sub_areas = main_area.find_all("Rechtsgebied")
+            current_app.logger.info(f"Found {len(sub_areas)} sub areas")
+
+            for sub_area in sub_areas:
+                legal_area_dict = transform_legal_area_xml_to_dict(sub_area)
+
+                if not legal_area_exists(legal_area_dict):
+                    LegalArea.create(**legal_area_dict)
+                    current_app.logger.info(
+                        f"New legal area {legal_area_dict.get('legal_area_name')} added"
+                    )

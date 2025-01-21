@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from app.scraper.rechtspraak_session import RechtspraakScrapeSession
 from app.scraper.people.enrich_people import enrich_person, person_details_url
 from app.tests.factories import PersonFactory
 
@@ -10,7 +11,8 @@ def test_removed_at_is_not_set(requests_mock, person):
     )
 
     assert person.removed_from_rechtspraak_at is None
-    enrich_person(person)
+    with RechtspraakScrapeSession() as session:
+        enrich_person(session, person)
     assert person.removed_from_rechtspraak_at is None
 
 
@@ -18,7 +20,8 @@ def test_removed_at_is_set_on_http_error(requests_mock, person):
     requests_mock.get(person_details_url(person.rechtspraak_id), status_code=500)
 
     assert person.removed_from_rechtspraak_at is None
-    enrich_person(person)
+    with RechtspraakScrapeSession() as session:
+        enrich_person(session, person)
     assert person.removed_from_rechtspraak_at is not None
 
 
@@ -30,5 +33,6 @@ def test_removed_at_is_removed_on_successful_scrape(requests_mock):
     )
 
     assert person.removed_from_rechtspraak_at == dt
-    enrich_person(person)
+    with RechtspraakScrapeSession() as session:
+        enrich_person(session, person)
     assert person.removed_from_rechtspraak_at is None

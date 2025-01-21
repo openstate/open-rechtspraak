@@ -1,8 +1,8 @@
-import requests
 from flask import current_app
 
 from app.models import Institution
 from app.scraper.other.config import INSTITUTIONS_URL
+from app.scraper.rechtspraak_session import RechtspraakScrapeSession
 from app.scraper.soup_parsing import safe_find_text, to_soup
 
 
@@ -26,17 +26,18 @@ def institution_exists(institution_dict):
 
 
 def import_institutions_handler():
-    r = requests.get(INSTITUTIONS_URL)
-    r.raise_for_status()
+    with RechtspraakScrapeSession() as session:
+        r = session.get(INSTITUTIONS_URL)
+        r.raise_for_status()
 
-    institutions = to_soup(r.content).find_all("Instantie")
-    current_app.logger.info(f"Found {len(institutions)} institutions")
+        institutions = to_soup(r.content).find_all("Instantie")
+        current_app.logger.info(f"Found {len(institutions)} institutions")
 
-    for institution in institutions:
-        institution_dict = transform_institution_xml_to_dict(institution)
+        for institution in institutions:
+            institution_dict = transform_institution_xml_to_dict(institution)
 
-        if not institution_exists(institution_dict):
-            Institution.create(**institution_dict)
-            current_app.logger.info(
-                f"New institution {institution_dict.get('name')} added"
-            )
+            if not institution_exists(institution_dict):
+                Institution.create(**institution_dict)
+                current_app.logger.info(
+                    f"New institution {institution_dict.get('name')} added"
+                )
