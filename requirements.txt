@@ -10,7 +10,7 @@ factory_boy==3.3.1
 Faker==30.8.2
 filelock==3.16.1
 Flask==3.0.3
-Flask-Cors==5.0.0
+Flask-Cors==6.0.0
 Flask-Migrate==4.0.7
 Flask-Sitemap==0.4.0
 Flask-SQLAlchemy==3.1.1
