@@ -48,4 +48,4 @@ SQLAlchemy==2.0.36
 typing_extensions==4.12.2
 urllib3==2.2.3
 virtualenv==20.27.1
-Werkzeug==3.1.1
+Werkzeug==3.1.4
