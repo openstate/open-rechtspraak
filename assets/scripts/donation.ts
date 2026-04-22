@@ -9,13 +9,13 @@ const lastMonth = (): Date => {
 class DonationUser {
   STORAGE_KEY = 'last-donation-modal-shown-at';
 
-  store(value: any): void {
+  store(value: string): void {
     localStorage.setItem(this.STORAGE_KEY, value);
   }
 
   registerModalShown(): void {
     const date = new Date();
-    this.store(date);
+    this.store(date.toISOString());
   }
 
   lastTimeModalShown(): (Date | null) {
