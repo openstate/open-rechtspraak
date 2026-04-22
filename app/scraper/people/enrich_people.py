@@ -31,10 +31,7 @@ def enrich_person(session: RechtspraakScrapeSession, person: Person) -> None:
         f"Enriching person {person.id} with information from {r.url}"
     )
 
-    # r.ok means a status code of 400 or higher 
-    # FAULTY_URL means we were redirected to FAULTY_URL
-    # if no "model" key exists, it means the person does not exist anymore in namenlijst
-    if not r.ok or r.url == FAULTY_URL or not r.json().get("model"):
+    if not r.ok or r.url == FAULTY_URL:
         current_app.logger.warning(
             f"Enrichtment of person {person.id} failed with status {r.status_code}, url {r.url}",
             extra={"id": person.id},
