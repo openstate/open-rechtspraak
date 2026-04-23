@@ -23,7 +23,7 @@ jobs:
           python-version: "3.14"
 
       - name: Run pre-commit
-        uses: pre-commit/action@v3
+        uses: pre-commit/action@v3.0.1
 
   test-python:
     runs-on: ubuntu-latest
