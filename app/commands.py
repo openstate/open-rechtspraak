@@ -49,7 +49,7 @@ def enrich_verdicts():
 def db_truncate():
     meta = db.metadata
     for table in reversed(meta.sorted_tables):
-        print("Clear table %s" % table)
+        print(f"Clear table {table}")
         db.session.execute(table.delete())
     db.session.commit()
 

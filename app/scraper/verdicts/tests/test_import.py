@@ -27,15 +27,9 @@ def test_attributes_are_mapped_correctly(requests_mock):
     verdict = Verdict.query.first()
 
     assert verdict.ecli == "ECLI:NL:RVS:2000:AA5654"
-    assert (
-        verdict.title
-        == "ECLI:NL:RVS:2000:AA5654, Raad van State, 20-04-2000, 19990054111"
-    )
+    assert verdict.title == "ECLI:NL:RVS:2000:AA5654, Raad van State, 20-04-2000, 19990054111"
     assert verdict.summary == "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-    assert (
-        verdict.uri
-        == "https://uitspraken.rechtspraak.nl/InzienDocument?id=ECLI:NL:RVS:2000:AA5654"
-    )
+    assert verdict.uri == "https://uitspraken.rechtspraak.nl/InzienDocument?id=ECLI:NL:RVS:2000:AA5654"
 
 
 def test_import_creates_multiple_verdicts(requests_mock):

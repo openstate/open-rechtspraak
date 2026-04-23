@@ -26,17 +26,13 @@ class PersonFactory(BaseFactory):
         sqlalchemy_session = db.session
 
     first_name = factory.Faker("first_name")
-    initials = factory.LazyAttribute(lambda a: "{}.".format(a.first_name[0]))
+    initials = factory.LazyAttribute(lambda a: f"{a.first_name[0]}.")
     titles = factory.Faker("prefix")
     last_name = factory.Faker("last_name")
     gender = fuzzy.FuzzyChoice(["male", "female"])
     rechtspraak_id = factory.Faker("md5")
-    toon_naam = factory.LazyAttribute(
-        lambda a: "{} {} {}".format(a.titles, a.initials, a.last_name)
-    )
-    toon_naam_kort = factory.LazyAttribute(
-        lambda a: "{} {}".format(a.initials, a.last_name)
-    )
+    toon_naam = factory.LazyAttribute(lambda a: f"{a.titles} {a.initials} {a.last_name}")
+    toon_naam_kort = factory.LazyAttribute(lambda a: f"{a.initials} {a.last_name}")
     protected = False
     removed_from_rechtspraak_at = None
 
@@ -47,5 +43,5 @@ class VerdictFactory(BaseFactory):
 
     ecli = factory.LazyAttribute(lambda x: generate_ecli())
     issued = factory.Faker("date")
-    title = factory.LazyAttribute(lambda a: "Uitspraak {}".format(a.ecli))
+    title = factory.LazyAttribute(lambda a: f"Uitspraak {a.ecli}")
     raw_xml = "<?xml><rdf:description></rdf:rdf></open-rechtspraak>"

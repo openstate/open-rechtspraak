@@ -23,9 +23,7 @@ def enrich_verdicts_handler():
     base_query = Verdict.query.filter(Verdict.last_scraped_at.is_(None))
     total_no_of_verdicts = base_query.count()
     runs = math.ceil(total_no_of_verdicts / 1000)
-    current_app.logger.info(
-        f"{runs} number of runs needed to enrich {total_no_of_verdicts} un-enriched verdicts"
-    )
+    current_app.logger.info(f"{runs} number of runs needed to enrich {total_no_of_verdicts} un-enriched verdicts")
 
     with RechtspraakScrapeSession() as session:
         for run in range(0, runs):
@@ -44,9 +42,7 @@ def enrich_verdicts_handler():
                         find_procedure_type_for_verdict(verdict)
                         find_legal_area_for_verdict(verdict)
                 except EnrichError:
-                    current_app.logger.error(
-                        "An unknown problem during verdict enrichment was encountered."
-                    )
+                    current_app.logger.exception("An unknown problem during verdict enrichment was encountered.")
                     pass
 
 
@@ -76,32 +72,26 @@ def enrich_verdict(session: RechtspraakScrapeSession, verdict):
 
     try:
         verdict.save()
-    except DataError as e:
-        current_app.logger.error(f"Error during verdict saving: {verdict.ecli}, {e}")
+    except DataError:
+        current_app.logger.exception(f"Error during verdict saving: {verdict.ecli}")
 
 
 def find_people_for_verdict(verdict, people=None, soup=None):
-    current_app.logger.debug(
-        f"Starting with people finding for verdict {verdict.ecli} ({verdict.id})"
-    )
+    current_app.logger.debug(f"Starting with people finding for verdict {verdict.ecli} ({verdict.id})")
 
     if not soup:
         soup = to_soup(verdict.raw_xml)
     beslissing = find_beslissing(soup)
 
     if not beslissing:
-        current_app.logger.debug(
-            f"No beslissing found in verdict {verdict.ecli} ({verdict.id})"
-        )
+        current_app.logger.debug(f"No beslissing found in verdict {verdict.ecli} ({verdict.id})")
         return
 
     verdict.contains_beslissing = True
     verdict.save()
 
     related_people = recognize_people(beslissing, people)
-    current_app.logger.debug(
-        f"Found {len(related_people)} related people in verdict {verdict.ecli} ({verdict.id})"
-    )
+    current_app.logger.debug(f"Found {len(related_people)} related people in verdict {verdict.ecli} ({verdict.id})")
 
     for person in related_people:
         pv = {"role": "rechter", "verdict_id": verdict.id, "person_id": person.id}
@@ -109,9 +99,7 @@ def find_people_for_verdict(verdict, people=None, soup=None):
         if not person_verdict_already_exists(pv):
             PersonVerdict.create(**pv)
         else:
-            current_app.logger.debug(
-                f"PersonVerdict for person {person.id} and verdict {verdict.id} already exists"
-            )
+            current_app.logger.debug(f"PersonVerdict for person {person.id} and verdict {verdict.id} already exists")
 
 
 def find_institution_for_verdict(verdict, soup=None):
@@ -122,9 +110,7 @@ def find_institution_for_verdict(verdict, soup=None):
     if not institution_identifier:
         return
 
-    institution = Institution.query.filter(
-        Institution.lido_id.ilike(institution_identifier)
-    ).first()
+    institution = Institution.query.filter(Institution.lido_id.ilike(institution_identifier)).first()
     if institution:
         verdict.institution = institution
         verdict.save()
@@ -132,9 +118,7 @@ def find_institution_for_verdict(verdict, soup=None):
             f"Institution {institution.name} matched with and verdict {verdict.id} ({verdict.ecli})"
         )
     else:
-        current_app.logger.warning(
-            f"No institution found for verdict {verdict.id} ({verdict.ecli})"
-        )
+        current_app.logger.warning(f"No institution found for verdict {verdict.id} ({verdict.ecli})")
 
 
 def find_procedure_type_for_verdict(verdict, soup=None):
@@ -143,14 +127,10 @@ def find_procedure_type_for_verdict(verdict, soup=None):
     procedure_type_identifier = find_procedure_type_identifier(soup)
 
     if not procedure_type_identifier:
-        current_app.logger.debug(
-            f"No procedure type found in xml from verdict {verdict.id} ({verdict.ecli})"
-        )
+        current_app.logger.debug(f"No procedure type found in xml from verdict {verdict.id} ({verdict.ecli})")
         return
 
-    procedure_type = ProcedureType.query.filter(
-        ProcedureType.lido_id.ilike(procedure_type_identifier)
-    ).first()
+    procedure_type = ProcedureType.query.filter(ProcedureType.lido_id.ilike(procedure_type_identifier)).first()
     if procedure_type:
         verdict.procedure_type = procedure_type
         verdict.save()
@@ -158,9 +138,7 @@ def find_procedure_type_for_verdict(verdict, soup=None):
             f"Procedure type {procedure_type.name} matched with and verdict {verdict.id} ({verdict.ecli})"
         )
     else:
-        current_app.logger.warning(
-            f"No procedure type found for verdict {verdict.id} ({verdict.ecli})"
-        )
+        current_app.logger.warning(f"No procedure type found for verdict {verdict.id} ({verdict.ecli})")
 
 
 def find_legal_area_for_verdict(verdict, soup=None):
@@ -170,14 +148,10 @@ def find_legal_area_for_verdict(verdict, soup=None):
     legal_area_identifier = find_legal_area_identifier(soup)
 
     if not legal_area_identifier:
-        current_app.logger.debug(
-            f"No legal area found in xml from verdict {verdict.id} ({verdict.ecli})"
-        )
+        current_app.logger.debug(f"No legal area found in xml from verdict {verdict.id} ({verdict.ecli})")
         return
 
-    legal_area = LegalArea.query.filter(
-        LegalArea.legal_area_lido_id.ilike(legal_area_identifier)
-    ).first()
+    legal_area = LegalArea.query.filter(LegalArea.legal_area_lido_id.ilike(legal_area_identifier)).first()
     if legal_area:
         verdict.legal_area = legal_area
         verdict.save()
@@ -185,6 +159,4 @@ def find_legal_area_for_verdict(verdict, soup=None):
             f"Legal area {legal_area.legal_area_name} matched with and verdict {verdict.id} ({verdict.ecli})"
         )
     else:
-        current_app.logger.warning(
-            f"No legal area found for verdict {verdict.id} ({verdict.ecli})"
-        )
+        current_app.logger.warning(f"No legal area found for verdict {verdict.id} ({verdict.ecli})")

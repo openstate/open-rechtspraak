@@ -9,19 +9,14 @@ class BaseService:
     DEFAULT_LIMIT = 20
     MAX_LIMIT = 100
 
-    def __init__(
-        self, query_params: MultiDict, queryset: Query = None, order: list = None
-    ):
-        self.limit = self._max_limit(
-            query_params.get("limit", default=self.DEFAULT_LIMIT, type=int)
-        )
+    def __init__(self, query_params: MultiDict, queryset: Query = None, order: list | None = None):
+        self.limit = self._max_limit(query_params.get("limit", default=self.DEFAULT_LIMIT, type=int))
         self.offset = query_params.get("offset", default=self.DEFAULT_OFFSET, type=int)
         self.queryset = queryset or Query([])
         self.order = order or []
 
     def _max_limit(self, limit: int):
-        if limit > self.MAX_LIMIT:
-            limit = self.MAX_LIMIT
+        limit = min(limit, self.MAX_LIMIT)
         return limit
 
     def apply_filtering(self):
@@ -29,9 +24,7 @@ class BaseService:
 
     def apply_ordering(self):
         if len(self.order) == 0:
-            raise ValueError(
-                "You did not specify any attributes to order the queryset on."
-            )
+            raise ValueError("You did not specify any attributes to order the queryset on.")
 
         for order in self.order:
             self.queryset = self.queryset.order_by(order)
@@ -61,9 +54,7 @@ class PersonService(BaseService):
             "former_judges", default=False, type=lambda v: v.lower() == "true"
         )
         if include_former_judges is False:
-            self.queryset = self.queryset.filter(
-                Person.removed_from_rechtspraak_at.is_(None)
-            )
+            self.queryset = self.queryset.filter(Person.removed_from_rechtspraak_at.is_(None))
         return self.queryset
 
     def list_query(self):

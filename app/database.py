@@ -1,4 +1,5 @@
 """Database module, including the SQLAlchemy database object and DB-related utilities."""
+
 import logging
 import uuid
 
@@ -12,7 +13,7 @@ Column = db.Column
 relationship = db.relationship
 
 
-class CRUDMixin(object):
+class CRUDMixin:
     """Mixin that adds convenience methods for CRUD (create, read, update, delete) operations."""
 
     @classmethod
@@ -25,7 +26,7 @@ class CRUDMixin(object):
         """Update specific fields of a record."""
         for attr, value in kwargs.items():
             setattr(self, attr, value)
-        return commit and self.save() or self
+        return (commit and self.save()) or self
 
     def save(self, commit=True):
         """Save the record."""
@@ -44,9 +45,7 @@ class UpsertMixin:
     @classmethod
     def get_or_create(cls, filter_by, default_kwargs=None, commit=True):
         """Fetches one record by filter criteria and creates one with defaults if missing"""
-        instance = (
-            db.session.query(cls).filter_by(**filter_by).with_for_update().first()
-        )
+        instance = db.session.query(cls).filter_by(**filter_by).with_for_update().first()
         if instance:
             return instance, False
 
@@ -110,9 +109,7 @@ class UUIDModel(Model):
             return None
 
 
-def reference_col(
-    tablename, nullable=False, pk_name="id", foreign_key_kwargs=None, column_kwargs=None
-):
+def reference_col(tablename, nullable=False, pk_name="id", foreign_key_kwargs=None, column_kwargs=None):
     """Column that adds primary key foreign key reference.
     Usage: ::
         category_id = reference_col('category')

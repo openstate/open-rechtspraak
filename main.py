@@ -1,4 +1,3 @@
-from app import app
 from app.extensions import db
 from app.models import (
     Institution,
@@ -10,6 +9,8 @@ from app.models import (
     SideJob,
     Verdict,
 )
+
+from app import app
 
 
 # This piece of code automatically imports the db and models when you start a

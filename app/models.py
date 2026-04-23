@@ -59,9 +59,7 @@ class ProfessionalDetail(UUIDModel):
     person_id = reference_col("person", nullable=False)
     person = relationship("Person", backref="professional_detail", lazy="select")
     institution_id = reference_col("institution", nullable=True)
-    institution = relationship(
-        "Institution", backref="professional_detail", lazy="select"
-    )
+    institution = relationship("Institution", backref="professional_detail", lazy="select")
 
     @staticmethod
     def transform_beroepsgegevens_dict(d):

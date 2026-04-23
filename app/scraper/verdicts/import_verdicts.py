@@ -1,8 +1,8 @@
 from flask import current_app
 
 from app.models import Verdict
-from app.scraper.soup_parsing import extract_verdicts, to_soup
 from app.scraper.rechtspraak_session import RechtspraakScrapeSession
+from app.scraper.soup_parsing import extract_verdicts, to_soup
 from app.scraper.verdicts.config import (
     DEFAULT_LIMIT,
     DEFAULT_SEARCH_QUERY_PARAMS,
@@ -23,9 +23,7 @@ def import_verdicts_handler(start_datetime: str, end_datetime: str):
         params["date"] = [start_datetime, end_datetime]
 
         while True:
-            current_app.logger.info(
-                f"Collecting verdicts from {SEARCH_ENDPOINT} with params: {params}"
-            )
+            current_app.logger.info(f"Collecting verdicts from {SEARCH_ENDPOINT} with params: {params}")
             r = session.get(SEARCH_ENDPOINT, params=params)
 
             if not r.ok or r.url == FAULTY_URL:
@@ -48,9 +46,7 @@ def import_verdicts_handler(start_datetime: str, end_datetime: str):
                 if not verdict_already_exists(verdict_kwargs.get("ecli")):
                     Verdict.create(**verdict_kwargs)
                 else:
-                    current_app.logger.debug(
-                        f'Verdict for {verdict_kwargs.get("ecli")} already exists'
-                    )
+                    current_app.logger.debug(f"Verdict for {verdict_kwargs.get('ecli')} already exists")
 
             params["from"] = params["from"] + DEFAULT_LIMIT
 

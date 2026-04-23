@@ -11,20 +11,17 @@ def search_strings():
     :return: list of search strings, that's formatted like this: ['aa', 'ab', 'ac', 'ad' ... 'ba', 'bb', 'zz']
     """
     result_set = []
-    for char in string.ascii_lowercase:
-        for second_char in string.ascii_lowercase:
-            result_set.append(char + second_char)
+    for first in string.ascii_lowercase:
+        for second in string.ascii_lowercase:
+            search_string = first + second
+            result_set.append(search_string)
 
     random.shuffle(result_set)
     return result_set
 
 
 def format_payload(search_string):
-    return {
-        "model": '{"instantieCode":[],"overige_instantie":[],"naam":"'
-        + search_string
-        + '"}'
-    }
+    return {"model": '{"instantieCode":[],"overige_instantie":[],"naam":"' + search_string + '"}'}
 
 
 def find_request_verification_token(content):

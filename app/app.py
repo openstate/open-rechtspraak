@@ -32,7 +32,6 @@ def flask_extensions(app):
     migrate.init_app(app, db)
     sitemap.init_app(app)
     cors.init_app(app)
-    return None
 
 
 def initialize_sentry():
@@ -151,5 +150,3 @@ def register_template_filters(app):
         if datetime:
             return datetime.strftime("%d-%m-%Y")
         return ""
-
-    return

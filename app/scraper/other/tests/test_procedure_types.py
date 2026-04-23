@@ -23,15 +23,11 @@ def test_procedure_type_attributes_are_mapped_correctly(requests_mock):
     procedure_type = ProcedureType.query.first()
 
     assert procedure_type.name == "Artikel 81 RO-zaken"
-    assert (
-        procedure_type.lido_id == "http://psi.rechtspraak.nl/procedure#artikel81ROzaken"
-    )
+    assert procedure_type.lido_id == "http://psi.rechtspraak.nl/procedure#artikel81ROzaken"
 
 
 def test_request_creates_multiple_procedure_types(requests_mock):
-    requests_mock.get(
-        PROCEDURE_TYPES_URL, status_code=200, text=FIVE_PROCEDURE_TYPES_XML
-    )
+    requests_mock.get(PROCEDURE_TYPES_URL, status_code=200, text=FIVE_PROCEDURE_TYPES_XML)
 
     assert ProcedureType.query.count() == 0
     import_procedure_types_handler()

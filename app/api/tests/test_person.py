@@ -1,4 +1,5 @@
 from flask import url_for
+from requests.status_codes import codes
 
 from app.tests.factories import PersonFactory
 
@@ -6,7 +7,7 @@ from app.tests.factories import PersonFactory
 class TestGeneral:
     def test_search(self, client):
         r = client.get(url_for("api.person"))
-        assert r.status_code == 200
+        assert r.status_code == codes.OK
 
     def test_search_contains_person(self, client, person):
         r = client.get(url_for("api.person"))
@@ -79,18 +80,14 @@ class TestCount:
 
 
 class TestFormerJudgeQueryParameter:
-    def test_search_by_default_removed_at_are_not_included(
-        self, client, removed_person
-    ):
+    def test_search_by_default_removed_at_are_not_included(self, client, removed_person):
         r = client.get(url_for("api.person"))
         response_data = r.get_json().get("data")
 
         for p in response_data:
             assert p.get("last_name") != removed_person.last_name
 
-    def test_search_former_judges_may_be_included_with_query_param(
-        self, client, removed_person
-    ):
+    def test_search_former_judges_may_be_included_with_query_param(self, client, removed_person):
         params = {"former_judges": "true"}
         r = client.get(url_for("api.person"), query_string=params)
         response_data = r.get_json().get("data")

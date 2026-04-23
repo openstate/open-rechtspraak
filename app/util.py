@@ -1,24 +1,25 @@
 import os
 from datetime import datetime
-from typing import Union
 from uuid import UUID
 
 import pytz
+
+MIN_RECHTSPRAAK_DATETIME_LENGTH = 5
 
 
 def get_env_variable(name, default=None) -> str:
     try:
         return os.environ.get(name, default=default)
     except KeyError:
-        message = "Expected environment variable '{}' not set.".format(name)
-        raise Exception(message)
+        message = f"Expected environment variable '{name}' not set."
+        raise OSError(message)
 
 
 def remove_milliseconds_from_epoch(epoch):
     return int(epoch) // 1000
 
 
-def parse_rechtspraak_datetime(dt: str) -> Union[datetime, None]:
+def parse_rechtspraak_datetime(dt: str) -> datetime | None:
     """
     datetimes from the Rechtspraak API are formatted like this: "/Date(1598911200000+0200)/"
 
@@ -31,13 +32,13 @@ def parse_rechtspraak_datetime(dt: str) -> Union[datetime, None]:
     3. Treat the datetime as if it is UTC and localize it to Europe/Amsterdam (datetime object with tzinfo)
     4. Remove the tzinfo from the datetime object, giving us a 'correct' UTC datetime object
     """
-    if len(dt) < 5:
+    if len(dt) < MIN_RECHTSPRAAK_DATETIME_LENGTH:
         # length of the datetime string is too short, we can't parse it to a valid epoch epoch
         return
 
     # Strip timezone and remove milliseconds, convert to datetime
     # strips /Date( and +0200) from the string, yields epoch with milliseconds
-    epoch = dt[6:][:-7]  # noqa
+    epoch = dt[6:][:-7]
     epoch = remove_milliseconds_from_epoch(epoch)
     dt = datetime.fromtimestamp(epoch)
 
@@ -66,6 +67,7 @@ def extract_initials(toonnaam_kort):
 def is_valid_uuid(uuid):
     try:
         UUID(uuid, version=4)
-        return True
     except ValueError:
         return False
+    else:
+        return True

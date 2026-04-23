@@ -14,9 +14,7 @@ def transform_procedure_type_xml_to_dict(soup):
 
 
 def procedure_type_exists(procedure_type_dict):
-    institution = ProcedureType.query.filter(
-        ProcedureType.name == procedure_type_dict.get("name")
-    ).first()
+    institution = ProcedureType.query.filter(ProcedureType.name == procedure_type_dict.get("name")).first()
     if institution:
         return True
 
@@ -34,6 +32,4 @@ def import_procedure_types_handler():
 
             if not procedure_type_exists(procedure_type_dict):
                 ProcedureType.create(**procedure_type_dict)
-                current_app.logger.info(
-                    f"New procedure type {procedure_type_dict.get('name')} added"
-                )
+                current_app.logger.info(f"New procedure type {procedure_type_dict.get('name')} added")
