@@ -26,11 +26,7 @@ def import_legal_areas_handler():
         r = session.get(LEGAL_AREAS_URL)
         r.raise_for_status()
 
-        main_areas = (
-            to_soup(r.content)
-            .find("Rechtsgebieden")
-            .findChildren("Rechtsgebied", recursive=False)
-        )
+        main_areas = to_soup(r.content).find("Rechtsgebieden").find_all("Rechtsgebied", recursive=False)
         current_app.logger.info(f"Found {len(main_areas)} main legal areas")
 
         for main_area in main_areas:
@@ -46,6 +42,4 @@ def import_legal_areas_handler():
 
                 if not legal_area_exists(legal_area_dict):
                     LegalArea.create(**legal_area_dict)
-                    current_app.logger.info(
-                        f"New legal area {legal_area_dict.get('legal_area_name')} added"
-                    )
+                    current_app.logger.info(f"New legal area {legal_area_dict.get('legal_area_name')} added")

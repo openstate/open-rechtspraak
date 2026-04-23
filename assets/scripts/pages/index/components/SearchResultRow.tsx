@@ -3,7 +3,7 @@ import React from 'react';
 import { Person, ProfessionalDetail } from '../../../types';
 import { personUrl } from '../../../urls';
 
-type ProfessionalDetailPillProps = {
+interface ProfessionalDetailPillProps {
   value: string
   variant?: string
 };

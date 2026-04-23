@@ -1,9 +1,10 @@
 from flask import url_for
+from requests.status_codes import codes
 
 
 def test_sitemap(client):
     r = client.get(url_for("flask_sitemap.sitemap"))
-    assert r.status_code == 200
+    assert r.status_code == codes.OK
 
 
 def test_unprotected_person_in_sitemap(client, person):

@@ -1,4 +1,4 @@
-FROM node:22
+FROM node:24
 ENV npm_config_cache /tmp/
 
 RUN npm install -g npm@latest

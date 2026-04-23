@@ -1,6 +1,5 @@
 from requests import Session
 from requests.adapters import Retry
-
 from requests_ratelimiter import LimiterAdapter
 
 
@@ -29,4 +28,4 @@ class RechtspraakScrapeSession(Session):
 
     def request(self, *args, **kwargs):
         kwargs.setdefault("timeout", 2)
-        return super(RechtspraakScrapeSession, self).request(*args, **kwargs)
+        return super().request(*args, **kwargs)

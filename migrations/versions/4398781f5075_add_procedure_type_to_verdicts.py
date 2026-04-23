@@ -5,6 +5,7 @@ Revises: 1b58fb814157
 Create Date: 2021-02-27 19:42:43.615387
 
 """
+
 import sqlalchemy as sa
 from alembic import op
 from sqlalchemy.dialects import postgresql
@@ -23,9 +24,7 @@ def upgrade():
         "verdict",
         sa.Column("procedure_type_id", postgresql.UUID(as_uuid=True), nullable=True),
     )
-    op.create_foreign_key(
-        None, "verdict", "procedure_type", ["procedure_type_id"], ["id"]
-    )
+    op.create_foreign_key(None, "verdict", "procedure_type", ["procedure_type_id"], ["id"])
     # ### end Alembic commands ###
 
 

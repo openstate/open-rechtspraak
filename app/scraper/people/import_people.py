@@ -16,24 +16,16 @@ def import_people_handler():
     with RechtspraakScrapeSession() as session:
         # We first need a CSRF token to be able to query the namenlijst.rechtspraak.nl API
         r = session.get("https://namenlijst.rechtspraak.nl/#!/zoeken/index")
-        HEADERS["__RequestVerificationToken"] = find_request_verification_token(
-            r.content
-        )
-        current_app.logger.debug(
-            f'Found CSRF token: {HEADERS["__RequestVerificationToken"]}'
-        )
+        HEADERS["__RequestVerificationToken"] = find_request_verification_token(r.content)
+        current_app.logger.debug(f"Found CSRF token: {HEADERS['__RequestVerificationToken']}")
 
         for search_string in search_strings():
             import_people_by_search_string(search_string, session)
 
 
-def import_people_by_search_string(
-    search_string: str, session: RechtspraakScrapeSession
-):
+def import_people_by_search_string(search_string: str, session: RechtspraakScrapeSession):
     payload = format_payload(search_string)
-    current_app.logger.info(
-        f"Importing people by search string '{search_string}' from {SEARCH_ENDPOINT}"
-    )
+    current_app.logger.info(f"Importing people by search string '{search_string}' from {SEARCH_ENDPOINT}")
 
     r = session.post(SEARCH_ENDPOINT, json=payload, headers=HEADERS, timeout=3)
 
@@ -46,7 +38,7 @@ def import_people_by_search_string(
     try:
         people = r.json().get("result", {}).get("model", {}).get("groupedItems", {})
     except JSONDecodeError:
-        current_app.logger.error(f"JSONDecodeError found when scraping {r.url}")
+        current_app.logger.exception(f"JSONDecodeError found when scraping {r.url}")
         people = []
 
     current_app.logger.debug(f"{len(people)} people found for {r.url}")

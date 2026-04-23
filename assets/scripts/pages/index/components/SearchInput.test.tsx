@@ -38,5 +38,5 @@ it('the callback is called when entering an input', async () => {
   // but subsequently assert that it's called within a second
   expect(callback).not.toHaveBeenCalledWith(inputValue);
   await waitFor(() => expect(callback).toHaveBeenCalledWith(inputValue), { timeout: 1000 });
-  expect(callback).toBeCalledTimes(1);
+  expect(callback).toHaveBeenCalledTimes(2);
 });

@@ -1,18 +1,18 @@
-from datetime import datetime
-from typing import Union
+from typing import TYPE_CHECKING
 
-from app.models import Person, Verdict
+if TYPE_CHECKING:
+    from datetime import datetime
+
+    from app.models import Person, Verdict
 
 
-def serialize_dt(dt: datetime) -> Union[str, None]:
+def serialize_dt(dt: datetime) -> str | None:
     return dt.isoformat() if dt else None
 
 
 def person_list_serializer(person: Person):
     # only show professional details that are still active
-    professional_details = [
-        detail for detail in person.professional_detail if detail.end_date is not None
-    ]
+    professional_details = [detail for detail in person.professional_detail if detail.end_date is not None]
     return {
         "id": person.id,
         "titles": person.titles,

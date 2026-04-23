@@ -9,9 +9,7 @@ from app.scraper.other.tests.fixtures import (
 
 
 def test_request_creates_legal_area(requests_mock):
-    requests_mock.get(
-        LEGAL_AREAS_URL, status_code=200, text=ONE_MAIN_AND_ONE_SUB_LEGAL_AREA_XML
-    )
+    requests_mock.get(LEGAL_AREAS_URL, status_code=200, text=ONE_MAIN_AND_ONE_SUB_LEGAL_AREA_XML)
 
     assert LegalArea.query.count() == 0
     import_legal_areas_handler()
@@ -19,24 +17,17 @@ def test_request_creates_legal_area(requests_mock):
 
 
 def test_legal_area_attributes_are_mapped_correctly(requests_mock):
-    requests_mock.get(
-        LEGAL_AREAS_URL, status_code=200, text=ONE_MAIN_AND_ONE_SUB_LEGAL_AREA_XML
-    )
+    requests_mock.get(LEGAL_AREAS_URL, status_code=200, text=ONE_MAIN_AND_ONE_SUB_LEGAL_AREA_XML)
 
     import_legal_areas_handler()
     legal_area = LegalArea.query.first()
 
     assert legal_area.legal_area_name == "Bestuursrecht"
-    assert (
-        legal_area.legal_area_lido_id
-        == "http://psi.rechtspraak.nl/rechtsgebied#bestuursrecht"
-    )
+    assert legal_area.legal_area_lido_id == "http://psi.rechtspraak.nl/rechtsgebied#bestuursrecht"
 
 
 def test_request_creates_multiple_legal_areas(requests_mock):
-    requests_mock.get(
-        LEGAL_AREAS_URL, status_code=200, text=TWO_MAIN_AND_TWO_SUB_LEGAL_AREAS_XML
-    )
+    requests_mock.get(LEGAL_AREAS_URL, status_code=200, text=TWO_MAIN_AND_TWO_SUB_LEGAL_AREAS_XML)
 
     assert LegalArea.query.count() == 0
     import_legal_areas_handler()
@@ -44,9 +35,7 @@ def test_request_creates_multiple_legal_areas(requests_mock):
 
 
 def test_only_one_legal_area_is_created_on_subsequent_scrapes(requests_mock):
-    requests_mock.get(
-        LEGAL_AREAS_URL, status_code=200, text=ONE_MAIN_AND_ONE_SUB_LEGAL_AREA_XML
-    )
+    requests_mock.get(LEGAL_AREAS_URL, status_code=200, text=ONE_MAIN_AND_ONE_SUB_LEGAL_AREA_XML)
 
     assert LegalArea.query.count() == 0
     import_legal_areas_handler()

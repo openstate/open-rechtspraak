@@ -27,9 +27,7 @@ def person_details_url(rechtspraak_id: str) -> str:
 
 def enrich_person(session: RechtspraakScrapeSession, person: Person) -> None:
     r = session.get(person_details_url(person.rechtspraak_id))
-    current_app.logger.info(
-        f"Enriching person {person.id} with information from {r.url}"
-    )
+    current_app.logger.info(f"Enriching person {person.id} with information from {r.url}")
 
     if not r.ok or r.url == FAULTY_URL:
         current_app.logger.warning(
@@ -44,42 +42,24 @@ def enrich_person(session: RechtspraakScrapeSession, person: Person) -> None:
     person_json = r.json().get("model", {})
 
     for beroepsgegeven in person_json.get("beroepsgegevens", []):
-        pd_kwargs = ProfessionalDetail.transform_beroepsgegevens_dict(
-            beroepsgegeven
-        )
+        pd_kwargs = ProfessionalDetail.transform_beroepsgegevens_dict(beroepsgegeven)
         if not professional_detail_already_exists(person, pd_kwargs):
-            institution = find_institution_for_professional_detail(
-                pd_kwargs.get("organisation")
-            )
-            ProfessionalDetail.create(
-                **{"person_id": person.id, **pd_kwargs}, institution=institution
-            )
+            institution = find_institution_for_professional_detail(pd_kwargs.get("organisation"))
+            ProfessionalDetail.create(**{"person_id": person.id, **pd_kwargs}, institution=institution)
 
     for historisch_beroepsgegeven in person_json.get("historieBeroepsgegevens", []):
-        pd_kwargs = ProfessionalDetail.transform_historisch_beroepsgegevens_dict(
-            historisch_beroepsgegeven
-        )
+        pd_kwargs = ProfessionalDetail.transform_historisch_beroepsgegevens_dict(historisch_beroepsgegeven)
         if not professional_detail_already_exists(person, pd_kwargs):
-            institution = find_institution_for_professional_detail(
-                pd_kwargs.get("organisation")
-            )
-            ProfessionalDetail.create(
-                **{"person_id": person.id, **pd_kwargs}, institution=institution
-            )
+            institution = find_institution_for_professional_detail(pd_kwargs.get("organisation"))
+            ProfessionalDetail.create(**{"person_id": person.id, **pd_kwargs}, institution=institution)
 
     for nevenbetrekking in person_json.get("huidigeNevenbetrekkingen", []):
-        nb_kwargs = SideJob.transform_huidige_nevenbetrekkingen_dict(
-            nevenbetrekking
-        )
+        nb_kwargs = SideJob.transform_huidige_nevenbetrekkingen_dict(nevenbetrekking)
         if not side_job_already_exists(person, nb_kwargs):
             SideJob.create(**{"person_id": person.id, **nb_kwargs})
 
-    for voorgaande_nevenbetrekking in person_json.get(
-        "voorgaandeNevenbetrekkingen", []
-    ):
-        nb_kwargs = SideJob.transform_voorgaande_nevenbetrekkingen_dict(
-            voorgaande_nevenbetrekking
-        )
+    for voorgaande_nevenbetrekking in person_json.get("voorgaandeNevenbetrekkingen", []):
+        nb_kwargs = SideJob.transform_voorgaande_nevenbetrekkingen_dict(voorgaande_nevenbetrekking)
         if not side_job_already_exists(person, nb_kwargs):
             SideJob.create(**{"person_id": person.id, **nb_kwargs})
 

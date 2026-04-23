@@ -18,9 +18,7 @@ def transform_institution_xml_to_dict(soup):
 
 
 def institution_exists(institution_dict):
-    institution = Institution.query.filter(
-        Institution.name == institution_dict.get("name")
-    ).first()
+    institution = Institution.query.filter(Institution.name == institution_dict.get("name")).first()
     if institution:
         return True
 
@@ -38,6 +36,4 @@ def import_institutions_handler():
 
             if not institution_exists(institution_dict):
                 Institution.create(**institution_dict)
-                current_app.logger.info(
-                    f"New institution {institution_dict.get('name')} added"
-                )
+                current_app.logger.info(f"New institution {institution_dict.get('name')} added")

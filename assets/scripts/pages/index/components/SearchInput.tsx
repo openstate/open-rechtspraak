@@ -1,19 +1,29 @@
-import React from 'react';
-import { DebounceInput } from 'react-debounce-input';
+import React, { useEffect, useState } from 'react';
+import { useDebounce } from 'use-debounce';
 
-type Props = {
+interface Props {
   setQuery: (q: string) => void
 };
 
+
 function SearchInput({ setQuery }: Props) {
+  const [text, setText] = useState("");
+  const [debounced] = useDebounce(text, 200);
+
+  useEffect(() => {
+    setQuery(debounced);
+  }, [debounced, setQuery]);
+
   return (
-    <DebounceInput
-      minLength={1}
-      debounceTimeout={200}
-      placeholder="Zoek op naam, bijvoorbeeld 'De Jong'"
-      className="form-control"
-      onChange={(e) => setQuery(e.target.value)}
-    />
+    <div>
+      <input
+        className="form-control"
+        placeholder="Zoek op naam, bijvoorbeeld 'De Jong'"
+        onChange={(e) => {
+          setText(e.target.value);
+        }}
+      />
+    </div>
   );
 }
 

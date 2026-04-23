@@ -7,7 +7,12 @@
     "sourceMap": true,
     "strict": true,
     "target": "ES6",
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "types": [
+      "node",
+      "jest",
+      "@testing-library/jest-dom"
+    ]
   },
   "exclude": [
     "node_modules",

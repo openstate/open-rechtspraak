@@ -1,5 +1,3 @@
-from typing import List
-
 from flask import current_app
 
 from app.models import Person, PersonVerdict, Verdict
@@ -20,7 +18,7 @@ def person_verdict_already_exists(pv: dict) -> bool:
     return True if pv else False
 
 
-def recognize_people(text: str, people: List[Person] = None) -> List[Person]:
+def recognize_people(text: str, people: list[Person] | None = None) -> list[Person]:
     if not people:
         current_app.logger.debug("No people received, querying people table")
         people = Person.query.all()

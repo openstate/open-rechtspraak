@@ -68,15 +68,9 @@ def person_detail(id):
         .filter(ProfessionalDetail.end_date.isnot(None))
         .all()
     )
-    side_jobs = (
-        SideJob.query.filter(SideJob.person_id == person.id)
-        .filter(SideJob.end_date.is_(None))
-        .all()
-    )
+    side_jobs = SideJob.query.filter(SideJob.person_id == person.id).filter(SideJob.end_date.is_(None)).all()
     historical_side_jobs = (
-        SideJob.query.filter(SideJob.person_id == person.id)
-        .filter(SideJob.end_date.isnot(None))
-        .all()
+        SideJob.query.filter(SideJob.person_id == person.id).filter(SideJob.end_date.isnot(None)).all()
     )
     verdicts = (
         Verdict.query.join(Verdict.people)
@@ -115,11 +109,11 @@ def post_blog():
     yield "base.index", {}, "", "daily", 1.0
     yield "base.about", {}, "", "weekly", 1.0
 
-    for person in (
-        Person.query.filter(Person.protected.isnot(True))
-        .order_by(Person.last_scraped_at.desc())
-        .all()
-    ):
-        yield "base.person_detail", {
-            "id": person.id
-        }, person.last_scraped_at, "weekly", 0.9
+    for person in Person.query.filter(Person.protected.isnot(True)).order_by(Person.last_scraped_at.desc()).all():
+        yield (
+            "base.person_detail",
+            {"id": person.id},
+            person.last_scraped_at,
+            "weekly",
+            0.9,
+        )

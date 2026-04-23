@@ -1,4 +1,3 @@
-// eslint-disable-next-line simple-import-sort/imports
 import prism from 'prismjs';
 
 import 'prismjs/components/prism-python';
