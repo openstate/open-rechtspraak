@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from app.database import Column, UUIDModel, db, reference_col, relationship
 from app.util import determine_gender, extract_initials, parse_rechtspraak_datetime
 
@@ -21,6 +23,7 @@ class Person(UUIDModel):
     toon_naam = Column(db.Text, nullable=True, unique=True)
     toon_naam_kort = Column(db.Text, nullable=True)
     rechtspraak_id = Column(db.Text, nullable=False, unique=True)
+    first_scraped_at = Column(db.DateTime, default=datetime.now, nullable=False)
     last_scraped_at = Column(db.DateTime, nullable=True)
     protected = Column(db.Boolean, default=False)
     removed_from_rechtspraak_at = Column(db.DateTime, nullable=True)

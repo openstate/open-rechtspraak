@@ -41,7 +41,7 @@ def import_people_by_search_string(search_string: str, session: RechtspraakScrap
         current_app.logger.exception(f"JSONDecodeError found when scraping {r.url}")
         people = []
 
-    current_app.logger.debug(f"{len(people)} people found for {r.url}")
+    current_app.logger.debug(f"{len(people)} people found for search string '{search_string}'")
 
     for person in people:
         update_or_create_person(person)
