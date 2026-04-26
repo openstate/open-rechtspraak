@@ -39,6 +39,7 @@ pyproject_hooks==1.2.0
 pyrate-limiter==4.1.0
 pytest==9.0.3
 pytest-factoryboy==2.8.1
+pytest-freezer==0.4.9
 python-dateutil==2.9.0.post0
 python-discovery==1.2.2
 python-editor==1.0.4

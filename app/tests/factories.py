@@ -33,6 +33,7 @@ class PersonFactory(BaseFactory):
     rechtspraak_id = factory.Faker("md5")
     toon_naam = factory.LazyAttribute(lambda a: f"{a.titles} {a.initials} {a.last_name}")
     toon_naam_kort = factory.LazyAttribute(lambda a: f"{a.initials} {a.last_name}")
+    last_scraped_at = None
     protected = False
     removed_from_rechtspraak_at = None
 

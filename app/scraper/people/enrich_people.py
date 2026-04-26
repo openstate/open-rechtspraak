@@ -1,4 +1,5 @@
-from datetime import datetime
+from datetime import datetime, timedelta
+from operator import or_
 
 from flask import current_app
 
@@ -11,9 +12,26 @@ from app.scraper.people.utils import (
 )
 from app.scraper.rechtspraak_session import RechtspraakScrapeSession
 
+RESCRAPE_AFTER_HOURS = 20
+
+
+def people_to_enrich() -> list[Person]:
+    """Yield people that should be enriched.
+
+    People that should be enriched have either:
+     - not been scraped in the past RESCRAPE_AFTER_HOURS hours, or
+     - have never been scraped before.
+    """
+    rescrape_after = datetime.now() - timedelta(hours=RESCRAPE_AFTER_HOURS)
+    return Person.query.filter(or_(Person.last_scraped_at <= rescrape_after, Person.last_scraped_at.is_(None))).all()
+
 
 def enrich_people_handler() -> None:
-    people = Person.query.all()
+    """Enriches all known people from namenlijst.rechtspraak.nl."""
+    people = people_to_enrich()
+    current_app.logger.info(
+        f"Enriching {len(people)} people that weren't enriched in the past {RESCRAPE_AFTER_HOURS} hours",
+    )
 
     # Rate limit to default requests p/s, which means that enriching 5.000 judges will take a little less than 3 hours
     with RechtspraakScrapeSession() as session:
@@ -22,10 +40,12 @@ def enrich_people_handler() -> None:
 
 
 def person_details_url(rechtspraak_id: str) -> str:
+    """Yield the publicly accessible url for a person to scrape."""
     return DETAILS_ENDPOINT + rechtspraak_id
 
 
 def enrich_person(session: RechtspraakScrapeSession, person: Person) -> None:
+    """Enrich a single person from namenlijst.rechtspraak.nl."""
     r = session.get(person_details_url(person.rechtspraak_id))
     current_app.logger.info(f"Enriching person {person.id} with information from {r.url}")
 
