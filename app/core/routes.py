@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 from flask import Blueprint, abort, redirect, render_template, url_for
 
 from app.extensions import sitemap
@@ -5,27 +7,31 @@ from app.models import Person, PersonVerdict, ProfessionalDetail, SideJob, Verdi
 from app.scraper.soup_parsing import find_beslissing, to_soup
 from app.util import is_valid_uuid
 
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
+
 core_bp = Blueprint("base", __name__)
 
 
 @core_bp.route("/")
-def index():
+def index() -> str:
     return render_template("pages/index.html")
 
 
 @core_bp.route("/about")
-def about():
+def about() -> str:
     return render_template("pages/about.html")
 
 
 @core_bp.route("/api_docs")
-def api_docs():
+def api_docs() -> str:
     person = Person.query.first()
     return render_template("pages/api_docs.html", person=person)
 
 
 @core_bp.route("/verdict/<id>")
-def verdict_detail(id):
+def verdict_detail(id: str) -> str:
     verdict = Verdict.query.filter(Verdict.id == id).first()
     beslissing = find_beslissing(to_soup(verdict.raw_xml))
     related_people = (
@@ -43,13 +49,13 @@ def verdict_detail(id):
 
 
 @core_bp.route("/verdict/ecli/<ecli>")
-def verdict_by_ecli(ecli):
+def verdict_by_ecli(ecli: str) -> str:
     verdict = Verdict.query.filter(Verdict.ecli == ecli).first()
     return verdict_detail(verdict.id)
 
 
 @core_bp.route("/person/<id>")
-def person_detail(id):
+def person_detail(id: str) -> str:
     if not is_valid_uuid(id):
         abort(404)
 
@@ -92,7 +98,7 @@ def person_detail(id):
 
 
 @core_bp.get("/rechtspraak/persoon/<slug>")
-def redirect_from_old_paths(slug):
+def redirect_from_old_paths(slug: str) -> str:
     slug = slug.replace("+", " ")
     slug = slug.rstrip()
 
@@ -100,12 +106,11 @@ def redirect_from_old_paths(slug):
 
     if person:
         return redirect(url_for("base.person_detail", id=person.id), code=301)
-    else:
-        return redirect(url_for("base.index", no_match=True), code=301)
+    return redirect(url_for("base.index", no_match=True), code=301)
 
 
 @sitemap.register_generator
-def post_blog():
+def post_blog() -> Iterable:
     yield "base.index", {}, "", "daily", 1.0
     yield "base.about", {}, "", "weekly", 1.0
 

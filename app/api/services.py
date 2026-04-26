@@ -9,20 +9,19 @@ class BaseService:
     DEFAULT_LIMIT = 20
     MAX_LIMIT = 100
 
-    def __init__(self, query_params: MultiDict, queryset: Query = None, order: list | None = None):
+    def __init__(self, query_params: MultiDict, queryset: Query = None, order: list | None = None) -> None:
         self.limit = self._max_limit(query_params.get("limit", default=self.DEFAULT_LIMIT, type=int))
         self.offset = query_params.get("offset", default=self.DEFAULT_OFFSET, type=int)
         self.queryset = queryset or Query([])
         self.order = order or []
 
-    def _max_limit(self, limit: int):
-        limit = min(limit, self.MAX_LIMIT)
-        return limit
+    def _max_limit(self, limit: int) -> int:
+        return min(limit, self.MAX_LIMIT)
 
-    def apply_filtering(self):
+    def apply_filtering(self) -> None:
         raise NotImplementedError
 
-    def apply_ordering(self):
+    def apply_ordering(self) -> Query:
         if len(self.order) == 0:
             raise ValueError("You did not specify any attributes to order the queryset on.")
 
@@ -30,41 +29,43 @@ class BaseService:
             self.queryset = self.queryset.order_by(order)
         return self.queryset
 
-    def apply_pagination(self):
+    def apply_pagination(self) -> Query:
         self.queryset = self.queryset.limit(self.limit)
         self.queryset = self.queryset.offset(self.offset)
         return self.queryset
 
 
 class PersonService(BaseService):
-    def __init__(self, query_params=MultiDict[str, str]):
+    def __init__(self, query_params: MultiDict[str, str] = MultiDict[str, str]) -> None:
         super().__init__(query_params)
         self.query_params = query_params
         self.queryset = Person.query.filter(Person.protected.isnot(True)).options(
-            joinedload(Person.professional_detail)
+            joinedload(Person.professional_detail),
         )
         self.order = [Person.last_name.asc(), Person.id.asc()]
 
-    def apply_filtering(self):
+    def apply_filtering(self) -> Query:
         q = self.query_params.get("q", None)
         if q:
             self.queryset = self.queryset.filter(Person.toon_naam.ilike(f"%{q}%"))
 
         include_former_judges = self.query_params.get(
-            "former_judges", default=False, type=lambda v: v.lower() == "true"
+            "former_judges",
+            default=False,
+            type=lambda v: v.lower() == "true",
         )
         if include_former_judges is False:
             self.queryset = self.queryset.filter(Person.removed_from_rechtspraak_at.is_(None))
         return self.queryset
 
-    def list_query(self):
+    def list_query(self) -> Query:
         self.queryset = self.apply_ordering()
         self.queryset = self.apply_pagination()
         return self.queryset
 
 
 class PersonVerdictsService(BaseService):
-    def __init__(self, person: Person, query_params=MultiDict[str, str]):
+    def __init__(self, person: Person, query_params: MultiDict[str, str] = MultiDict[str, str]) -> None:
         super().__init__(query_params)
         self.query_params = query_params
         self.queryset = (

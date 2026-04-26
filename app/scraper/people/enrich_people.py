@@ -12,7 +12,7 @@ from app.scraper.people.utils import (
 from app.scraper.rechtspraak_session import RechtspraakScrapeSession
 
 
-def enrich_people_handler():
+def enrich_people_handler() -> None:
     people = Person.query.all()
 
     # Rate limit to default requests p/s, which means that enriching 5.000 judges will take a little less than 3 hours
@@ -54,14 +54,14 @@ def enrich_person(session: RechtspraakScrapeSession, person: Person) -> None:
             ProfessionalDetail.create(**{"person_id": person.id, **pd_kwargs}, institution=institution)
 
     for nevenbetrekking in person_json.get("huidigeNevenbetrekkingen", []):
-        nb_kwargs = SideJob.transform_huidige_nevenbetrekkingen_dict(nevenbetrekking)
-        if not side_job_already_exists(person, nb_kwargs):
-            SideJob.create(**{"person_id": person.id, **nb_kwargs})
+        nevenbetrekking_kwargs = SideJob.transform_huidige_nevenbetrekkingen_dict(nevenbetrekking)
+        if not side_job_already_exists(person, nevenbetrekking_kwargs):
+            SideJob.create(**{"person_id": person.id, **nevenbetrekking_kwargs})
 
     for voorgaande_nevenbetrekking in person_json.get("voorgaandeNevenbetrekkingen", []):
-        nb_kwargs = SideJob.transform_voorgaande_nevenbetrekkingen_dict(voorgaande_nevenbetrekking)
-        if not side_job_already_exists(person, nb_kwargs):
-            SideJob.create(**{"person_id": person.id, **nb_kwargs})
+        nevenbetrekking_kwargs = SideJob.transform_voorgaande_nevenbetrekkingen_dict(voorgaande_nevenbetrekking)
+        if not side_job_already_exists(person, nevenbetrekking_kwargs):
+            SideJob.create(**{"person_id": person.id, **nevenbetrekking_kwargs})
 
     person.removed_from_rechtspraak_at = None
     person.last_scraped_at = datetime.now()

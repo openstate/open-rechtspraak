@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 import sentry_sdk
 from flask import Flask
 from flask_talisman import Talisman
@@ -12,8 +14,11 @@ from app.extensions import cors, db, migrate, sitemap
 from app.redirect.routes import redirect_bp
 from app.util import get_env_variable
 
+if TYPE_CHECKING:
+    from datetime import datetime
 
-def create_app(env=None):
+
+def create_app(env: str | None = None) -> None:
     initialize_sentry()
     app = Flask(__name__, static_folder="static")
     app.config.from_object(get_config(env))
@@ -26,7 +31,7 @@ def create_app(env=None):
     return app
 
 
-def flask_extensions(app):
+def flask_extensions(app: Flask) -> None:
     initialize_talisman(app)
     db.init_app(app)
     migrate.init_app(app, db)
@@ -34,7 +39,7 @@ def flask_extensions(app):
     cors.init_app(app)
 
 
-def initialize_sentry():
+def initialize_sentry() -> None:
     sentry_sdk.init(
         dsn=get_env_variable("SENTRY_DSN", default=""),
         integrations=[
@@ -46,7 +51,7 @@ def initialize_sentry():
     )
 
 
-def initialize_talisman(app):
+def initialize_talisman(app: Flask) -> None:
     SELF = "'self'"
 
     csp = {
@@ -108,7 +113,7 @@ def initialize_talisman(app):
         "xr-spatial-tracking": "()",
     }
 
-    app = Talisman(
+    return Talisman(
         app,
         force_https=app.config["TALISMAN_FORCE_HTTPS"],
         content_security_policy=csp,
@@ -117,22 +122,21 @@ def initialize_talisman(app):
         permissions_policy=permissions_policy,
         strict_transport_security=False,
     )
-    return app
 
 
-def register_error_handlers(app):
+def register_error_handlers(app: Flask) -> None:
     app.register_error_handler(401, unauthorized_error)
     app.register_error_handler(404, page_not_found)
     app.register_error_handler(500, internal_server_error)
 
 
-def register_routes(app):
+def register_routes(app: Flask) -> None:
     app.register_blueprint(core_bp)
     app.register_blueprint(api_bp)
     app.register_blueprint(redirect_bp)
 
 
-def register_commands(app):
+def register_commands(app: Flask) -> None:
     app.cli.add_command(commands.import_people)
     app.cli.add_command(commands.enrich_people)
     app.cli.add_command(commands.import_verdicts)
@@ -144,9 +148,9 @@ def register_commands(app):
     app.cli.add_command(seed.seed)
 
 
-def register_template_filters(app):
+def register_template_filters(app: Flask) -> None:
     @app.template_filter("date")
-    def _jinja2_filter_datetime(datetime):
+    def _jinja2_filter_datetime(datetime: datetime) -> str:
         if datetime:
             return datetime.strftime("%d-%m-%Y")
         return ""

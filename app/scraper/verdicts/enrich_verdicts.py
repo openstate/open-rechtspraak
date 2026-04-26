@@ -5,7 +5,7 @@ from flask import current_app
 from sqlalchemy.exc import DataError
 
 from app.errors import EnrichError
-from app.models import Institution, LegalArea, PersonVerdict, ProcedureType, Verdict
+from app.models import Institution, LegalArea, Person, PersonVerdict, ProcedureType, Verdict
 from app.scraper.rechtspraak_session import RechtspraakScrapeSession
 from app.scraper.soup_parsing import (
     find_beslissing,
@@ -19,14 +19,14 @@ from app.scraper.verdicts.config import DETAILS_ENDPOINT, FAULTY_URL
 from app.scraper.verdicts.utils import person_verdict_already_exists, recognize_people
 
 
-def enrich_verdicts_handler():
+def enrich_verdicts_handler() -> None:
     base_query = Verdict.query.filter(Verdict.last_scraped_at.is_(None))
     total_no_of_verdicts = base_query.count()
     runs = math.ceil(total_no_of_verdicts / 1000)
     current_app.logger.info(f"{runs} number of runs needed to enrich {total_no_of_verdicts} un-enriched verdicts")
 
     with RechtspraakScrapeSession() as session:
-        for run in range(0, runs):
+        for run in range(runs):
             offset = run * 1000
             current_app.logger.info(f"Run {run} with offset {offset}")
             verdicts = base_query.limit(1000).all()
@@ -43,10 +43,9 @@ def enrich_verdicts_handler():
                         find_legal_area_for_verdict(verdict)
                 except EnrichError:
                     current_app.logger.exception("An unknown problem during verdict enrichment was encountered.")
-                    pass
 
 
-def enrich_verdict(session: RechtspraakScrapeSession, verdict):
+def enrich_verdict(session: RechtspraakScrapeSession, verdict: Verdict) -> None:
     current_app.logger.debug(f"Enriching {verdict.ecli}")
     params = {"id": verdict.ecli}
     r = session.get(DETAILS_ENDPOINT, params=params)
@@ -54,7 +53,7 @@ def enrich_verdict(session: RechtspraakScrapeSession, verdict):
 
     if not r.ok or r.url == FAULTY_URL:
         current_app.logger.error(
-            f"Error during verdict enrichment: {verdict.id}, {verdict.ecli}, {r.status_code}, {r.url}"
+            f"Error during verdict enrichment: {verdict.id}, {verdict.ecli}, {r.status_code}, {r.url}",
         )
         return
 
@@ -76,7 +75,7 @@ def enrich_verdict(session: RechtspraakScrapeSession, verdict):
         current_app.logger.exception(f"Error during verdict saving: {verdict.ecli}")
 
 
-def find_people_for_verdict(verdict, people=None, soup=None):
+def find_people_for_verdict(verdict: Verdict, people: list[Person] | None = None, soup: str | None = None) -> None:
     current_app.logger.debug(f"Starting with people finding for verdict {verdict.ecli} ({verdict.id})")
 
     if not soup:
@@ -102,7 +101,7 @@ def find_people_for_verdict(verdict, people=None, soup=None):
             current_app.logger.debug(f"PersonVerdict for person {person.id} and verdict {verdict.id} already exists")
 
 
-def find_institution_for_verdict(verdict, soup=None):
+def find_institution_for_verdict(verdict: Verdict, soup: str | None = None) -> None:
     if not soup:
         soup = to_soup(verdict.raw_xml)
     institution_identifier = find_institution_identifier(soup)
@@ -115,13 +114,13 @@ def find_institution_for_verdict(verdict, soup=None):
         verdict.institution = institution
         verdict.save()
         current_app.logger.debug(
-            f"Institution {institution.name} matched with and verdict {verdict.id} ({verdict.ecli})"
+            f"Institution {institution.name} matched with and verdict {verdict.id} ({verdict.ecli})",
         )
     else:
         current_app.logger.warning(f"No institution found for verdict {verdict.id} ({verdict.ecli})")
 
 
-def find_procedure_type_for_verdict(verdict, soup=None):
+def find_procedure_type_for_verdict(verdict: Verdict, soup: str | None = None) -> None:
     if not soup:
         soup = to_soup(verdict.raw_xml)
     procedure_type_identifier = find_procedure_type_identifier(soup)
@@ -135,13 +134,13 @@ def find_procedure_type_for_verdict(verdict, soup=None):
         verdict.procedure_type = procedure_type
         verdict.save()
         current_app.logger.debug(
-            f"Procedure type {procedure_type.name} matched with and verdict {verdict.id} ({verdict.ecli})"
+            f"Procedure type {procedure_type.name} matched with and verdict {verdict.id} ({verdict.ecli})",
         )
     else:
         current_app.logger.warning(f"No procedure type found for verdict {verdict.id} ({verdict.ecli})")
 
 
-def find_legal_area_for_verdict(verdict, soup=None):
+def find_legal_area_for_verdict(verdict: Verdict, soup: str | None = None) -> None:
     if not soup:
         soup = to_soup(verdict.raw_xml)
 
@@ -156,7 +155,7 @@ def find_legal_area_for_verdict(verdict, soup=None):
         verdict.legal_area = legal_area
         verdict.save()
         current_app.logger.debug(
-            f"Legal area {legal_area.legal_area_name} matched with and verdict {verdict.id} ({verdict.ecli})"
+            f"Legal area {legal_area.legal_area_name} matched with and verdict {verdict.id} ({verdict.ecli})",
         )
     else:
         current_app.logger.warning(f"No legal area found for verdict {verdict.id} ({verdict.ecli})")

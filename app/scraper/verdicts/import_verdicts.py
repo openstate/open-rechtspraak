@@ -12,9 +12,8 @@ from app.scraper.verdicts.config import (
 from app.scraper.verdicts.utils import verdict_already_exists
 
 
-def import_verdicts_handler(start_datetime: str, end_datetime: str):
-    """
-    Datetime parameters must be formatted as such: %Y-%m-%dT%H:%M:%S
+def import_verdicts_handler(start_datetime: str, end_datetime: str) -> None:
+    """Datetime parameters must be formatted as such: %Y-%m-%dT%H:%M:%S
 
     See https://www.rechtspraak.nl/Uitspraken/paginas/open-data.aspx for more details on how the search endpoint works.
     """
@@ -28,7 +27,7 @@ def import_verdicts_handler(start_datetime: str, end_datetime: str):
 
             if not r.ok or r.url == FAULTY_URL:
                 current_app.logger.error(
-                    f"Error during verdict collection: STATUS_CODE {r.status_code} | URL {r.url} | CONTENT {r.content}"
+                    f"Error during verdict collection: STATUS_CODE {r.status_code} | URL {r.url} | CONTENT {r.content}",
                 )
                 return
 
@@ -52,6 +51,6 @@ def import_verdicts_handler(start_datetime: str, end_datetime: str):
 
             if len(verdicts) < DEFAULT_LIMIT:
                 current_app.logger.info(
-                    f"Last scrape yielded less than {DEFAULT_LIMIT}, indicating no more verdicts can be found."
+                    f"Last scrape yielded less than {DEFAULT_LIMIT}, indicating no more verdicts can be found.",
                 )
                 break

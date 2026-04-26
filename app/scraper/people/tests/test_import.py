@@ -3,9 +3,7 @@ from app.scraper.people.import_people import update_or_create_person
 
 
 def test_person_gets_created_if_no_toonaam_exists(requests_mock, person):
-    """
-    This test ensures that a scraped person is created if their toonnaam does not exist yet.
-    """
+    """This test ensures that a scraped person is created if their toonnaam does not exist yet."""
     assert Person.query.count() == 1
 
     scraped_person = {
@@ -25,9 +23,8 @@ def test_person_gets_created_if_no_toonaam_exists(requests_mock, person):
 
 
 def test_person_gets_updated_if_toonnaam_is_identical(requests_mock, person):
-    """
-    This test ensures that attributes (i.e. last name) of a person are updated if they are rescraped, assuming
-      their 'toonnaam' is identical.
+    """This test ensures that attributes (i.e. last name) of a person are updated if they are rescraped, assuming
+    their 'toonnaam' is identical.
     """
     new_last_name = "Van der Achternaam"
     assert person.last_name != new_last_name

@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 from flask import current_app
 
 from app.models import LegalArea
@@ -5,23 +7,26 @@ from app.scraper.other.config import LEGAL_AREAS_URL
 from app.scraper.rechtspraak_session import RechtspraakScrapeSession
 from app.scraper.soup_parsing import safe_find_text, to_soup
 
+if TYPE_CHECKING:
+    from bs4 import BeautifulSoup
 
-def transform_legal_area_xml_to_dict(area):
+
+def transform_legal_area_xml_to_dict(soup: BeautifulSoup) -> dict:
     return {
-        "legal_area_lido_id": safe_find_text(area, "Identifier"),
-        "legal_area_name": safe_find_text(area, "Naam"),
+        "legal_area_lido_id": safe_find_text(soup, "Identifier"),
+        "legal_area_name": safe_find_text(soup, "Naam"),
     }
 
 
-def legal_area_exists(legal_area_dict):
+def legal_area_exists(legal_area_dict: dict) -> bool:
     legal_area = LegalArea.query.filter(
-        LegalArea.legal_area_lido_id == legal_area_dict.get("legal_area_lido_id")
+        LegalArea.legal_area_lido_id == legal_area_dict.get("legal_area_lido_id"),
     ).first()
-    if legal_area:
-        return True
+
+    return True if legal_area else False
 
 
-def import_legal_areas_handler():
+def import_legal_areas_handler() -> None:
     with RechtspraakScrapeSession() as session:
         r = session.get(LEGAL_AREAS_URL)
         r.raise_for_status()

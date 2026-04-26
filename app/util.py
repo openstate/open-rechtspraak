@@ -7,7 +7,7 @@ import pytz
 MIN_RECHTSPRAAK_DATETIME_LENGTH = 5
 
 
-def get_env_variable(name, default=None) -> str:
+def get_env_variable(name: str, default: str | None = None) -> str:
     try:
         return os.environ.get(name, default=default)
     except KeyError:
@@ -15,13 +15,12 @@ def get_env_variable(name, default=None) -> str:
         raise OSError(message)
 
 
-def remove_milliseconds_from_epoch(epoch):
+def remove_milliseconds_from_epoch(epoch: str) -> int:
     return int(epoch) // 1000
 
 
 def parse_rechtspraak_datetime(dt: str) -> datetime | None:
-    """
-    datetimes from the Rechtspraak API are formatted like this: "/Date(1598911200000+0200)/"
+    """Datetimes from the Rechtspraak API are formatted like this: "/Date(1598911200000+0200)/"
 
     Weirdly enough, they are epochs with milliseconds _and_ a timezone. The epoch itself it no in UTC, but in
     Europe/Amsterdam (as indicated by the +0200 / +0100). That's bad design on the side of the API.
@@ -34,7 +33,7 @@ def parse_rechtspraak_datetime(dt: str) -> datetime | None:
     """
     if len(dt) < MIN_RECHTSPRAAK_DATETIME_LENGTH:
         # length of the datetime string is too short, we can't parse it to a valid epoch epoch
-        return
+        return None
 
     # Strip timezone and remove milliseconds, convert to datetime
     # strips /Date( and +0200) from the string, yields epoch with milliseconds
@@ -47,24 +46,22 @@ def parse_rechtspraak_datetime(dt: str) -> datetime | None:
     dt = dt.astimezone(dutch_timezone)
 
     # Remove the tzinfo from the datetime object, giving us a 'correct' UTC datetime object
-    dt = dt.replace(tzinfo=None)
-    return dt
+    return dt.replace(tzinfo=None)
 
 
-def determine_gender(toonnaam):
+def determine_gender(toonnaam: str) -> str:
     if "dhr." in toonnaam:
         return "male"
-    elif "mw." in toonnaam:
+    if "mw." in toonnaam:
         return "female"
-    else:
-        return "other"
+    return "other"
 
 
-def extract_initials(toonnaam_kort):
-    return toonnaam_kort.split()[0]
+def extract_initials(toonnaam_kort: str) -> str:
+    return toonnaam_kort.split(maxsplit=1)[0]
 
 
-def is_valid_uuid(uuid):
+def is_valid_uuid(uuid: str) -> bool:
     try:
         UUID(uuid, version=4)
     except ValueError:

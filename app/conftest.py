@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 import pytest
 from pytest_factoryboy import register
@@ -8,23 +9,30 @@ from app.app import create_app
 from app.database import db as db_
 from app.models import Person, PersonVerdict, Verdict
 
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
+    from flask import Flask
+    from flask.testing import FlaskClient
+    from flask_sqlalchemy import SQLAlchemy
+
 
 @pytest.fixture
-def client(app):
+def client(app: Flask) -> FlaskClient:
     context = app.test_request_context()
     context.push()
     return app.test_client()
 
 
 @pytest.fixture(scope="session")
-def app():
+def app() -> Iterable[Flask]:
     app_ = create_app("test")
     with app_.app_context():
         yield app_
 
 
 @pytest.fixture(scope="function", autouse=True)
-def db(app):
+def db(app: Flask) -> SQLAlchemy:
     db_.app = app
     with app.app_context():
         db_.create_all()
@@ -62,13 +70,13 @@ def verdict() -> Verdict:
 
 
 @pytest.fixture
-def person_with_verdict(person, verdict) -> Person:
+def person_with_verdict(person: Person, verdict: Verdict) -> Person:
     PersonVerdict.create(person_id=person.id, verdict_id=verdict.id, role="rechter")
     return person
 
 
 @pytest.fixture
-def person_with_verdicts(person) -> Person:
+def person_with_verdicts(person: Person) -> Person:
     verdicts = f.VerdictFactory.create_batch(5)
     for verdict in verdicts:
         PersonVerdict.create(person_id=person.id, verdict_id=verdict.id, role="rechter")
