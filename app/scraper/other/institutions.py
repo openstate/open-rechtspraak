@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 from flask import current_app
 
 from app.models import Institution
@@ -5,8 +7,11 @@ from app.scraper.other.config import INSTITUTIONS_URL
 from app.scraper.rechtspraak_session import RechtspraakScrapeSession
 from app.scraper.soup_parsing import safe_find_text, to_soup
 
+if TYPE_CHECKING:
+    from bs4 import BeautifulSoup
 
-def transform_institution_xml_to_dict(soup):
+
+def transform_institution_xml_to_dict(soup: BeautifulSoup) -> dict:
     return {
         "lido_id": safe_find_text(soup, "Identifier"),
         "name": safe_find_text(soup, "Naam"),
@@ -17,13 +22,12 @@ def transform_institution_xml_to_dict(soup):
     }
 
 
-def institution_exists(institution_dict):
+def institution_exists(institution_dict: dict) -> bool:
     institution = Institution.query.filter(Institution.name == institution_dict.get("name")).first()
-    if institution:
-        return True
+    return True if institution else False
 
 
-def import_institutions_handler():
+def import_institutions_handler() -> None:
     with RechtspraakScrapeSession() as session:
         r = session.get(INSTITUTIONS_URL)
         r.raise_for_status()

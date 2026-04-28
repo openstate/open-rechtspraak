@@ -10,7 +10,7 @@ def serialize_dt(dt: datetime) -> str | None:
     return dt.isoformat() if dt else None
 
 
-def person_list_serializer(person: Person):
+def person_list_serializer(person: Person) -> dict:
     # only show professional details that are still active
     professional_details = [detail for detail in person.professional_detail if detail.end_date is not None]
     return {
@@ -35,7 +35,7 @@ def person_list_serializer(person: Person):
     }
 
 
-def verdict_serializer(verdict: Verdict):
+def verdict_serializer(verdict: Verdict) -> dict:
     procedure_type = verdict.procedure_type.lido_id if verdict.procedure_type else None
     legal_area = verdict.legal_area.legal_area_lido_id if verdict.legal_area else None
     institution = verdict.institution.lido_id if verdict.institution else None

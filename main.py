@@ -16,7 +16,7 @@ from app import app
 # This piece of code automatically imports the db and models when you start a
 # Flask shell
 @app.shell_context_processor
-def make_shell_context():
+def make_shell_context() -> dict:
     return {
         "db": db,
         "PersonVerdict": PersonVerdict,

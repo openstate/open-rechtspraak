@@ -41,7 +41,7 @@ class VerdictFactory(BaseFactory):
     class Meta:
         model = Verdict
 
-    ecli = factory.LazyAttribute(lambda x: generate_ecli())
+    ecli = factory.LazyAttribute(lambda _: generate_ecli())
     issued = factory.Faker("date")
     title = factory.LazyAttribute(lambda a: f"Uitspraak {a.ecli}")
     raw_xml = "<?xml><rdf:description></rdf:rdf></open-rechtspraak>"

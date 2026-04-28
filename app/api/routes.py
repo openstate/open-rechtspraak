@@ -1,4 +1,4 @@
-from flask import Blueprint, abort, jsonify, redirect, request, url_for
+from flask import Blueprint, Response, abort, jsonify, redirect, request, url_for
 
 from app.api.serializers import person_list_serializer, verdict_serializer
 from app.api.services import PersonService, PersonVerdictsService
@@ -9,12 +9,12 @@ api_bp = Blueprint("api", __name__, url_prefix="/api/v1")
 
 
 @api_bp.route("/")
-def redirect_api_docs():
+def redirect_api_docs() -> Response:
     return redirect(url_for("base.api_docs"))
 
 
 @api_bp.route("/person")
-def person():
+def person() -> Response:
     service = PersonService(request.args)
     service.apply_filtering()
 
@@ -31,7 +31,7 @@ def person():
 
 
 @api_bp.route("/person/<id>/verdicts")
-def person_verdicts(id):
+def person_verdicts(id: str) -> Response:
     if not is_valid_uuid(id):
         abort(404)
 

@@ -1,7 +1,7 @@
 from app.util import get_env_variable
 
 
-def build_dsn(test=False):
+def build_dsn(test: bool = False) -> str:
     if get_env_variable("DATABASE_URL"):
         return get_env_variable("DATABASE_URL")
 
@@ -49,16 +49,15 @@ class TestConfig(Config):
 
 class ProductionConfig(Config):
     TALISMAN_FORCE_HTTPS = True
-    pass
 
 
-def get_config(env=None):
+def get_config(env: str | None = None) -> Config:
     if env is None:
         env = get_env_variable("ENV", default="production")
 
     if env == "production":
         return ProductionConfig()
-    elif env == "test":
+    if env == "test":
         return TestConfig()
 
     return DevelopmentConfig()

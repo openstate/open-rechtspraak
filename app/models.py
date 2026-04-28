@@ -27,11 +27,11 @@ class Person(UUIDModel):
     verdicts = relationship("PersonVerdict", back_populates="person")
 
     @property
-    def former_judge(self):
+    def former_judge(self) -> bool:
         return True if self.removed_from_rechtspraak_at else False
 
     @staticmethod
-    def from_dict(d):
+    def from_dict(d: dict) -> dict:
         toon_naam = (d.get("toonnaam") or "").strip()
         toon_naam_kort = (d.get("toonnaamkort") or "").strip()
         len_last_name = len(toon_naam) - len(toon_naam_kort)
@@ -62,7 +62,7 @@ class ProfessionalDetail(UUIDModel):
     institution = relationship("Institution", backref="professional_detail", lazy="select")
 
     @staticmethod
-    def transform_beroepsgegevens_dict(d):
+    def transform_beroepsgegevens_dict(d: dict) -> dict:
         return dict(
             start_date=parse_rechtspraak_datetime(d.get("begindatum") or ""),
             main_job=bool(d.get("hoofdfunctie")),
@@ -72,7 +72,7 @@ class ProfessionalDetail(UUIDModel):
         )
 
     @staticmethod
-    def transform_historisch_beroepsgegevens_dict(d):
+    def transform_historisch_beroepsgegevens_dict(d: dict) -> dict:
         return dict(
             start_date=parse_rechtspraak_datetime(d.get("begindatum") or ""),
             end_date=parse_rechtspraak_datetime(d.get("einddatum") or ""),
@@ -95,7 +95,7 @@ class SideJob(UUIDModel):
     person = relationship("Person", backref="side_job", lazy="select")
 
     @staticmethod
-    def transform_huidige_nevenbetrekkingen_dict(d):
+    def transform_huidige_nevenbetrekkingen_dict(d: dict) -> dict:
         return dict(
             start_date=parse_rechtspraak_datetime(d.get("begindatum") or ""),
             paid=(d.get("bezoldigd") or "").strip(),
@@ -106,7 +106,7 @@ class SideJob(UUIDModel):
         )
 
     @staticmethod
-    def transform_voorgaande_nevenbetrekkingen_dict(d):
+    def transform_voorgaande_nevenbetrekkingen_dict(d: dict) -> dict:
         return dict(
             start_date=parse_rechtspraak_datetime(d.get("begindatum") or ""),
             end_date=parse_rechtspraak_datetime(d.get("einddatum") or ""),

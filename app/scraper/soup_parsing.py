@@ -1,23 +1,25 @@
+from typing import TYPE_CHECKING
+
 from bs4 import BeautifulSoup
 
+if TYPE_CHECKING:
+    from bs4._typing import _StrainableAttributes
 
-def to_soup(content):
+
+def to_soup(content: str) -> BeautifulSoup:
     return BeautifulSoup(content, features="xml")
 
 
-def extract_verdicts(soup):
+def extract_verdicts(soup: BeautifulSoup) -> BeautifulSoup:
     return soup.find_all("entry")
 
 
-def safe_find_text(soup, selector, attrs=None):
+def safe_find_text(soup: BeautifulSoup, selector: str, attrs: _StrainableAttributes | None = None) -> str:
     finding = soup.find(selector, attrs=attrs)
-    if finding:
-        return finding.text
-    else:
-        return ""
+    return finding.text if finding else ""
 
 
-def find_elements_containing(soup, text):
+def find_elements_containing(soup: BeautifulSoup, text: str) -> list:
     sections = soup.find_all("section")
     result = []
     for section in sections:
@@ -28,7 +30,7 @@ def find_elements_containing(soup, text):
     return result
 
 
-def find_beslissing(soup):
+def find_beslissing(soup: BeautifulSoup) -> str:
     beslissings_text = ""
     beslissings_text += safe_find_text(soup, "section", {"role": "beslissing"})
     results = find_elements_containing(
@@ -51,22 +53,21 @@ def find_beslissing(soup):
     return beslissings_text
 
 
-def find_institution_identifier(soup):
+def find_institution_identifier(soup: BeautifulSoup) -> str:
     creator = soup.find("dcterms:creator")
     if creator:
         identifier = creator.get("resourceidentifier")
         if not identifier:
             identifier = creator.get("psi:resourceIdentifier")
         return identifier
+    return ""
 
 
-def find_procedure_type_identifier(soup):
+def find_procedure_type_identifier(soup: BeautifulSoup) -> str:
     procedure_type = soup.find("psi:procedure")
-    if procedure_type:
-        return procedure_type.get("resourceIdentifier")
+    return procedure_type.get("resourceIdentifier") if procedure_type else ""
 
 
-def find_legal_area_identifier(soup):
+def find_legal_area_identifier(soup: BeautifulSoup) -> str:
     legal_area = soup.find("dcterms:subject")
-    if legal_area:
-        return legal_area.get("resourceIdentifier")
+    return legal_area.get("resourceIdentifier") if legal_area else ""

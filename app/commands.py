@@ -15,13 +15,13 @@ from app.scraper.verdicts.import_verdicts import import_verdicts_handler
 
 @click.command("import_people")
 @with_appcontext
-def import_people():
+def import_people() -> None:
     import_people_handler()
 
 
 @click.command("enrich_people")
 @with_appcontext
-def enrich_people():
+def enrich_people() -> None:
     enrich_people_handler()
 
 
@@ -29,7 +29,7 @@ def enrich_people():
 @click.option("--start_date", default=None)
 @click.option("--end_date", default=None)
 @with_appcontext
-def import_verdicts(start_date, end_date):
+def import_verdicts(start_date: str | None, end_date: str | None) -> None:
     if not start_date:
         start_date = (datetime.now() - timedelta(days=3)).strftime("%Y-%m-%dT%H:%M:%S")
     if not end_date:
@@ -40,13 +40,13 @@ def import_verdicts(start_date, end_date):
 
 @click.command("enrich_verdicts")
 @with_appcontext
-def enrich_verdicts():
+def enrich_verdicts() -> None:
     enrich_verdicts_handler()
 
 
 @click.command("db_truncate")
 @with_appcontext
-def db_truncate():
+def db_truncate() -> None:
     meta = db.metadata
     for table in reversed(meta.sorted_tables):
         print(f"Clear table {table}")
@@ -56,17 +56,17 @@ def db_truncate():
 
 @click.command("import_institutions")
 @with_appcontext
-def import_institutions():
+def import_institutions() -> None:
     import_institutions_handler()
 
 
 @click.command("import_procedure_types")
 @with_appcontext
-def import_procedure_types():
+def import_procedure_types() -> None:
     import_procedure_types_handler()
 
 
 @click.command("import_legal_areas")
 @with_appcontext
-def import_legal_areas():
+def import_legal_areas() -> None:
     import_legal_areas_handler()

@@ -8,19 +8,19 @@ from app.models import Person, PersonVerdict, Verdict
 from app.tests import factories
 
 
-def seed_people(n: int = 10):
+def seed_people(n: int = 10) -> list[Person]:
     people = [factory.build(dict, FACTORY_CLASS=factories.PersonFactory) for i in range(n)]
     return [Person.update_or_create(person) for person in people]
 
 
-def seed_verdicts(n: int = 30):
+def seed_verdicts(n: int = 30) -> list[Verdict]:
     verdicts = [factory.build(dict, FACTORY_CLASS=factories.VerdictFactory) for i in range(n)]
     return [Verdict.update_or_create(verdict) for verdict in verdicts]
 
 
 @click.command("seed")
 @with_appcontext
-def seed():
+def seed() -> None:
     people = seed_people()
 
     verdicts = seed_verdicts()
