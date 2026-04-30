@@ -32,6 +32,9 @@ class Config:
     # Silence deprecation warning
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+    # Rate limit requests to namenlijst.rechtspraak.nl
+    RATE_LIMIT = False if get_env_variable("RATE_LIMIT", default=True) == "false" else True
+
 
 class DevelopmentConfig(Config):
     DEBUG = True
