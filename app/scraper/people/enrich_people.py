@@ -62,7 +62,7 @@ def enrich_person(session: RechtspraakScrapeSession, person: Person) -> None:
 
     if not r.ok or r.url == FAULTY_URL:
         current_app.logger.warning(
-            f"Enrichtment of person {person.id} failed with status {r.status_code}, url {r.url}",
+            f"Enrichment of person {person.id} failed with status {r.status_code}, url {r.url}",
             extra={"id": person.id},
         )
         person.removed_from_rechtspraak_at = datetime.now()
@@ -94,6 +94,10 @@ def enrich_person(session: RechtspraakScrapeSession, person: Person) -> None:
         if not side_job_already_exists(person, nevenbetrekking_kwargs):
             SideJob.create(**{"person_id": person.id, **nevenbetrekking_kwargs})
 
+    person.last_name_own = person_json.get("achternaamEigen")
+    person.last_name_partner = person_json.get("achternaamPartner")
+    person.did_not_self_report_side_jobs = person_json.get("geenOpgaveNevenbetrekkingen")
+    person.has_no_side_jobs = person_json.get("vervultGeenNevenbetrekkingen")
     person.removed_from_rechtspraak_at = None
     person.last_scraped_at = datetime.now()
     person.save()
