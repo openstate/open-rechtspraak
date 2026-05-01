@@ -39,6 +39,17 @@ def enrich_people_handler() -> None:
             enrich_person(session, person)
 
 
+def enrich_person_handler(person_id: str) -> None:
+    """Enriches a single person by their id."""
+    person = Person.query.filter(Person.id == person_id).first()
+
+    if not person:
+        raise ValueError(f"person with id '{person_id}' does not exist")
+
+    with RechtspraakScrapeSession() as session:
+        enrich_person(session, person)
+
+
 def person_details_url(rechtspraak_id: str) -> str:
     """Yield the publicly accessible url for a person to scrape."""
     return DETAILS_ENDPOINT + rechtspraak_id
