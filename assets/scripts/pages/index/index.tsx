@@ -7,23 +7,29 @@ import registerComponent from '../../utils/registerComponent';
 import SearchCounter from './components/SearchCounter';
 import SearchInput from './components/SearchInput';
 import SearchResultRow from './components/SearchResultRow';
+import SearchIncludeFormerJudges from './components/SearchIncludeFormerJudges';
 
 function Search() {
   const [q, setQuery] = useState<string>('');
+  const [includeFormerJudges, setIncludeFormerJudges] = useState<boolean>(false);
   const [{ data, loading, error }, refetch] = useAxios({ url: 'api/v1/person' }, { manual: true });
 
   useEffect(() => {
     refetch({
       params: {
         q,
+        former_judges: includeFormerJudges,
         limit: 100,
       },
     });
-  }, [q]);
+  }, [q, includeFormerJudges]);
+
+  console.log(includeFormerJudges);
 
   return (
     <div>
       <SearchInput setQuery={setQuery} />
+      <SearchIncludeFormerJudges setIncludeFormerJudges={setIncludeFormerJudges} />
       <SearchCounter count={data?.count} />
       {error && <ErrorMessage />}
 

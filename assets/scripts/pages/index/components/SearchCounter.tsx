@@ -6,7 +6,7 @@ interface Props {
 
 function SearchCounter({ count }: Props) {
   return (
-    <p>
+    <p className="pt-2">
       <span id="search-results-count">{(count !== undefined) ? count : '____'}</span>
       {' '}
       personen gevonden
