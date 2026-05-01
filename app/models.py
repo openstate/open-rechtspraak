@@ -17,7 +17,6 @@ class Person(UUIDModel):
     __tablename__ = "person"
     titles = Column(db.Text, nullable=True)
     initials = Column(db.Text, nullable=True)
-    first_name = Column(db.Text, nullable=True)
     last_name = Column(db.Text, nullable=True)
     last_name_own = Column(db.Text, nullable=True)
     last_name_partner = Column(db.Text, nullable=True)

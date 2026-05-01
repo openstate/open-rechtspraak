@@ -25,8 +25,7 @@ class PersonFactory(BaseFactory):
         model = Person
         sqlalchemy_session = db.session
 
-    first_name = factory.Faker("first_name")
-    initials = factory.LazyAttribute(lambda a: f"{a.first_name[0]}.")
+    initials = factory.LazyAttribute(lambda a: str(factory.Faker("first_name"))[0] + ".")
     titles = factory.Faker("prefix")
     last_name = factory.Faker("last_name")
     gender = fuzzy.FuzzyChoice(["male", "female"])

@@ -17,7 +17,6 @@ def person_list_serializer(person: Person) -> dict:
         "id": person.id,
         "titles": person.titles,
         "initials": person.initials,
-        "first_name": person.first_name,
         "last_name": person.last_name,
         "last_name_own": person.last_name_own,
         "last_name_partner": person.last_name_partner,
