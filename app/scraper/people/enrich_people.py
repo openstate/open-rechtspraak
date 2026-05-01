@@ -72,6 +72,15 @@ def enrich_person(session: RechtspraakScrapeSession, person: Person) -> None:
 
     person_json = r.json().get("model", {})
 
+    # This indicates that the person did exist in namenlijst.rechtspraak.nl, but does not exist
+    # anymore. This means that the person has been removed from namenlijst.rechtspraak.nl.
+    if not person_json:
+        current_app.logger.warning(f"Person '{person.id}' has been removed from namenlijst.rechtspraak.nl")
+        person.removed_from_rechtspraak_at = datetime.now()
+        person.last_scraped_at = datetime.now()
+        person.save()
+        return
+
     for beroepsgegeven in person_json.get("beroepsgegevens", []):
         pd_kwargs = ProfessionalDetail.transform_beroepsgegevens_dict(beroepsgegeven)
         if not professional_detail_already_exists(person, pd_kwargs):

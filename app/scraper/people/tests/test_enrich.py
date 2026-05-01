@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from typing import ClassVar
 
 from app.scraper.people.enrich_people import (
     RESCRAPE_AFTER_HOURS,
@@ -11,8 +12,28 @@ from app.tests.factories import PersonFactory
 
 
 class TestEnrichPerson:
+    rechtspraak_response: ClassVar = {
+        "completeDateTime": "/Date(1777637082369+0200)/",
+        "errorMessage": None,
+        "model": {
+            "achternaam": "Test",
+            "beroepsgegevens": [],
+            "beroepsgegevensBuitenRM": [],
+            "geenOpgaveNevenbetrekkingen": False,
+            "historieBeroepsgegevens": [],
+            "huidigeNevenbetrekkingen": [],
+            "status": "Gepubliceerd",
+            "toonNaam": "mw. mr. drs. C.T. Aalbers ",
+            "vervultGeenNevenbetrekkingen": True,
+            "voorgaandeBetrekkingen": [],
+            "voorgaandeNevenbetrekkingen": [],
+        },
+        "status": 1,
+        "validationMessages": None,
+    }
+
     def test_removed_at_is_not_set(self, requests_mock, person):
-        requests_mock.get(person_details_url(person.rechtspraak_id), json={}, status_code=200)
+        requests_mock.get(person_details_url(person.rechtspraak_id), json=self.rechtspraak_response, status_code=200)
 
         assert person.removed_from_rechtspraak_at is None
         with RechtspraakScrapeSession() as session:
@@ -30,12 +51,28 @@ class TestEnrichPerson:
     def test_removed_at_is_removed_on_successful_scrape(self, requests_mock):
         dt = datetime.now()
         person = PersonFactory(removed_from_rechtspraak_at=dt)
-        requests_mock.get(person_details_url(person.rechtspraak_id), json={}, status_code=200)
+        requests_mock.get(person_details_url(person.rechtspraak_id), json=self.rechtspraak_response, status_code=200)
 
         assert person.removed_from_rechtspraak_at == dt
         with RechtspraakScrapeSession() as session:
             enrich_person(session, person)
         assert person.removed_from_rechtspraak_at is None
+
+    def test_removed_at_is_set_if_empty_model_returned(self, requests_mock):
+        person = PersonFactory()
+        response = {
+            "completeDateTime": "/Date(1777636689856+0200)/",
+            "errorMessage": None,
+            "model": None,
+            "status": 1,
+            "validationMessages": None,
+        }
+        requests_mock.get(person_details_url(person.rechtspraak_id), json=response, status_code=200)
+
+        assert person.removed_from_rechtspraak_at is None
+        with RechtspraakScrapeSession() as session:
+            enrich_person(session, person)
+        assert person.removed_from_rechtspraak_at
 
     def test_should_scrape_if_never_scraped_before(self, requests_mock):
         person = PersonFactory(last_scraped_at=None)
