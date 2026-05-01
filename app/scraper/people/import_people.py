@@ -52,4 +52,4 @@ def update_or_create_person(person: dict) -> Person:
     do not exist yet.
     """
     p_kwargs = Person.from_dict(person)
-    return Person.update_or_create({"toon_naam": p_kwargs.pop("toon_naam")}, p_kwargs)
+    return Person.update_or_create({"rechtspraak_internal_id": p_kwargs.pop("rechtspraak_internal_id")}, p_kwargs)
