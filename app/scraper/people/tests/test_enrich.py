@@ -186,8 +186,9 @@ class TestEnrichPersonProfessionalDetails:
         pd = {
             "begindatum": "/Date(1769900400000+0100)/",
             "einddatum": "/Date(1869900400000+0100)/",
-            "functieBuitenRM": "Rechter-plaatsvervanger",
-            "instantieBuitenRM": "Rechtbank Amsterdam",
+            "functieBuitenRM": "Gerechtsdeurwaarder",
+            "instantieBuitenRM": "Deuren zijn veel Waard B.V.",
+            "plaatsBuitenRM": "Deurdorp",
         }
         response = {
             "completeDateTime": "/Date(1777637082369+0200)/",
@@ -214,7 +215,7 @@ class TestEnrichPersonProfessionalDetails:
         assert person.professional_detail[0].function == pd.get("functieBuitenRM")
         assert person.professional_detail[0].start_date == datetime(2026, 2, 1, 0, 0)
         assert person.professional_detail[0].end_date == datetime(2029, 4, 3, 10, 46, 40)
-        assert person.professional_detail[0].remarks == pd.get("opmerkingen")
+        assert pd.get("plaatsBuitenRM") in person.professional_detail[0].remarks
         assert person.professional_detail[0].organisation == pd.get("instantieBuitenRM")
         assert person.professional_detail[0].outside_of_judiciary is True
 
