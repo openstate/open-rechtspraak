@@ -1,0 +1,17 @@
+<div class="col-lg-6 mb-3" id="{{ pd.id }}">
+  <div class="card">
+    <div class="card-body">
+      <h5>{{ pd.function }}</h5>
+      {% if pd.start_date and pd.end_date %}
+      <span>Van <span class="start-date">{{ pd.start_date|date }}</span> tot <span class="end-date">{{
+          pd.end_date|date }}</span>.</span>
+      {% elif pd.start_date %}
+      <span>Gestart op <span class="start-date">{{ pd.start_date|date }}</span>.</span>
+      {% endif %}
+    </div>
+    <div class="card-footer">
+      <span class="badge rounded-pill bg-primary mt-2 me-2 overflow-hidden mw-100" title="{{ pd.organisation }}">{{
+        pd.organisation }}</span>
+    </div>
+  </div>
+</div>

@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from typing import ClassVar
 
+from app.models import ProfessionalDetail
 from app.scraper.people.enrich_people import (
     RESCRAPE_AFTER_HOURS,
     enrich_people_handler,
@@ -23,7 +24,7 @@ class TestEnrichPerson:
             "historieBeroepsgegevens": [],
             "huidigeNevenbetrekkingen": [],
             "status": "Gepubliceerd",
-            "toonNaam": "mw. mr. drs. C.T. Aalbers ",
+            "toonNaam": "mw. mr. drs. A.B. Test",
             "vervultGeenNevenbetrekkingen": True,
             "voorgaandeBetrekkingen": [],
             "voorgaandeNevenbetrekkingen": [],
@@ -82,6 +83,140 @@ class TestEnrichPerson:
         with RechtspraakScrapeSession() as session:
             enrich_person(session, person)
         assert person.last_scraped_at is not None
+
+
+class TestEnrichPersonProfessionalDetails:
+    def test_no_professional_details_are_created_if_none_exist(self, requests_mock):
+        person = PersonFactory()
+        response = {
+            "completeDateTime": "/Date(1777637082369+0200)/",
+            "errorMessage": None,
+            "model": {
+                "achternaam": "Test",
+                "beroepsgegevens": [],
+                "toonNaam": "mw. mr. drs. A.B. Test",
+            },
+            "status": 1,
+            "validationMessages": None,
+        }
+        requests_mock.get(person_details_url(person.rechtspraak_id), json=response, status_code=200)
+
+        assert person.professional_detail == []
+        with RechtspraakScrapeSession() as session:
+            enrich_person(session, person)
+        assert person.professional_detail == []
+
+    def test_current_professional_detail_is_created_if_exist(self, requests_mock):
+        person = PersonFactory()
+        pd = {
+            "begindatum": "/Date(1769900400000+0100)/",
+            "functieOmschrijving": "Rechter-plaatsvervanger",
+            "hoofdfunctie": True,
+            "instantieOmschrijving": "Rechtbank Amsterdam",
+            "opmerkingen": "test",
+        }
+        response = {
+            "completeDateTime": "/Date(1777637082369+0200)/",
+            "errorMessage": None,
+            "model": {
+                "achternaam": "Test",
+                "beroepsgegevens": [pd],
+                "toonNaam": "mw. mr. drs. A.B. Test",
+            },
+            "status": 1,
+            "validationMessages": None,
+        }
+        requests_mock.get(person_details_url(person.rechtspraak_id), json=response, status_code=200)
+
+        assert person.professional_detail == []
+        assert len(ProfessionalDetail.query.all()) == 0
+
+        with RechtspraakScrapeSession() as session:
+            enrich_person(session, person)
+
+        assert len(person.professional_detail) == 1
+        assert len(ProfessionalDetail.query.all()) == 1
+
+        assert person.professional_detail[0].function == pd.get("functieOmschrijving")
+        assert person.professional_detail[0].start_date == datetime(2026, 2, 1, 0, 0)
+        assert person.professional_detail[0].main_job is True
+        assert person.professional_detail[0].remarks == pd.get("opmerkingen")
+        assert person.professional_detail[0].organisation == pd.get("instantieOmschrijving")
+        assert person.professional_detail[0].outside_of_judiciary is False
+
+    def test_historical_professional_detail_is_created_if_exist(self, requests_mock):
+        person = PersonFactory()
+        pd = {
+            "begindatum": "/Date(1769900400000+0100)/",
+            "einddatum": "/Date(1869900400000+0100)/",
+            "functie": "Rechter-plaatsvervanger",
+            "instantie": "Rechtbank Amsterdam",
+        }
+        response = {
+            "completeDateTime": "/Date(1777637082369+0200)/",
+            "errorMessage": None,
+            "model": {
+                "achternaam": "Test",
+                "historieBeroepsgegevens": [pd],
+                "toonNaam": "mw. mr. drs. A.B. Test",
+            },
+            "status": 1,
+            "validationMessages": None,
+        }
+        requests_mock.get(person_details_url(person.rechtspraak_id), json=response, status_code=200)
+
+        assert person.professional_detail == []
+        assert len(ProfessionalDetail.query.all()) == 0
+
+        with RechtspraakScrapeSession() as session:
+            enrich_person(session, person)
+
+        assert len(person.professional_detail) == 1
+        assert len(ProfessionalDetail.query.all()) == 1
+
+        assert person.professional_detail[0].function == pd.get("functie")
+        assert person.professional_detail[0].start_date == datetime(2026, 2, 1, 0, 0)
+        assert person.professional_detail[0].end_date == datetime(2029, 4, 3, 10, 46, 40)
+        assert person.professional_detail[0].remarks == pd.get("opmerkingen")
+        assert person.professional_detail[0].organisation == pd.get("instantie")
+        assert person.professional_detail[0].outside_of_judiciary is False
+
+    def test_professional_detail_outside_of_judiciary_is_created_if_exist(self, requests_mock):
+        person = PersonFactory()
+        pd = {
+            "begindatum": "/Date(1769900400000+0100)/",
+            "einddatum": "/Date(1869900400000+0100)/",
+            "functieBuitenRM": "Rechter-plaatsvervanger",
+            "instantieBuitenRM": "Rechtbank Amsterdam",
+        }
+        response = {
+            "completeDateTime": "/Date(1777637082369+0200)/",
+            "errorMessage": None,
+            "model": {
+                "achternaam": "Test",
+                "beroepsgegevensBuitenRM": [pd],
+                "toonNaam": "mw. mr. drs. A.B. Test",
+            },
+            "status": 1,
+            "validationMessages": None,
+        }
+        requests_mock.get(person_details_url(person.rechtspraak_id), json=response, status_code=200)
+
+        assert person.professional_detail == []
+        assert len(ProfessionalDetail.query.all()) == 0
+
+        with RechtspraakScrapeSession() as session:
+            enrich_person(session, person)
+
+        assert len(person.professional_detail) == 1
+        assert len(ProfessionalDetail.query.all()) == 1
+
+        assert person.professional_detail[0].function == pd.get("functieBuitenRM")
+        assert person.professional_detail[0].start_date == datetime(2026, 2, 1, 0, 0)
+        assert person.professional_detail[0].end_date == datetime(2029, 4, 3, 10, 46, 40)
+        assert person.professional_detail[0].remarks == pd.get("opmerkingen")
+        assert person.professional_detail[0].organisation == pd.get("instantieBuitenRM")
+        assert person.professional_detail[0].outside_of_judiciary is True
 
 
 class TestEnrichPeopleHandler:
