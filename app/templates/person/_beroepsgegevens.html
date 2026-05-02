@@ -12,6 +12,11 @@
     <div class="card-footer">
       <span class="badge rounded-pill bg-primary mt-2 me-2 overflow-hidden mw-100" title="{{ pd.organisation }}">{{
         pd.organisation }}</span>
+
+      {% if pd.location %}
+      <span class="badge rounded-pill bg-secondary mt-2 me-2 overflow-hidden mw-100" title="{{ pd.location }}">{{
+        pd.location }}</span>
+      {% endif %}
     </div>
   </div>
 </div>

@@ -54,7 +54,7 @@ Op deze pagina zie je alle beroepsgegevens en nevenfuncties van {{ person.toon_n
       {% endif %}
     </div>
     <div>
-      <h2 class="mt-3 mb-3">Beroepsgegevens buiten rechterlijke macht</h2>
+      <h2 class="mt-3 mb-3">Overige beroepsgegevens</h2>
       {% if professional_details_outside_of_the_judiciary|length > 0 %}
       <div class="row mb-3">
         {% for pd in professional_details_outside_of_the_judiciary %}
@@ -62,7 +62,7 @@ Op deze pagina zie je alle beroepsgegevens en nevenfuncties van {{ person.toon_n
         {% endfor %}
       </div>
       {% else %}
-      <p>Er zijn geen historische beroepsgegevens bekend.</p>
+      <p>Er zijn geen overige beroepsgegevens bekend.</p>
       {% endif %}
     </div>
 

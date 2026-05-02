@@ -218,6 +218,45 @@ class TestEnrichPersonProfessionalDetails:
         assert person.professional_detail[0].organisation == pd.get("instantieBuitenRM")
         assert person.professional_detail[0].outside_of_judiciary is True
 
+    def test_voorgaande_betrekking_is_created_if_exist(self, requests_mock):
+        person = PersonFactory()
+        pd = {
+            "begindatum": "/Date(1769900400000+0100)/",
+            "einddatum": "/Date(1869900400000+0100)/",
+            "functie": "Advocaat",
+            "instantie": "Stichting Rechtvaardige Advocaten",
+            "plaats": "Dorpstad",
+        }
+        response = {
+            "completeDateTime": "/Date(1777637082369+0200)/",
+            "errorMessage": None,
+            "model": {
+                "achternaam": "Test",
+                "voorgaandeBetrekkingen": [pd],
+                "toonNaam": "mw. mr. drs. A.B. Test",
+            },
+            "status": 1,
+            "validationMessages": None,
+        }
+        requests_mock.get(person_details_url(person.rechtspraak_id), json=response, status_code=200)
+
+        assert person.professional_detail == []
+        assert len(ProfessionalDetail.query.all()) == 0
+
+        with RechtspraakScrapeSession() as session:
+            enrich_person(session, person)
+
+        assert len(person.professional_detail) == 1
+        assert len(ProfessionalDetail.query.all()) == 1
+
+        assert person.professional_detail[0].function == pd.get("functie")
+        assert person.professional_detail[0].start_date == datetime(2026, 2, 1, 0, 0)
+        assert person.professional_detail[0].end_date == datetime(2029, 4, 3, 10, 46, 40)
+        assert person.professional_detail[0].remarks == pd.get("opmerkingen")
+        assert person.professional_detail[0].organisation == pd.get("instantie")
+        assert person.professional_detail[0].location == pd.get("plaats")
+        assert person.professional_detail[0].outside_of_judiciary is True
+
 
 class TestEnrichPeopleHandler:
     def test_should_rescrape_if_scraped_n_hours_ago(self, requests_mock, freezer):
