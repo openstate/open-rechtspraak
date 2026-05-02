@@ -147,9 +147,10 @@ class ProfessionalDetail(UUIDModel):
     @staticmethod
     def transform_beroepsgegevens_buiten_rm_dict(d: dict) -> dict:
         plaats_buiten_rm = d.get("plaatsBuitenRM")
-        remarks = None
         if plaats_buiten_rm and plaats_buiten_rm is not None:
             remarks = f"Plaats buiten rechterlijke macht: {plaats_buiten_rm.strip()}"
+        else:
+            remarks = ""
 
         return dict(
             start_date=parse_rechtspraak_datetime(d.get("begindatum") or ""),
