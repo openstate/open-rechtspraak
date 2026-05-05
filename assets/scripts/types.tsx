@@ -6,7 +6,7 @@ export interface ProfessionalDetail extends Model {
   function: string;
   organisation: string;
   start_date: string;
-  end_date: string;
+  end_date: string | null;
 }
 
 export interface Person extends Model {
