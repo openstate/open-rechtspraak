@@ -3,16 +3,31 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from datetime import datetime
 
-    from app.models import Person, Verdict
+    from app.models import Person, ProfessionalDetail, Verdict
 
 
 def serialize_dt(dt: datetime) -> str | None:
     return dt.isoformat() if dt else None
 
 
+def professional_detail_serializer(pd: ProfessionalDetail) -> dict:
+    return {
+        "id": pd.id,
+        "function": pd.function.title(),
+        "organisation": pd.organisation,
+        "main_job": pd.main_job,
+        "remarks": pd.remarks,
+        "location": pd.location,
+        "outside_of_judiciary": pd.outside_of_judiciary,
+        "start_date": pd.start_date.isoformat(),
+        "end_date": pd.end_date.isoformat() if pd.end_date else None,
+    }
+
+
 def person_list_serializer(person: Person) -> dict:
-    # only show professional details that are still active
-    professional_details = [detail for detail in person.professional_detail if detail.end_date is not None]
+    # return all professional details, ordered from newest to oldest
+    professional_details = sorted(person.professional_detail, key=lambda r: r.start_date, reverse=True)
+
     return {
         "id": person.id,
         "titles": person.titles,
@@ -28,14 +43,7 @@ def person_list_serializer(person: Person) -> dict:
         "rechtspraak_id": person.rechtspraak_id,
         "rechtspraak_internal_id": person.rechtspraak_internal_id,
         "removed_from_rechtspraak_at": serialize_dt(person.removed_from_rechtspraak_at),
-        "professional_details": [
-            {
-                "id": pd.id,
-                "function": pd.function.title(),
-                "organisation": pd.organisation,
-            }
-            for pd in professional_details
-        ],
+        "professional_details": [professional_detail_serializer(pd) for pd in professional_details],
     }
 
 
