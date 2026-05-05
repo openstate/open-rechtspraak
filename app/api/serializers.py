@@ -1,8 +1,7 @@
+from datetime import datetime
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from datetime import datetime
-
     from app.models import Person, ProfessionalDetail, Verdict
 
 
@@ -19,14 +18,16 @@ def professional_detail_serializer(pd: ProfessionalDetail) -> dict:
         "remarks": pd.remarks,
         "location": pd.location,
         "outside_of_judiciary": pd.outside_of_judiciary,
-        "start_date": pd.start_date.isoformat(),
+        "start_date": pd.start_date.isoformat() if pd.start_date else None,
         "end_date": pd.end_date.isoformat() if pd.end_date else None,
     }
 
 
 def person_list_serializer(person: Person) -> dict:
     # return all professional details, ordered from newest to oldest
-    professional_details = sorted(person.professional_detail, key=lambda r: r.start_date, reverse=True)
+    professional_details = sorted(
+        person.professional_detail, key=lambda r: r.start_date if r.start_date else datetime(1970, 1, 1), reverse=True
+    )
 
     return {
         "id": person.id,
