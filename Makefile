@@ -44,6 +44,9 @@ import_people:
 enrich_people:
 	$(FLASK) enrich_people
 
+enrich_person:
+	$(FLASK) enrich_person ${PERSON_ID}
+
 import_verdicts:
 	$(FLASK) import_verdicts
 

@@ -61,7 +61,7 @@ def person_detail(id: str) -> str:
 
     person = Person.query.filter(Person.id == id).first()
 
-    if person.protected:
+    if not person or person.protected:
         abort(404)
 
     professional_details = (

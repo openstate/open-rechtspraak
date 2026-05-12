@@ -139,6 +139,7 @@ def register_routes(app: Flask) -> None:
 def register_commands(app: Flask) -> None:
     app.cli.add_command(commands.import_people)
     app.cli.add_command(commands.enrich_people)
+    app.cli.add_command(commands.enrich_person)
     app.cli.add_command(commands.import_verdicts)
     app.cli.add_command(commands.enrich_verdicts)
     app.cli.add_command(commands.import_institutions)

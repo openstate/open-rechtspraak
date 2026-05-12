@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from app.database import Column, UUIDModel, db, reference_col, relationship
 from app.util import determine_gender, extract_initials, parse_rechtspraak_datetime
 
@@ -15,12 +17,16 @@ class Person(UUIDModel):
     __tablename__ = "person"
     titles = Column(db.Text, nullable=True)
     initials = Column(db.Text, nullable=True)
-    first_name = Column(db.Text, nullable=True)
     last_name = Column(db.Text, nullable=True)
+    last_name_own = Column(db.Text, nullable=True)
+    last_name_partner = Column(db.Text, nullable=True)
+    did_not_self_report_side_jobs = Column(db.Boolean, nullable=True)
+    has_no_side_jobs = Column(db.Boolean, nullable=True)
     gender = Column(db.Text, nullable=True)
     toon_naam = Column(db.Text, nullable=True, unique=True)
     toon_naam_kort = Column(db.Text, nullable=True)
     rechtspraak_id = Column(db.Text, nullable=False, unique=True)
+    first_scraped_at = Column(db.DateTime, default=datetime.now, nullable=False)
     last_scraped_at = Column(db.DateTime, nullable=True)
     protected = Column(db.Boolean, default=False)
     removed_from_rechtspraak_at = Column(db.DateTime, nullable=True)

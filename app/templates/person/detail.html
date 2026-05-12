@@ -9,9 +9,12 @@
 {% endblock %}
 
 {% block og_title %}
-  <meta property="og:title" content="{{ person.toon_naam }}"/>{% endblock %}
-{% block og_description %}Op deze pagina zie je alle beroepsgegevens en nevenfuncties van {{ person.toon_naam }}
-  .{% endblock %}
+  <meta property="og:title" content="{{ person.toon_naam }}"/>
+{% endblock %}
+
+{% block og_description %}
+  Op deze pagina zie je alle beroepsgegevens en nevenfuncties van {{ person.toon_naam }}.
+{% endblock %}
 
 {% block content %}
   <div class="row">
@@ -19,7 +22,6 @@
       <div>
         <div class="d-flex justify-content-between">
           <h2 class="mb-3">Beroepsgegevens</h2>
-
           <div class="mt-1">
             <a class="btn btn-primary btn-sm"
                href="{{ url_for('redirect.rechtspraak_persoon', id=person.rechtspraak_id) }}" target="_blank"
@@ -104,7 +106,15 @@
             {% endfor %}
           </div>
         {% else %}
-          <p>Er zijn geen nevenbetrekkingen bekend.</p>
+          {% if person.has_no_side_jobs %}
+            <p>Volgens namenlijst.rechtspraak.nl heeft deze persoon geen nevenbetrekkingen.</p>
+          {% else %}
+            <p>Er zijn geen nevenbetrekkingen bekend.</p>
+          {% endif %}
+        {% endif %}
+
+        {% if person.did_not_self_report_side_jobs %}
+          <p>Dat komt omdat deze persoon géén opgave heeft gedaan van hun huidige nevenbetrekkingen.</p>
         {% endif %}
       </div>
       <div>
@@ -136,6 +146,10 @@
           </div>
         {% else %}
           <p>Er zijn geen historische nevenbetrekkingen bekend.</p>
+
+          {% if person.did_not_self_report_side_jobs %}
+            <p>Dat komt omdat deze persoon géén opgave heeft gedaan van hun voorgaande nevenbetrekkingen.</p>
+          {% endif %}
         {% endif %}
       </div>
     </div>

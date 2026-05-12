@@ -7,7 +7,7 @@ from app.database import db
 from app.scraper.other.institutions import import_institutions_handler
 from app.scraper.other.legal_areas import import_legal_areas_handler
 from app.scraper.other.procedure_types import import_procedure_types_handler
-from app.scraper.people.enrich_people import enrich_people_handler
+from app.scraper.people.enrich_people import enrich_people_handler, enrich_person_handler
 from app.scraper.people.import_people import import_people_handler
 from app.scraper.verdicts.enrich_verdicts import enrich_verdicts_handler
 from app.scraper.verdicts.import_verdicts import import_verdicts_handler
@@ -23,6 +23,13 @@ def import_people() -> None:
 @with_appcontext
 def enrich_people() -> None:
     enrich_people_handler()
+
+
+@click.command("enrich_person")
+@click.argument("person_id")
+@with_appcontext
+def enrich_person(person_id: str) -> None:
+    enrich_person_handler(person_id)
 
 
 @click.command("import_verdicts")
