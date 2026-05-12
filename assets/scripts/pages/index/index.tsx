@@ -24,8 +24,6 @@ function Search() {
     });
   }, [q, includeFormerJudges]);
 
-  console.log(includeFormerJudges);
-
   return (
     <div>
       <SearchInput setQuery={setQuery} />

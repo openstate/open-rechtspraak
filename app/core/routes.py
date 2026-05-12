@@ -67,11 +67,21 @@ def person_detail(id: str) -> str:
     professional_details = (
         ProfessionalDetail.query.filter(ProfessionalDetail.person_id == person.id)
         .filter(ProfessionalDetail.end_date.is_(None))
+        .filter(ProfessionalDetail.outside_of_judiciary.is_(False))
+        .order_by(ProfessionalDetail.start_date.desc())
         .all()
     )
     historical_professional_details = (
         ProfessionalDetail.query.filter(ProfessionalDetail.person_id == person.id)
         .filter(ProfessionalDetail.end_date.isnot(None))
+        .filter(ProfessionalDetail.outside_of_judiciary.is_(False))
+        .order_by(ProfessionalDetail.start_date.desc())
+        .all()
+    )
+    professional_details_outside_of_the_judiciary = (
+        ProfessionalDetail.query.filter(ProfessionalDetail.person_id == person.id)
+        .filter(ProfessionalDetail.outside_of_judiciary.is_(True))
+        .order_by(ProfessionalDetail.start_date.desc())
         .all()
     )
     side_jobs = SideJob.query.filter(SideJob.person_id == person.id).filter(SideJob.end_date.is_(None)).all()
@@ -91,6 +101,7 @@ def person_detail(id: str) -> str:
         person=person,
         professional_details=professional_details,
         historical_professional_details=historical_professional_details,
+        professional_details_outside_of_the_judiciary=professional_details_outside_of_the_judiciary,
         side_jobs=side_jobs,
         historical_side_jobs=historical_side_jobs,
         verdicts=verdicts,

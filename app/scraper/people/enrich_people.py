@@ -55,7 +55,7 @@ def person_details_url(rechtspraak_id: str) -> str:
     return DETAILS_ENDPOINT + rechtspraak_id
 
 
-def enrich_person(session: RechtspraakScrapeSession, person: Person) -> None:
+def enrich_person(session: RechtspraakScrapeSession, person: Person) -> None:  # noqa: PLR0912
     """Enrich a single person from namenlijst.rechtspraak.nl."""
     r = session.get(person_details_url(person.rechtspraak_id))
     current_app.logger.info(f"Enriching person {person.id} with information from {r.url}")
@@ -89,6 +89,18 @@ def enrich_person(session: RechtspraakScrapeSession, person: Person) -> None:
 
     for historisch_beroepsgegeven in person_json.get("historieBeroepsgegevens", []):
         pd_kwargs = ProfessionalDetail.transform_historisch_beroepsgegevens_dict(historisch_beroepsgegeven)
+        if not professional_detail_already_exists(person, pd_kwargs):
+            institution = find_institution_for_professional_detail(pd_kwargs.get("organisation"))
+            ProfessionalDetail.create(**{"person_id": person.id, **pd_kwargs}, institution=institution)
+
+    for voorgaande_betrekking in person_json.get("voorgaandeBetrekkingen", []):
+        pd_kwargs = ProfessionalDetail.transform_voorgaande_betrekking_dict(voorgaande_betrekking)
+        if not professional_detail_already_exists(person, pd_kwargs):
+            institution = find_institution_for_professional_detail(pd_kwargs.get("organisation"))
+            ProfessionalDetail.create(**{"person_id": person.id, **pd_kwargs}, institution=institution)
+
+    for beroepsgegeven in person_json.get("beroepsgegevensBuitenRM", []):
+        pd_kwargs = ProfessionalDetail.transform_beroepsgegevens_buiten_rm_dict(beroepsgegeven)
         if not professional_detail_already_exists(person, pd_kwargs):
             institution = find_institution_for_professional_detail(pd_kwargs.get("organisation"))
             ProfessionalDetail.create(**{"person_id": person.id, **pd_kwargs}, institution=institution)

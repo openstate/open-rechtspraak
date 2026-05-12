@@ -27,19 +27,20 @@ function SearchResultRow({ id, toon_naam, professional_details }: Person) {
 
         <div className="card-footer">
           {professional_details.map((professionalDetail: ProfessionalDetail) => (
-            <React.Fragment key={professionalDetail.id}>
-              <ProfessionalDetailPill
-                key={`org-${professionalDetail.id}`}
-                value={professionalDetail.organisation}
-                variant="primary"
-              />
-              <ProfessionalDetailPill
-                key={`func-${professionalDetail.id}`}
-                value={professionalDetail.function}
-                variant="secondary"
-              />
-            </React.Fragment>
-          ))}
+            professionalDetail.end_date === null ?
+              <React.Fragment key={professionalDetail.id}>
+                <ProfessionalDetailPill
+                  key={`org-${professionalDetail.id}`}
+                  value={professionalDetail.organisation}
+                  variant="primary"
+                />
+                <ProfessionalDetailPill
+                  key={`func-${professionalDetail.id}`}
+                  value={professionalDetail.function}
+                  variant="secondary"
+                />
+              </React.Fragment>
+              : null))}
         </div>
       </div>
     </a>

@@ -104,6 +104,8 @@ class ProfessionalDetail(UUIDModel):
     function = Column(db.Text, nullable=False)
     organisation = Column(db.Text, nullable=True)
     remarks = Column(db.Text, nullable=True)
+    location = Column(db.Text, nullable=True)
+    outside_of_judiciary = Column(db.Boolean, default=False)
     person_id = reference_col("person", nullable=False)
     person = relationship("Person", backref="professional_detail", lazy="select")
     institution_id = reference_col("institution", nullable=True)
@@ -117,6 +119,7 @@ class ProfessionalDetail(UUIDModel):
             function=(d.get("functieOmschrijving") or "").strip(),
             organisation=(d.get("instantieOmschrijving") or "").strip(),
             remarks=(d.get("opmerkingen") or "").strip(),
+            outside_of_judiciary=False,
         )
 
     @staticmethod
@@ -127,6 +130,35 @@ class ProfessionalDetail(UUIDModel):
             main_job=bool(d.get("hoofdfunctie")),
             function=(d.get("functie") or "").strip(),
             organisation=(d.get("instantie") or "").strip(),
+            outside_of_judiciary=False,
+        )
+
+    @staticmethod
+    def transform_voorgaande_betrekking_dict(d: dict) -> dict:
+        return dict(
+            start_date=parse_rechtspraak_datetime(d.get("begindatum") or ""),
+            end_date=parse_rechtspraak_datetime(d.get("einddatum") or ""),
+            function=(d.get("functie") or "").strip(),
+            organisation=(d.get("instantie") or "").strip(),
+            location=(d.get("plaats") or "").strip(),
+            outside_of_judiciary=True,
+        )
+
+    @staticmethod
+    def transform_beroepsgegevens_buiten_rm_dict(d: dict) -> dict:
+        plaats_buiten_rm = d.get("plaatsBuitenRM")
+        if plaats_buiten_rm and plaats_buiten_rm is not None:
+            remarks = f"Plaats buiten rechterlijke macht: {plaats_buiten_rm.strip()}"
+        else:
+            remarks = ""
+
+        return dict(
+            start_date=parse_rechtspraak_datetime(d.get("begindatum") or ""),
+            end_date=parse_rechtspraak_datetime(d.get("einddatum") or ""),
+            function=(d.get("functieBuitenRM") or "").strip(),
+            organisation=(d.get("instantieBuitenRM") or "").strip(),
+            remarks=remarks,
+            outside_of_judiciary=True,
         )
 
 
