@@ -38,6 +38,9 @@ def upgrade():
     for id_ in ids_to_clean:
         person = session.query(Person).filter(Person.id == id_).first()
 
+        if not person:
+            continue
+
         for pd in person.professional_detail:
             session.delete(pd)
         for sj in person.side_job:
