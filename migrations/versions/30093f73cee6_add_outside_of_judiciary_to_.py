@@ -1,7 +1,7 @@
 """Add outside_of_judiciary  to professional detail
 
 Revision ID: 30093f73cee6
-Revises: 2684f0161ed5
+Revises: d6e38fddc8c0
 Create Date: 2026-05-02 17:22:23.963233
 
 """
@@ -9,12 +9,12 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.orm import Session
 
-from app.models import Person, ProfessionalDetail
+from app.models import ProfessionalDetail
 
 
 # revision identifiers, used by Alembic.
 revision = '30093f73cee6'
-down_revision = '2684f0161ed5'
+down_revision = 'd6e38fddc8c0'
 branch_labels = None
 depends_on = None
 

@@ -1,7 +1,7 @@
 """Add location to professional detail
 
 Revision ID: d6e38fddc8c0
-Revises: 30093f73cee6
+Revises: 2684f0161ed5
 Create Date: 2026-05-02 18:49:22.514275
 
 """
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = 'd6e38fddc8c0'
-down_revision = '30093f73cee6'
+down_revision = '2684f0161ed5'
 branch_labels = None
 depends_on = None
 
