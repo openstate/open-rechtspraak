@@ -2,7 +2,6 @@ import random
 from datetime import datetime
 
 import factory
-from factory import fuzzy
 
 from app.database import db
 from app.models import Person, Verdict
@@ -29,10 +28,8 @@ class PersonFactory(BaseFactory):
     initials = factory.LazyAttribute(lambda a: str(factory.Faker("first_name"))[0] + ".")
     titles = factory.Faker("prefix")
     last_name = factory.Faker("last_name")
-    gender = fuzzy.FuzzyChoice(["male", "female"])
     rechtspraak_id = factory.Faker("md5")
     toon_naam = factory.LazyAttribute(lambda a: f"{a.titles} {a.initials} {a.last_name}")
-    toon_naam_kort = factory.LazyAttribute(lambda a: f"{a.initials} {a.last_name}")
     last_scraped_at = factory.LazyFunction(datetime.now)
     protected = False
     removed_from_rechtspraak_at = None

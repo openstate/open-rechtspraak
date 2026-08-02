@@ -52,14 +52,6 @@ def parse_rechtspraak_datetime(dt: str) -> datetime | None:
     return dt.replace(tzinfo=None)
 
 
-def determine_gender(toonnaam: str) -> str:
-    if "dhr." in toonnaam:
-        return "male"
-    if "mw." in toonnaam:
-        return "female"
-    return "other"
-
-
 def extract_initials(name: str) -> tuple[str, str]:
     """
     Returns a tuple with initials and the rest of the name"""
