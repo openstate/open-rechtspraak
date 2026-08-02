@@ -42,7 +42,6 @@ def person_list_serializer(person: Person) -> dict:
         "toon_naam": person.toon_naam,
         "toon_naam_kort": person.toon_naam_kort,
         "rechtspraak_id": person.rechtspraak_id,
-        "rechtspraak_internal_id": person.rechtspraak_internal_id,
         "removed_from_rechtspraak_at": serialize_dt(person.removed_from_rechtspraak_at),
         "professional_details": [professional_detail_serializer(pd) for pd in professional_details],
     }

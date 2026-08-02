@@ -6,6 +6,9 @@ import pytz
 
 MIN_RECHTSPRAAK_DATETIME_LENGTH = 5
 
+PREFIX_TITLES = ["jonkheer", "mr.", "dr.", "drs.", "prof.", "ing."]
+SUFFIX_TITLES = ["LL.M.", "MPA"]
+
 
 def get_env_variable(name: str, default: str | None = None) -> str:
     try:
@@ -57,8 +60,38 @@ def determine_gender(toonnaam: str) -> str:
     return "other"
 
 
-def extract_initials(toonnaam_kort: str) -> str:
-    return toonnaam_kort.split(maxsplit=1)[0]
+def extract_initials(name: str) -> tuple[str, str]:
+    """
+    Returns a tuple with initials and the rest of the name"""
+    return name.split(maxsplit=1)
+
+
+def titles_left(name: str) -> bool:
+    if any([name.startswith(title) for title in PREFIX_TITLES]):
+        return True
+    if any([name.endswith(title) for title in SUFFIX_TITLES]):
+        return True
+    return False
+
+
+def extract_titles(name: str) -> tuple[str, list[str]]:
+    titles = []
+
+    while True:
+        if not titles_left(name):
+            break
+
+        for title in PREFIX_TITLES:
+            if name.startswith(title):
+                name = name.replace(title, "").strip()
+                titles.append(title)
+
+        for title in SUFFIX_TITLES:
+            if name.endswith(title):
+                name = name.replace(title, "").strip()
+                titles.append(title)
+
+    return titles, name
 
 
 def is_valid_uuid(uuid: str) -> bool:

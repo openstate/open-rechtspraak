@@ -31,7 +31,6 @@ class PersonFactory(BaseFactory):
     last_name = factory.Faker("last_name")
     gender = fuzzy.FuzzyChoice(["male", "female"])
     rechtspraak_id = factory.Faker("md5")
-    rechtspraak_internal_id = factory.LazyAttribute(lambda a: Person.extract_rechtspraak_internal_id(a.rechtspraak_id))
     toon_naam = factory.LazyAttribute(lambda a: f"{a.titles} {a.initials} {a.last_name}")
     toon_naam_kort = factory.LazyAttribute(lambda a: f"{a.initials} {a.last_name}")
     last_scraped_at = factory.LazyFunction(datetime.now)

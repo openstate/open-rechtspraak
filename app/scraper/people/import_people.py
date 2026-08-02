@@ -1,33 +1,27 @@
-from json import JSONDecodeError
+import json
 
 from flask import current_app
 
 from app.models import Person
-from app.scraper.people.config import FAULTY_URL, HEADERS, SEARCH_ENDPOINT
-from app.scraper.people.utils import (
-    find_request_verification_token,
-    format_payload,
-    search_strings,
-)
+from app.scraper.people.config import FAULTY_URL, SEARCH_ENDPOINT
+from app.scraper.people.utils import search_strings
 from app.scraper.rechtspraak_session import RechtspraakScrapeSession
+from app.scraper.soup_parsing import extract_rnl_state, to_soup
 
 
 def import_people_handler() -> None:
     with RechtspraakScrapeSession() as session:
-        # We first need a CSRF token to be able to query the namenlijst.rechtspraak.nl API
-        r = session.get("https://namenlijst.rechtspraak.nl/#!/zoeken/index")
-        HEADERS["__RequestVerificationToken"] = find_request_verification_token(r.content)
-        current_app.logger.debug(f"Found CSRF token: {HEADERS['__RequestVerificationToken']}")
-
         for search_string in search_strings():
             import_people_by_search_string(search_string, session)
 
 
 def import_people_by_search_string(search_string: str, session: RechtspraakScrapeSession) -> None:
-    payload = format_payload(search_string)
     current_app.logger.info(f"Importing people by search string '{search_string}' from {SEARCH_ENDPOINT}")
+    """rnl-state"""
 
-    r = session.post(SEARCH_ENDPOINT, json=payload, headers=HEADERS, timeout=3)
+    query_params = {"searchterm": search_string}
+
+    r = session.get(SEARCH_ENDPOINT, params=query_params, timeout=3)
 
     if not r.ok or r.url == FAULTY_URL:
         current_app.logger.error(
@@ -36,10 +30,16 @@ def import_people_by_search_string(search_string: str, session: RechtspraakScrap
         return
 
     try:
-        people = r.json().get("result", {}).get("model", {}).get("groupedItems", {})
-    except JSONDecodeError:
+        soup = to_soup(r.content, features="html.parser")
+        state = extract_rnl_state(soup).text
+        people = json.loads(state).get("neroSearchResults")
+
+        if len(people) == 0:
+            current_app.logger.info(f"Found 0 people during people collection for search string '{search_string}'")
+            return
+    except json.JSONDecodeError:
         current_app.logger.exception(f"JSONDecodeError found when scraping {r.url}")
-        people = []
+        return
 
     current_app.logger.debug(f"{len(people)} people found for search string '{search_string}'")
 
@@ -52,4 +52,4 @@ def update_or_create_person(person: dict) -> Person:
     do not exist yet.
     """
     p_kwargs = Person.from_dict(person)
-    return Person.update_or_create({"rechtspraak_internal_id": p_kwargs.pop("rechtspraak_internal_id")}, p_kwargs)
+    return Person.update_or_create({"rechtspraak_id": p_kwargs.pop("rechtspraak_id")}, p_kwargs)

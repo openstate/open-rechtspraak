@@ -1,8 +1,6 @@
 import random
 import string
 
-from bs4 import BeautifulSoup
-
 from app.models import Institution, Person, ProfessionalDetail, SideJob
 
 
@@ -16,15 +14,6 @@ def search_strings() -> list[str]:
 
     random.shuffle(result_set)
     return result_set
-
-
-def format_payload(search_string: str) -> dict:
-    return {"model": '{"instantieCode":[],"overige_instantie":[],"naam":"' + search_string + '"}'}
-
-
-def find_request_verification_token(content: str) -> str | None:
-    soup = BeautifulSoup(content, "html.parser")
-    return soup.find("input", {"name": "__RequestVerificationToken"})["value"]
 
 
 def professional_detail_already_exists(person: Person, professional_detail_kwargs: dict) -> bool:
