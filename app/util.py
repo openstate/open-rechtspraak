@@ -54,7 +54,8 @@ def parse_rechtspraak_datetime(dt: str) -> datetime | None:
 
 def extract_initials(name: str) -> tuple[str, str]:
     """
-    Returns a tuple with initials and the rest of the name"""
+    Returns a tuple with initials and the rest of the name.
+    MUST be run on a name without titles. Use the extract_titles function first."""
     return name.split(maxsplit=1)
 
 
@@ -68,22 +69,23 @@ def titles_left(name: str) -> bool:
 
 def extract_titles(name: str) -> tuple[str, list[str]]:
     titles = []
+    remaining_name = name
 
     while True:
-        if not titles_left(name):
+        if not titles_left(remaining_name):
             break
 
         for title in PREFIX_TITLES:
-            if name.startswith(title):
-                name = name.replace(title, "").strip()
+            if remaining_name.startswith(title):
+                remaining_name = remaining_name.replace(title, "").strip()
                 titles.append(title)
 
         for title in SUFFIX_TITLES:
-            if name.endswith(title):
-                name = name.replace(title, "").strip()
+            if remaining_name.endswith(title):
+                remaining_name = remaining_name.replace(title, "").strip()
                 titles.append(title)
 
-    return titles, name
+    return titles, remaining_name
 
 
 def is_valid_uuid(uuid: str) -> bool:
