@@ -15,7 +15,7 @@ from app.scraper.soup_parsing import (
     safe_find_text,
     to_soup,
 )
-from app.scraper.verdicts.config import DETAILS_ENDPOINT, FAULTY_URL
+from app.scraper.verdicts.config import DETAILS_ENDPOINT
 from app.scraper.verdicts.utils import person_verdict_already_exists, recognize_people
 
 
@@ -51,7 +51,7 @@ def enrich_verdict(session: RechtspraakScrapeSession, verdict: Verdict) -> None:
     r = session.get(DETAILS_ENDPOINT, params=params)
     current_app.logger.info(f"Collecting verdict information from {r.url}")
 
-    if not r.ok or r.url == FAULTY_URL:
+    if not r.ok:
         current_app.logger.error(
             f"Error during verdict enrichment: {verdict.id}, {verdict.ecli}, {r.status_code}, {r.url}",
         )

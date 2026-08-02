@@ -53,7 +53,6 @@ class ProfessionalDetail(UUIDModel):
     __tablename__ = "professional_detail"
     start_date = Column(db.DateTime, nullable=True)
     end_date = Column(db.DateTime, nullable=True)
-    main_job = Column(db.Boolean, default=False)
     function = Column(db.Text, nullable=False)
     organisation = Column(db.Text, nullable=True)
     remarks = Column(db.Text, nullable=True)
@@ -67,10 +66,9 @@ class ProfessionalDetail(UUIDModel):
     @staticmethod
     def transform_beroepsgegevens_dict(d: dict) -> dict:
         return dict(
-            start_date=parse_rechtspraak_datetime(d.get("begindatum") or ""),
-            main_job=bool(d.get("hoofdfunctie")),
-            function=(d.get("functieOmschrijving") or "").strip(),
-            organisation=(d.get("instantieOmschrijving") or "").strip(),
+            start_date=parse_rechtspraak_datetime(d.get("ingangsdatum") or ""),
+            function=(d.get("functie") or "").strip(),
+            organisation=(d.get("instantie") or "").strip(),
             remarks=(d.get("opmerkingen") or "").strip(),
             outside_of_judiciary=False,
         )
@@ -78,18 +76,18 @@ class ProfessionalDetail(UUIDModel):
     @staticmethod
     def transform_historisch_beroepsgegevens_dict(d: dict) -> dict:
         return dict(
-            start_date=parse_rechtspraak_datetime(d.get("begindatum") or ""),
+            start_date=parse_rechtspraak_datetime(d.get("ingangsdatum") or ""),
             end_date=parse_rechtspraak_datetime(d.get("einddatum") or ""),
-            main_job=bool(d.get("hoofdfunctie")),
             function=(d.get("functie") or "").strip(),
             organisation=(d.get("instantie") or "").strip(),
+            location=(d.get("plaats") or "").strip(),
             outside_of_judiciary=False,
         )
 
     @staticmethod
     def transform_voorgaande_betrekking_dict(d: dict) -> dict:
         return dict(
-            start_date=parse_rechtspraak_datetime(d.get("begindatum") or ""),
+            start_date=parse_rechtspraak_datetime(d.get("ingangsdatum") or ""),
             end_date=parse_rechtspraak_datetime(d.get("einddatum") or ""),
             function=(d.get("functie") or "").strip(),
             organisation=(d.get("instantie") or "").strip(),
@@ -99,18 +97,12 @@ class ProfessionalDetail(UUIDModel):
 
     @staticmethod
     def transform_beroepsgegevens_buiten_rm_dict(d: dict) -> dict:
-        plaats_buiten_rm = d.get("plaatsBuitenRM")
-        if plaats_buiten_rm and plaats_buiten_rm is not None:
-            remarks = f"Plaats buiten rechterlijke macht: {plaats_buiten_rm.strip()}"
-        else:
-            remarks = ""
-
         return dict(
-            start_date=parse_rechtspraak_datetime(d.get("begindatum") or ""),
+            start_date=parse_rechtspraak_datetime(d.get("ingangsdatum") or ""),
             end_date=parse_rechtspraak_datetime(d.get("einddatum") or ""),
-            function=(d.get("functieBuitenRM") or "").strip(),
-            organisation=(d.get("instantieBuitenRM") or "").strip(),
-            remarks=remarks,
+            function=(d.get("functie") or "").strip(),
+            organisation=(d.get("instantie") or "").strip(),
+            location=(d.get("plaats") or "").strip(),
             outside_of_judiciary=True,
         )
 
@@ -128,22 +120,26 @@ class SideJob(UUIDModel):
     person = relationship("Person", backref="side_job", lazy="select")
 
     @staticmethod
+    def _extract_bezoldiging(bezoldigd: bool) -> str:
+        return "Ja" if bezoldigd else "Nee"
+
+    @staticmethod
     def transform_huidige_nevenbetrekkingen_dict(d: dict) -> dict:
         return dict(
-            start_date=parse_rechtspraak_datetime(d.get("begindatum") or ""),
-            paid=(d.get("bezoldigd") or "").strip(),
+            start_date=parse_rechtspraak_datetime(d.get("ingangsdatum") or ""),
+            paid=SideJob._extract_bezoldiging(d["bezoldigd"]),
             function=(d.get("functie") or "").strip(),
             organisation_name=(d.get("instantie") or "").strip(),
             place=(d.get("plaats") or "").strip(),
-            organisation_type=(d.get("soortbedrijf") or "").strip(),
+            organisation_type=(d.get("soortBedrijf") or "").strip(),
         )
 
     @staticmethod
     def transform_voorgaande_nevenbetrekkingen_dict(d: dict) -> dict:
         return dict(
-            start_date=parse_rechtspraak_datetime(d.get("begindatum") or ""),
+            start_date=parse_rechtspraak_datetime(d.get("ingangsdatum") or ""),
             end_date=parse_rechtspraak_datetime(d.get("einddatum") or ""),
-            paid=(d.get("bezoldigd") or "").strip(),
+            paid=SideJob._extract_bezoldiging(d["bezoldigd"]),
             function=(d.get("functie") or "").strip(),
             organisation_name=(d.get("instantie") or "").strip(),
             place=(d.get("plaats") or "").strip(),

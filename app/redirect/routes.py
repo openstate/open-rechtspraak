@@ -10,7 +10,7 @@ def rechtspraak_open_data() -> Response:
 
 @redirect_bp.route("/rechtspraak/search")
 def rechtspraak_search() -> Response:
-    return redirect("https://namenlijst.rechtspraak.nl/")
+    return redirect("https://www.rechtspraak.nl/registers/nevenfunctieregister")
 
 
 @redirect_bp.route("/rechtspraak/persoon/<id>")

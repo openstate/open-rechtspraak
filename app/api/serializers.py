@@ -14,7 +14,6 @@ def professional_detail_serializer(pd: ProfessionalDetail) -> dict:
         "id": pd.id,
         "function": pd.function.title(),
         "organisation": pd.organisation,
-        "main_job": pd.main_job,
         "remarks": pd.remarks,
         "location": pd.location,
         "outside_of_judiciary": pd.outside_of_judiciary,

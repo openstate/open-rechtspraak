@@ -3,7 +3,7 @@ import json
 from flask import current_app
 
 from app.models import Person
-from app.scraper.people.config import FAULTY_URL, SEARCH_ENDPOINT
+from app.scraper.people.config import SEARCH_ENDPOINT
 from app.scraper.people.utils import search_strings
 from app.scraper.rechtspraak_session import RechtspraakScrapeSession
 from app.scraper.soup_parsing import extract_rnl_state, to_soup
@@ -23,7 +23,7 @@ def import_people_by_search_string(search_string: str, session: RechtspraakScrap
 
     r = session.get(SEARCH_ENDPOINT, params=query_params, timeout=3)
 
-    if not r.ok or r.url == FAULTY_URL:
+    if not r.ok:
         current_app.logger.error(
             f"Error during people collection: STATUS_CODE {r.status_code} | URL {r.url} | CONTENT {r.content}",
         )
