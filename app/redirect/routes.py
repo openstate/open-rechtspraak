@@ -15,7 +15,7 @@ def rechtspraak_search() -> Response:
 
 @redirect_bp.route("/rechtspraak/persoon/<id>")
 def rechtspraak_persoon(id: str) -> Response:
-    return redirect(f"https://namenlijst.rechtspraak.nl/#!/details/{id}")
+    return redirect(f"https://www.rechtspraak.nl/registers/nevenfunctieregister/details/{id}")
 
 
 @redirect_bp.route("/rechtspraak/uitspraak/<ecli>")
