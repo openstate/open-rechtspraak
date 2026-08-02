@@ -115,8 +115,6 @@ def enrich_person(session: RechtspraakScrapeSession, person: Person) -> None:  #
         if not side_job_already_exists(person, nevenbetrekking_kwargs):
             SideJob.create(**{"person_id": person.id, **nevenbetrekking_kwargs})
 
-    person.last_name_own = person_json.get("achternaamEigen")
-    person.last_name_partner = person_json.get("achternaamPartner")
     person.did_not_self_report_side_jobs = person_json.get("geenOpgaveNevenbetrekkingen")
     person.has_no_side_jobs = person_json.get("vervultGeenNevenbetrekkingen")
     person.removed_from_rechtspraak_at = None
