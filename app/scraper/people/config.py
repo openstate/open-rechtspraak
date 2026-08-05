@@ -1,10 +1,2 @@
-SEARCH_ENDPOINT = "https://namenlijst.rechtspraak.nl/Services/WebNamenlijstService/Zoek"
-DETAILS_ENDPOINT = "https://namenlijst.rechtspraak.nl/Services/WebNamenlijstService/haalOp/?id="
-
-HEADERS = {
-    "Referer": "https://namenlijst.rechtspraak.nl/",
-    "Accept": "application/json, text/plain, */*",
-    "Content-Type": "application/json;charset=UTF-8",
-}
-
-FAULTY_URL = "https://mededeling.rechtspraak.nl/400"
+SEARCH_ENDPOINT = "https://www.rechtspraak.nl/registers/nevenfunctieregister/zoeken"
+DETAILS_ENDPOINT = "https://www.rechtspraak.nl/registers/nevenfunctieregister/details/"

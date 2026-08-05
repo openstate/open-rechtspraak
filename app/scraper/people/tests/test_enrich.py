@@ -1,6 +1,8 @@
 from datetime import datetime, timedelta
 from typing import ClassVar
 
+from flask import json
+
 from app.models import ProfessionalDetail
 from app.scraper.people.enrich_people import (
     RESCRAPE_AFTER_HOURS,
@@ -12,29 +14,31 @@ from app.scraper.rechtspraak_session import RechtspraakScrapeSession
 from app.tests.factories import PersonFactory
 
 
+def format_dict_to_html(content: dict):
+    return f'<html><body><script id="rnl-state" type="application/json">{json.dumps(content)}</script></body></html>'
+
+
 class TestEnrichPerson:
-    rechtspraak_response: ClassVar = {
-        "completeDateTime": "/Date(1777637082369+0200)/",
-        "errorMessage": None,
-        "model": {
+    rechtspraak_json: ClassVar = {
+        "neroRechterlijkeAmbtenaarDetails": {
             "achternaam": "Test",
-            "beroepsgegevens": [],
+            "actieveBeroepsgegevens": [],
             "beroepsgegevensBuitenRM": [],
             "geenOpgaveNevenbetrekkingen": False,
             "historieBeroepsgegevens": [],
             "huidigeNevenbetrekkingen": [],
             "status": "Gepubliceerd",
-            "toonNaam": "mw. mr. drs. A.B. Test",
+            "samengesteldeNaam": "mw. mr. drs. A.B. Test",
             "vervultGeenNevenbetrekkingen": True,
             "voorgaandeBetrekkingen": [],
             "voorgaandeNevenbetrekkingen": [],
         },
-        "status": 1,
-        "validationMessages": None,
     }
 
     def test_removed_at_is_not_set(self, requests_mock, person):
-        requests_mock.get(person_details_url(person.rechtspraak_id), json=self.rechtspraak_response, status_code=200)
+        requests_mock.get(
+            person_details_url(person.rechtspraak_id), text=format_dict_to_html(self.rechtspraak_json), status_code=200
+        )
 
         assert person.removed_from_rechtspraak_at is None
         with RechtspraakScrapeSession() as session:
@@ -42,7 +46,9 @@ class TestEnrichPerson:
         assert person.removed_from_rechtspraak_at is None
 
     def test_removed_at_is_set_on_http_error(self, requests_mock, person):
-        requests_mock.get(person_details_url(person.rechtspraak_id), status_code=500)
+        requests_mock.get(
+            person_details_url(person.rechtspraak_id), text=format_dict_to_html(self.rechtspraak_json), status_code=500
+        )
 
         assert person.removed_from_rechtspraak_at is None
         with RechtspraakScrapeSession() as session:
@@ -52,7 +58,9 @@ class TestEnrichPerson:
     def test_removed_at_is_removed_on_successful_scrape(self, requests_mock):
         dt = datetime.now()
         person = PersonFactory(removed_from_rechtspraak_at=dt)
-        requests_mock.get(person_details_url(person.rechtspraak_id), json=self.rechtspraak_response, status_code=200)
+        requests_mock.get(
+            person_details_url(person.rechtspraak_id), text=format_dict_to_html(self.rechtspraak_json), status_code=200
+        )
 
         assert person.removed_from_rechtspraak_at == dt
         with RechtspraakScrapeSession() as session:
@@ -62,13 +70,11 @@ class TestEnrichPerson:
     def test_removed_at_is_set_if_empty_model_returned(self, requests_mock):
         person = PersonFactory()
         response = {
-            "completeDateTime": "/Date(1777636689856+0200)/",
-            "errorMessage": None,
-            "model": None,
-            "status": 1,
-            "validationMessages": None,
+            "neroRechterlijkeAmbtenaarDetails": None,
         }
-        requests_mock.get(person_details_url(person.rechtspraak_id), json=response, status_code=200)
+        requests_mock.get(
+            person_details_url(person.rechtspraak_id), text=format_dict_to_html(response), status_code=200
+        )
 
         assert person.removed_from_rechtspraak_at is None
         with RechtspraakScrapeSession() as session:
@@ -77,7 +83,7 @@ class TestEnrichPerson:
 
     def test_should_scrape_if_never_scraped_before(self, requests_mock):
         person = PersonFactory(last_scraped_at=None)
-        requests_mock.get(person_details_url(person.rechtspraak_id), json={}, status_code=200)
+        requests_mock.get(person_details_url(person.rechtspraak_id), text=format_dict_to_html({}), status_code=200)
 
         assert person.last_scraped_at is None
         with RechtspraakScrapeSession() as session:
@@ -89,17 +95,14 @@ class TestEnrichPersonProfessionalDetails:
     def test_no_professional_details_are_created_if_none_exist(self, requests_mock):
         person = PersonFactory()
         response = {
-            "completeDateTime": "/Date(1777637082369+0200)/",
-            "errorMessage": None,
-            "model": {
-                "achternaam": "Test",
-                "beroepsgegevens": [],
-                "toonNaam": "mw. mr. drs. A.B. Test",
+            "neroRechterlijkeAmbtenaarDetails": {
+                "actieveBeroepsgegevens": [],
+                "samengesteldeNaam": "mw. mr. drs. A.B. Test",
             },
-            "status": 1,
-            "validationMessages": None,
         }
-        requests_mock.get(person_details_url(person.rechtspraak_id), json=response, status_code=200)
+        requests_mock.get(
+            person_details_url(person.rechtspraak_id), text=format_dict_to_html(response), status_code=200
+        )
 
         assert person.professional_detail == []
         with RechtspraakScrapeSession() as session:
@@ -109,61 +112,19 @@ class TestEnrichPersonProfessionalDetails:
     def test_current_professional_detail_is_created_if_exist(self, requests_mock):
         person = PersonFactory()
         pd = {
-            "begindatum": "/Date(1769900400000+0100)/",
-            "functieOmschrijving": "Rechter-plaatsvervanger",
-            "hoofdfunctie": True,
-            "instantieOmschrijving": "Rechtbank Amsterdam",
-            "opmerkingen": "test",
-        }
-        response = {
-            "completeDateTime": "/Date(1777637082369+0200)/",
-            "errorMessage": None,
-            "model": {
-                "achternaam": "Test",
-                "beroepsgegevens": [pd],
-                "toonNaam": "mw. mr. drs. A.B. Test",
-            },
-            "status": 1,
-            "validationMessages": None,
-        }
-        requests_mock.get(person_details_url(person.rechtspraak_id), json=response, status_code=200)
-
-        assert person.professional_detail == []
-        assert len(ProfessionalDetail.query.all()) == 0
-
-        with RechtspraakScrapeSession() as session:
-            enrich_person(session, person)
-
-        assert len(person.professional_detail) == 1
-        assert len(ProfessionalDetail.query.all()) == 1
-
-        assert person.professional_detail[0].function == pd.get("functieOmschrijving")
-        assert person.professional_detail[0].start_date == datetime(2026, 2, 1, 0, 0)
-        assert person.professional_detail[0].main_job is True
-        assert person.professional_detail[0].remarks == pd.get("opmerkingen")
-        assert person.professional_detail[0].organisation == pd.get("instantieOmschrijving")
-        assert person.professional_detail[0].outside_of_judiciary is False
-
-    def test_historical_professional_detail_is_created_if_exist(self, requests_mock):
-        person = PersonFactory()
-        pd = {
-            "begindatum": "/Date(1769900400000+0100)/",
-            "einddatum": "/Date(1869900400000+0100)/",
+            "ingangsdatum": "2026-02-01",
             "functie": "Rechter-plaatsvervanger",
             "instantie": "Rechtbank Amsterdam",
         }
         response = {
-            "completeDateTime": "/Date(1777637082369+0200)/",
-            "errorMessage": None,
-            "model": {
-                "achternaam": "Test",
-                "historieBeroepsgegevens": [pd],
-                "toonNaam": "mw. mr. drs. A.B. Test",
+            "neroRechterlijkeAmbtenaarDetails": {
+                "actieveBeroepsgegevens": [pd],
+                "samengesteldeNaam": "mw. mr. drs. A.B. Test",
             },
-            "status": 1,
-            "validationMessages": None,
         }
-        requests_mock.get(person_details_url(person.rechtspraak_id), json=response, status_code=200)
+        requests_mock.get(
+            person_details_url(person.rechtspraak_id), text=format_dict_to_html(response), status_code=200
+        )
 
         assert person.professional_detail == []
         assert len(ProfessionalDetail.query.all()) == 0
@@ -176,7 +137,40 @@ class TestEnrichPersonProfessionalDetails:
 
         assert person.professional_detail[0].function == pd.get("functie")
         assert person.professional_detail[0].start_date == datetime(2026, 2, 1, 0, 0)
-        assert person.professional_detail[0].end_date == datetime(2029, 4, 3, 10, 46, 40)
+        assert person.professional_detail[0].organisation == pd.get("instantie")
+        assert person.professional_detail[0].outside_of_judiciary is False
+
+    def test_historical_professional_detail_is_created_if_exist(self, requests_mock):
+        person = PersonFactory()
+        pd = {
+            "ingangsdatum": "2026-02-01",
+            "einddatum": "2029-04-03",
+            "functie": "Rechter-plaatsvervanger",
+            "instantie": "Rechtbank Amsterdam",
+        }
+        response = {
+            "neroRechterlijkeAmbtenaarDetails": {
+                "achternaam": "Test",
+                "historieBeroepsgegevens": [pd],
+                "samengesteldeNaam": "mw. mr. drs. A.B. Test",
+            },
+        }
+        requests_mock.get(
+            person_details_url(person.rechtspraak_id), text=format_dict_to_html(response), status_code=200
+        )
+
+        assert person.professional_detail == []
+        assert len(ProfessionalDetail.query.all()) == 0
+
+        with RechtspraakScrapeSession() as session:
+            enrich_person(session, person)
+
+        assert len(person.professional_detail) == 1
+        assert len(ProfessionalDetail.query.all()) == 1
+
+        assert person.professional_detail[0].function == pd.get("functie")
+        assert person.professional_detail[0].start_date == datetime(2026, 2, 1, 0, 0)
+        assert person.professional_detail[0].end_date == datetime(2029, 4, 3, 0, 0, 0)
         assert person.professional_detail[0].remarks == pd.get("opmerkingen")
         assert person.professional_detail[0].organisation == pd.get("instantie")
         assert person.professional_detail[0].outside_of_judiciary is False
@@ -184,62 +178,22 @@ class TestEnrichPersonProfessionalDetails:
     def test_professional_detail_outside_of_judiciary_is_created_if_exist(self, requests_mock):
         person = PersonFactory()
         pd = {
-            "begindatum": "/Date(1769900400000+0100)/",
-            "einddatum": "/Date(1869900400000+0100)/",
-            "functieBuitenRM": "Gerechtsdeurwaarder",
-            "instantieBuitenRM": "Deuren zijn veel Waard B.V.",
-            "plaatsBuitenRM": "Deurdorp",
+            "ingangsdatum": "2026-02-01",
+            "einddatum": "2029-04-03",
+            "functie": "Gerechtsdeurwaarder",
+            "instantie": "Deuren zijn veel Waard B.V.",
+            "plaats": "Deurdorp",
         }
         response = {
-            "completeDateTime": "/Date(1777637082369+0200)/",
-            "errorMessage": None,
-            "model": {
+            "neroRechterlijkeAmbtenaarDetails": {
                 "achternaam": "Test",
                 "beroepsgegevensBuitenRM": [pd],
-                "toonNaam": "mw. mr. drs. A.B. Test",
+                "samengesteldeNaam": "mw. mr. drs. A.B. Test",
             },
-            "status": 1,
-            "validationMessages": None,
         }
-        requests_mock.get(person_details_url(person.rechtspraak_id), json=response, status_code=200)
-
-        assert person.professional_detail == []
-        assert len(ProfessionalDetail.query.all()) == 0
-
-        with RechtspraakScrapeSession() as session:
-            enrich_person(session, person)
-
-        assert len(person.professional_detail) == 1
-        assert len(ProfessionalDetail.query.all()) == 1
-
-        assert person.professional_detail[0].function == pd.get("functieBuitenRM")
-        assert person.professional_detail[0].start_date == datetime(2026, 2, 1, 0, 0)
-        assert person.professional_detail[0].end_date == datetime(2029, 4, 3, 10, 46, 40)
-        assert pd.get("plaatsBuitenRM") in person.professional_detail[0].remarks
-        assert person.professional_detail[0].organisation == pd.get("instantieBuitenRM")
-        assert person.professional_detail[0].outside_of_judiciary is True
-
-    def test_voorgaande_betrekking_is_created_if_exist(self, requests_mock):
-        person = PersonFactory()
-        pd = {
-            "begindatum": "/Date(1769900400000+0100)/",
-            "einddatum": "/Date(1869900400000+0100)/",
-            "functie": "Advocaat",
-            "instantie": "Stichting Rechtvaardige Advocaten",
-            "plaats": "Dorpstad",
-        }
-        response = {
-            "completeDateTime": "/Date(1777637082369+0200)/",
-            "errorMessage": None,
-            "model": {
-                "achternaam": "Test",
-                "voorgaandeBetrekkingen": [pd],
-                "toonNaam": "mw. mr. drs. A.B. Test",
-            },
-            "status": 1,
-            "validationMessages": None,
-        }
-        requests_mock.get(person_details_url(person.rechtspraak_id), json=response, status_code=200)
+        requests_mock.get(
+            person_details_url(person.rechtspraak_id), text=format_dict_to_html(response), status_code=200
+        )
 
         assert person.professional_detail == []
         assert len(ProfessionalDetail.query.all()) == 0
@@ -252,7 +206,43 @@ class TestEnrichPersonProfessionalDetails:
 
         assert person.professional_detail[0].function == pd.get("functie")
         assert person.professional_detail[0].start_date == datetime(2026, 2, 1, 0, 0)
-        assert person.professional_detail[0].end_date == datetime(2029, 4, 3, 10, 46, 40)
+        assert person.professional_detail[0].end_date == datetime(2029, 4, 3, 0, 0, 0)
+        assert person.professional_detail[0].location == pd.get("plaats")
+        assert person.professional_detail[0].organisation == pd.get("instantie")
+        assert person.professional_detail[0].outside_of_judiciary is True
+
+    def test_voorgaande_betrekking_is_created_if_exist(self, requests_mock):
+        person = PersonFactory()
+        pd = {
+            "ingangsdatum": "2026-02-01",
+            "einddatum": "2029-04-03",
+            "functie": "Advocaat",
+            "instantie": "Stichting Rechtvaardige Advocaten",
+            "plaats": "Dorpstad",
+        }
+        response = {
+            "neroRechterlijkeAmbtenaarDetails": {
+                "achternaam": "Test",
+                "voorgaandeBetrekkingen": [pd],
+                "samengesteldeNaam": "mw. mr. drs. A.B. Test",
+            },
+        }
+        requests_mock.get(
+            person_details_url(person.rechtspraak_id), text=format_dict_to_html(response), status_code=200
+        )
+
+        assert person.professional_detail == []
+        assert len(ProfessionalDetail.query.all()) == 0
+
+        with RechtspraakScrapeSession() as session:
+            enrich_person(session, person)
+
+        assert len(person.professional_detail) == 1
+        assert len(ProfessionalDetail.query.all()) == 1
+
+        assert person.professional_detail[0].function == pd.get("functie")
+        assert person.professional_detail[0].start_date == datetime(2026, 2, 1, 0, 0)
+        assert person.professional_detail[0].end_date == datetime(2029, 4, 3, 0, 0, 0)
         assert person.professional_detail[0].remarks == pd.get("opmerkingen")
         assert person.professional_detail[0].organisation == pd.get("instantie")
         assert person.professional_detail[0].location == pd.get("plaats")
@@ -266,7 +256,7 @@ class TestEnrichPeopleHandler:
 
         freezer.move_to(now)
         person = PersonFactory(last_scraped_at=long_time_ago)
-        requests_mock.get(person_details_url(person.rechtspraak_id), json={}, status_code=200)
+        requests_mock.get(person_details_url(person.rechtspraak_id), text=format_dict_to_html({}), status_code=200)
 
         assert person.last_scraped_at == long_time_ago
         enrich_people_handler()
@@ -278,7 +268,7 @@ class TestEnrichPeopleHandler:
 
         freezer.move_to(now)
         person = PersonFactory(last_scraped_at=long_time_ago)
-        requests_mock.get(person_details_url(person.rechtspraak_id), json={}, status_code=200)
+        requests_mock.get(person_details_url(person.rechtspraak_id), text=format_dict_to_html({}), status_code=200)
 
         assert person.last_scraped_at == long_time_ago
         enrich_people_handler()

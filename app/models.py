@@ -1,8 +1,7 @@
-import base64
 from datetime import datetime
 
 from app.database import Column, UUIDModel, db, reference_col, relationship
-from app.util import determine_gender, extract_initials, parse_rechtspraak_datetime
+from app.util import extract_initials, extract_titles, parse_rechtspraak_datetime
 
 EXPECTED_LENGTH_DECODED_RECHTSPRAAK_ID = 24
 
@@ -21,15 +20,10 @@ class Person(UUIDModel):
     titles = Column(db.Text, nullable=True)
     initials = Column(db.Text, nullable=True)
     last_name = Column(db.Text, nullable=True)
-    last_name_own = Column(db.Text, nullable=True)
-    last_name_partner = Column(db.Text, nullable=True)
     did_not_self_report_side_jobs = Column(db.Boolean, nullable=True)
     has_no_side_jobs = Column(db.Boolean, nullable=True)
-    gender = Column(db.Text, nullable=True)
     toon_naam = Column(db.Text, nullable=True)
-    toon_naam_kort = Column(db.Text, nullable=True)
     rechtspraak_id = Column(db.Text, nullable=False, unique=True)
-    rechtspraak_internal_id = Column(db.Text, nullable=False, unique=True)
     first_scraped_at = Column(db.DateTime, default=datetime.now, nullable=False)
     last_scraped_at = Column(db.DateTime, nullable=True)
     protected = Column(db.Boolean, default=False)
@@ -41,66 +35,24 @@ class Person(UUIDModel):
         return True if self.removed_from_rechtspraak_at else False
 
     @staticmethod
-    def extract_rechtspraak_internal_id(rechtspraak_id: str) -> str:
-        """
-        The 32 bytes base64 encoded rechtspraak_id is not unique. When you search for the same person twice, you will
-        get a different rechtspraak_id value. Hence we update this value. The value does contain a hidden constant
-        identifier that is actually unique.
-
-        I.e. the rechtspraak_identifiers for 'Aalbers' are (this wroked on April 26, 2026):
-            Gdt0tdGIIuzw8KSh2gMpRWZbZSWiGKxR
-            5dw03zI8T6G2KSdAjiB3KmZbZSWiGKxR
-            36Kwhv2cTaPtkHp4IuuRvmZbZSWiGKxR
-            HkSJNxWvetDolZ_2HMHWimZbZSWiGKxR
-            WCYcEezsc9aHgX6zzdSDFWZbZSWiGKxR
-            glQd8FEdhZQtGPPnaJC6NGZbZSWiGKxR
-            wS8idUKONa5z7FnZY2iQX2ZbZSWiGKxR
-            kXxH0Vc_efNFkJTNsSkkG2ZbZSWiGKxR
-            sP0mz6Lag5_M8psivG9BYGZbZSWiGKxR
-            qAKJ16y3iaSH3HJN_nT3hGZbZSWiGKxR
-            i8k3m3IJGzFpR2nUqO_pDmZbZSWiGKxR
-            mWxMsW1oKLbpzS2nxr9gY2ZbZSWiGKxR
-            F_ZlpgPY_nnHlxuhpxzU8mZbZSWiGKxR
-
-        The 'identifier' is always 32 characters long. They use HTTP safe base64 encoding where + is replaced by -
-        and / by _. Decoding yields 24 bytes. Of those 24 bytes, the last 8 bytes of the identifier is constant
-        per person. If you change any of the first 16 bytes, you will always end up on the same page.
-
-        It is currently unknown what any of the first 16 bytes mean, but entropy analysis indicates it is either
-        compressed or encrypted. Regardless, this is a solid way to identify people across name changes.
-        """
-        encoded_id = rechtspraak_id.encode()
-        decoded_id = base64.b64decode(encoded_id, altchars=b"-_")
-        if len(decoded_id) != EXPECTED_LENGTH_DECODED_RECHTSPRAAK_ID:
-            raise ValueError(f"length of rechtspraak_id is not {EXPECTED_LENGTH_DECODED_RECHTSPRAAK_ID}: {decoded_id}")
-        return decoded_id[16:].hex()
-
-    @staticmethod
     def from_dict(d: dict) -> dict:
-        toon_naam = (d.get("toonnaam") or "").strip()
-        toon_naam_kort = (d.get("toonnaamkort") or "").strip()
-        len_last_name = len(toon_naam) - len(toon_naam_kort)
-        titles = d.get("toonnaam", "")[0:len_last_name].strip()
-        rechtspraak_id = (d.get("persoonId") or "").strip()
-        rechtspraak_internal_id = Person.extract_rechtspraak_internal_id(rechtspraak_id)
-
-        return dict(
-            rechtspraak_id=rechtspraak_id,
-            rechtspraak_internal_id=rechtspraak_internal_id,
-            last_name=(d.get("ACHTERNAAM") or "").strip(),
-            gender=determine_gender(toon_naam),
-            toon_naam=toon_naam,
-            toon_naam_kort=toon_naam_kort,
-            titles=titles,
-            initials=extract_initials(toon_naam_kort),
-        )
+        toon_naam = (d.get("samengesteldeNaam") or "").strip()
+        rechtspraak_id = (d.get("id") or "").strip()
+        titles, name_without_titles = extract_titles(toon_naam)
+        initials, last_name = extract_initials(name_without_titles)
+        return {
+            "rechtspraak_id": rechtspraak_id,
+            "toon_naam": toon_naam,
+            "titles": " ".join(titles),
+            "initials": initials,
+            "last_name": last_name,
+        }
 
 
 class ProfessionalDetail(UUIDModel):
     __tablename__ = "professional_detail"
     start_date = Column(db.DateTime, nullable=True)
     end_date = Column(db.DateTime, nullable=True)
-    main_job = Column(db.Boolean, default=False)
     function = Column(db.Text, nullable=False)
     organisation = Column(db.Text, nullable=True)
     remarks = Column(db.Text, nullable=True)
@@ -114,10 +66,9 @@ class ProfessionalDetail(UUIDModel):
     @staticmethod
     def transform_beroepsgegevens_dict(d: dict) -> dict:
         return dict(
-            start_date=parse_rechtspraak_datetime(d.get("begindatum") or ""),
-            main_job=bool(d.get("hoofdfunctie")),
-            function=(d.get("functieOmschrijving") or "").strip(),
-            organisation=(d.get("instantieOmschrijving") or "").strip(),
+            start_date=parse_rechtspraak_datetime(d.get("ingangsdatum") or ""),
+            function=(d.get("functie") or "").strip(),
+            organisation=(d.get("instantie") or "").strip(),
             remarks=(d.get("opmerkingen") or "").strip(),
             outside_of_judiciary=False,
         )
@@ -125,18 +76,18 @@ class ProfessionalDetail(UUIDModel):
     @staticmethod
     def transform_historisch_beroepsgegevens_dict(d: dict) -> dict:
         return dict(
-            start_date=parse_rechtspraak_datetime(d.get("begindatum") or ""),
+            start_date=parse_rechtspraak_datetime(d.get("ingangsdatum") or ""),
             end_date=parse_rechtspraak_datetime(d.get("einddatum") or ""),
-            main_job=bool(d.get("hoofdfunctie")),
             function=(d.get("functie") or "").strip(),
             organisation=(d.get("instantie") or "").strip(),
+            location=(d.get("plaats") or "").strip(),
             outside_of_judiciary=False,
         )
 
     @staticmethod
     def transform_voorgaande_betrekking_dict(d: dict) -> dict:
         return dict(
-            start_date=parse_rechtspraak_datetime(d.get("begindatum") or ""),
+            start_date=parse_rechtspraak_datetime(d.get("ingangsdatum") or ""),
             end_date=parse_rechtspraak_datetime(d.get("einddatum") or ""),
             function=(d.get("functie") or "").strip(),
             organisation=(d.get("instantie") or "").strip(),
@@ -146,18 +97,12 @@ class ProfessionalDetail(UUIDModel):
 
     @staticmethod
     def transform_beroepsgegevens_buiten_rm_dict(d: dict) -> dict:
-        plaats_buiten_rm = d.get("plaatsBuitenRM")
-        if plaats_buiten_rm and plaats_buiten_rm is not None:
-            remarks = f"Plaats buiten rechterlijke macht: {plaats_buiten_rm.strip()}"
-        else:
-            remarks = ""
-
         return dict(
-            start_date=parse_rechtspraak_datetime(d.get("begindatum") or ""),
+            start_date=parse_rechtspraak_datetime(d.get("ingangsdatum") or ""),
             end_date=parse_rechtspraak_datetime(d.get("einddatum") or ""),
-            function=(d.get("functieBuitenRM") or "").strip(),
-            organisation=(d.get("instantieBuitenRM") or "").strip(),
-            remarks=remarks,
+            function=(d.get("functie") or "").strip(),
+            organisation=(d.get("instantie") or "").strip(),
+            location=(d.get("plaats") or "").strip(),
             outside_of_judiciary=True,
         )
 
@@ -175,22 +120,26 @@ class SideJob(UUIDModel):
     person = relationship("Person", backref="side_job", lazy="select")
 
     @staticmethod
+    def _extract_bezoldiging(bezoldigd: bool) -> str:
+        return "Ja" if bezoldigd else "Nee"
+
+    @staticmethod
     def transform_huidige_nevenbetrekkingen_dict(d: dict) -> dict:
         return dict(
-            start_date=parse_rechtspraak_datetime(d.get("begindatum") or ""),
-            paid=(d.get("bezoldigd") or "").strip(),
+            start_date=parse_rechtspraak_datetime(d.get("ingangsdatum") or ""),
+            paid=SideJob._extract_bezoldiging(d["bezoldigd"]),
             function=(d.get("functie") or "").strip(),
             organisation_name=(d.get("instantie") or "").strip(),
             place=(d.get("plaats") or "").strip(),
-            organisation_type=(d.get("soortbedrijf") or "").strip(),
+            organisation_type=(d.get("soortBedrijf") or "").strip(),
         )
 
     @staticmethod
     def transform_voorgaande_nevenbetrekkingen_dict(d: dict) -> dict:
         return dict(
-            start_date=parse_rechtspraak_datetime(d.get("begindatum") or ""),
+            start_date=parse_rechtspraak_datetime(d.get("ingangsdatum") or ""),
             end_date=parse_rechtspraak_datetime(d.get("einddatum") or ""),
-            paid=(d.get("bezoldigd") or "").strip(),
+            paid=SideJob._extract_bezoldiging(d["bezoldigd"]),
             function=(d.get("functie") or "").strip(),
             organisation_name=(d.get("instantie") or "").strip(),
             place=(d.get("plaats") or "").strip(),

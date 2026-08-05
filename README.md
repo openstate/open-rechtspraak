@@ -29,8 +29,8 @@
 
 ## Periodically scraping data
 Scraping data from people is done in two steps:
-1. Retrieving a list of people with `make import_people` from the `https://namenlijst.rechtspraak.nl/Services/WebNamenlijstService/Zoek` service. These people are saved.
-2. We enrich the details from people through `https://namenlijst.rechtspraak.nl/Services/WebNamenlijstService/haalOp/?id=<rechtspraak_id>` where `rechtspraak_id` is a unique ID assigned by `namenlijst.rechtspraak.nl` to the person.
+1. Retrieving a list of people with `make import_people` from `https://www.rechtspraak.nl/registers/nevenfunctieregister`. These people are saved.
+2. We enrich the details from people through `https://www.rechtspraak.nl/registers/nevenfunctieregister/details/<rechtspraak_id>`.
 
 Similarly, two commands exist for scraping verdicts and enriching them.
 1. Retrieving a list of verdicts (default = verdicts of the past three days) with `make import_verdicts`.

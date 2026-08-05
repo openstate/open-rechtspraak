@@ -6,8 +6,13 @@ if TYPE_CHECKING:
     from bs4._typing import _StrainableAttributes
 
 
-def to_soup(content: str) -> BeautifulSoup:
-    return BeautifulSoup(content, features="xml")
+def to_soup(content: str, features: str = "xml") -> BeautifulSoup:
+    """Uses the 'xml' parser by default. If you are converting html documents, use 'html.parser'."""
+    return BeautifulSoup(content, features=features)
+
+
+def extract_rnl_state(soup: BeautifulSoup) -> BeautifulSoup:
+    return soup.find(id="rnl-state")
 
 
 def extract_verdicts(soup: BeautifulSoup) -> BeautifulSoup:

@@ -31,8 +31,4 @@ def recognize_people(text: str, people: list[Person] | None = None) -> list[Pers
             found.append(person)
             continue
 
-        short_name = person.toon_naam_kort.lower()
-        if short_name in text:
-            found.append(person)
-            continue
     return found

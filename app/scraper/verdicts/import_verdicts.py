@@ -6,7 +6,6 @@ from app.scraper.soup_parsing import extract_verdicts, to_soup
 from app.scraper.verdicts.config import (
     DEFAULT_LIMIT,
     DEFAULT_SEARCH_QUERY_PARAMS,
-    FAULTY_URL,
     SEARCH_ENDPOINT,
 )
 from app.scraper.verdicts.utils import verdict_already_exists
@@ -25,7 +24,7 @@ def import_verdicts_handler(start_datetime: str, end_datetime: str) -> None:
             current_app.logger.info(f"Collecting verdicts from {SEARCH_ENDPOINT} with params: {params}")
             r = session.get(SEARCH_ENDPOINT, params=params)
 
-            if not r.ok or r.url == FAULTY_URL:
+            if not r.ok:
                 current_app.logger.error(
                     f"Error during verdict collection: STATUS_CODE {r.status_code} | URL {r.url} | CONTENT {r.content}",
                 )

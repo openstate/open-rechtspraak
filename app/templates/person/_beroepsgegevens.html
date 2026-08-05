@@ -8,6 +8,9 @@
       {% elif pd.start_date %}
       <span>Gestart op <span class="start-date">{{ pd.start_date|date }}</span>.</span>
       {% endif %}
+      {% if pd.location %}
+      <span>Locatie <span class="place">{{ pd.location }}</span>.</span>
+      {% endif %}
     </div>
     <div class="card-footer">
       <span class="badge rounded-pill bg-primary mt-2 me-2 overflow-hidden mw-100" title="{{ pd.organisation }}">{{
