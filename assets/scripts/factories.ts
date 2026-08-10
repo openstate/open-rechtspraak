@@ -24,6 +24,6 @@ export const PROFESSIONAL_DETAILS_FIXTURE: ProfessionalDetail[] = [{
 
 export const PERSON_FIXTURE: Person = {
   id: '0eee8e7d-d402-47b1-8726-a5a2e430889f',
-  toon_naam: 'dhr. mr. A.B.C. De Jong',
+  toon_naam: 'mr. A.B.C. De Jong',
   professional_details: PROFESSIONAL_DETAILS_FIXTURE,
 };

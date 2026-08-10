@@ -28,7 +28,7 @@ class TestEnrichPerson:
             "historieBeroepsgegevens": [],
             "huidigeNevenbetrekkingen": [],
             "status": "Gepubliceerd",
-            "samengesteldeNaam": "mw. mr. drs. A.B. Test",
+            "samengesteldeNaam": "mr. drs. A.B. Test",
             "vervultGeenNevenbetrekkingen": True,
             "voorgaandeBetrekkingen": [],
             "voorgaandeNevenbetrekkingen": [],
@@ -97,7 +97,7 @@ class TestEnrichPersonProfessionalDetails:
         response = {
             "neroRechterlijkeAmbtenaarDetails": {
                 "actieveBeroepsgegevens": [],
-                "samengesteldeNaam": "mw. mr. drs. A.B. Test",
+                "samengesteldeNaam": "mr. drs. A.B. Test",
             },
         }
         requests_mock.get(
@@ -119,7 +119,7 @@ class TestEnrichPersonProfessionalDetails:
         response = {
             "neroRechterlijkeAmbtenaarDetails": {
                 "actieveBeroepsgegevens": [pd],
-                "samengesteldeNaam": "mw. mr. drs. A.B. Test",
+                "samengesteldeNaam": "mr. drs. A.B. Test",
             },
         }
         requests_mock.get(
@@ -152,7 +152,7 @@ class TestEnrichPersonProfessionalDetails:
             "neroRechterlijkeAmbtenaarDetails": {
                 "achternaam": "Test",
                 "historieBeroepsgegevens": [pd],
-                "samengesteldeNaam": "mw. mr. drs. A.B. Test",
+                "samengesteldeNaam": "mr. drs. A.B. Test",
             },
         }
         requests_mock.get(
@@ -188,7 +188,7 @@ class TestEnrichPersonProfessionalDetails:
             "neroRechterlijkeAmbtenaarDetails": {
                 "achternaam": "Test",
                 "beroepsgegevensBuitenRM": [pd],
-                "samengesteldeNaam": "mw. mr. drs. A.B. Test",
+                "samengesteldeNaam": "mr. drs. A.B. Test",
             },
         }
         requests_mock.get(
@@ -224,7 +224,7 @@ class TestEnrichPersonProfessionalDetails:
             "neroRechterlijkeAmbtenaarDetails": {
                 "achternaam": "Test",
                 "voorgaandeBetrekkingen": [pd],
-                "samengesteldeNaam": "mw. mr. drs. A.B. Test",
+                "samengesteldeNaam": "mr. drs. A.B. Test",
             },
         }
         requests_mock.get(
