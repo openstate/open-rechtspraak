@@ -70,6 +70,8 @@ def upgrade():
             session.delete(pd)
         for sj in new_person.side_job:
             session.delete(sj)
+        for verdict in new_match.verdicts:
+            session.delete(verdict)
 
         session.delete(new_person)
         session.commit()
@@ -103,6 +105,8 @@ def upgrade():
             session.delete(pd)
         for sj in new_match.side_job:
             session.delete(sj)
+        for verdict in new_match.verdicts:
+            session.delete(verdict)
 
         session.delete(new_match)
         session.commit()
