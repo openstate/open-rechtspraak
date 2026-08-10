@@ -70,7 +70,7 @@ def upgrade():
             session.delete(pd)
         for sj in new_person.side_job:
             session.delete(sj)
-        for verdict in new_match.verdicts:
+        for verdict in new_person.verdicts:
             session.delete(verdict)
 
         session.delete(new_person)
