@@ -7,7 +7,7 @@ from requests_ratelimiter import LimiterAdapter
 class RechtspraakScrapeSession(Session):
     """This class contains:
     - maximum of 3 retries
-    - timeout of 2 seconds per request
+    - timeout of 5 seconds per request
     - backoff factor of 1 (.5s, 1s, 2s, 4s, 8s etc.)
 
     Hence, it has a maximum request time of 9.5s (3*2s + .5s + 1s + 2s).
@@ -18,7 +18,7 @@ class RechtspraakScrapeSession(Session):
 
         retries = Retry(
             total=3,
-            backoff_factor=2,
+            backoff_factor=3,
             raise_on_status=False,
             status_forcelist=tuple(range(401, 600)),
         )
@@ -30,5 +30,5 @@ class RechtspraakScrapeSession(Session):
             self.mount("https://", adapter)
 
     def request(self, *args: int, **kwargs: dict) -> Response:
-        kwargs.setdefault("timeout", 2)
+        kwargs.setdefault("timeout", 5)
         return super().request(*args, **kwargs)
